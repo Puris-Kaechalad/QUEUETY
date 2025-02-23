@@ -3,7 +3,8 @@ import Icon from '../assets/react.svg';
 
 function nav() {
     return (
-        <div className="navbar bg-none shadow-lg">
+        <div className="bg-white shadow-md p-2 flex justify-between items-center border border-blue-500 rounded-lg">
+        {/* <div className="navbar bg-none bg-opacity-50 shadow-lg"> */}
             <div className="navbar-start">
                 {/* ซ่อนเมื่อจอมีขนาดใหญ่ */}
                 <div className="dropdown">
@@ -28,7 +29,7 @@ function nav() {
                         <li><a>Menu</a></li>
                         <li><a>Reservation</a></li>
                         <li><a>History</a></li>
-                        <li><a>Contact us</a></li>
+                        <li><a>Contact us</a></li>s
                     </ul>
                 </div>
                 <a className="btn btn-ghost text-xl">daisyUI</a>

@@ -9,6 +9,9 @@ function home() {
       <div className="w-full h-150 relative">
         <img src={Cocktail} alt="Background" className="w-full h-full object-cover" />
       </div>
+      <div>
+        
+      </div>
     </>
   )
 }
