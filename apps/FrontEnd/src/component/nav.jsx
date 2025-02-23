@@ -3,7 +3,7 @@ import Icon from '../assets/react.svg';
 
 function nav() {
     return (
-        <div className="navbar bg-transparent absolute z-20 text-white p-4">
+        <div className="navbar absolute z-20 text-white p-4">
             <div className="navbar-start">
                 {/* ซ่อนเมื่อจอมีขนาดใหญ่ */}
                 <div className="dropdown">
@@ -23,32 +23,44 @@ function nav() {
                     </div>
                     <ul
                         tabIndex={0}
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow tracking-widest">
                         <li><a>Home</a></li>
                         <li><a>Menu</a></li>
                         <li><a>Reservation</a></li>
                         <li><a>History</a></li>
-                        <li><a>Contact us</a></li>s
+                        <li><a>Contact us</a></li>
                     </ul>
                 </div>
                 {/* logo */}
-                <a className="text-xl">daisyUI</a>
+                <a className="text-xl"><img src="#" alt="logo" /></a>
             </div>
 
             <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1 gap-32 text-lg">
-                    <li><a>Home</a></li>
-                    <li><a>Menu</a></li>
-                    <li><a>Reservation</a></li>
-                    <li><a>History</a></li>
-                    <li><a>Contact us</a></li>
+                <ul className="menu menu-horizontal px-1 gap-32 text-lg font-semibold tracking-widest">
+                    <li>
+                        <a className="hover:text-xl transition-all duration-200">Home</a>
+                    </li>
+                    <li>
+                        <a className="hover:text-xl transition-all duration-200">Menu</a>
+                    </li>
+                    <li>
+                        <a className="hover:text-xl transition-all duration-200">Reservation</a>
+                    </li>
+                    <li>
+                        <a className="hover:text-xl transition-all duration-200">History</a>
+                    </li>
+                    <li>
+                        <a className="hover:text-xl transition-all duration-200">Contact us</a>
+                    </li>
                 </ul>
             </div>
 
             <div className="navbar-end">
-                <a className=" flex px-4 py-2 gap-6 border-1 rounded-md hover:bg-white hover:text-black
+                <a className=" flex px-4 py-2 gap-6 border-1 border-white rounded-md tracking-widest hover:bg-white hover:text-black hover:border-white
                 duration-300 ease-in-out">
-                <img src={Icon} alt="icon" className='h-6'/>Puris</a>
+                    <img src={Icon} alt="icon" className='h-6' />
+                    Puris
+                </a>
             </div>
         </div>
     )
