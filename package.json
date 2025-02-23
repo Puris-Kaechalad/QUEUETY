@@ -1,5 +1,5 @@
 {
-  "name": "QUEUETY1",
+  "name": "queuety",
   "private": true,
   "scripts": {
     "build": "turbo run build",
