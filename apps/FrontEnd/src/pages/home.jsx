@@ -1,18 +1,18 @@
 import React from 'react'
 import Navbar from '../component/nav'
-import Cocktail from '../assets/cocktail.jpg'
+
 
 function home() {
   return (
     <>
       <Navbar />
-      <div className="w-full h-130 z-10 top-0 left-0">
-        <img src={Cocktail} alt="Background" className="w-full h-full object-cover opacity-95 brightness-70"/>
+      <div className="w-full h-180 z-10 top-0 left-0">
+        
       </div>
 
       <div class="space-y-8">
         <section class="p-10  bg-white mb-0">
-
+          
         </section>
 
         <section class="p-10 bg-white mb-0">
