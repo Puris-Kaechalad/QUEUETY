@@ -3,6 +3,8 @@
 
 :root{
   background-color: #1B1F2B;
+  /* background: linear-gradient(to bottom, white, gray);
+    clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%); */
 }
 /* 
 :root {

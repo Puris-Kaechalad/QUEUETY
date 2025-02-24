@@ -11,7 +11,7 @@ function home() {
       </div>
 
       <div class="space-y-8">
-        <section class="p-10  mb-0">
+        <section class="p-10  bg-white mb-0">
 
         </section>
 
@@ -19,7 +19,7 @@ function home() {
 
         </section>
 
-        <section class="p-10">
+        <section class="p-10 bg-white">
 
         </section>
       </div>
