@@ -7,12 +7,12 @@ function home() {
     <>
       <Navbar />
       <div className="w-full h-180 z-10 top-0 left-0">
-        
+
       </div>
 
       <div class="space-y-8">
         <section class="p-10  bg-white mb-0">
-          
+
         </section>
 
         <section class="p-10 bg-white mb-0">

@@ -57,8 +57,8 @@ function nav() {
 
             <div className="navbar-end">
                 <a className=" flex px-4 py-1 gap-6 text-black border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white
-                duration-300 ease-in-out">
-                    <img src={Icon} alt="icon" className='h-6' />
+                duration-300 ease-in-out" href="../pages/register.jsx"> 
+                    <img src={Icon} alt="icon" className='h-6'/>
                     123456
                 </a>
             </div>
