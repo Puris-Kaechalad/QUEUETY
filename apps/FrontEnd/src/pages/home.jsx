@@ -1,7 +1,6 @@
 import React from 'react'
 import Navbar from '../component/nav'
 
-
 function home() {
   return (
     <>
