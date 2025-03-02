@@ -5,10 +5,9 @@ export default function register() {
     return (
         <>
             <Navbar />
-
-            <div className="flex justify-center items-center min-h-screen bg-gray-100">
-                <div className="bg-white p-8 rounded-3xl shadow-lg w-full max-w-lg">
-                    <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+                    <h2 className="text-3xl font-bold text-center text-black mb-6">Register</h2>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>

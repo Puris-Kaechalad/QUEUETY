@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 import Icon from '../assets/react.svg';
 
 function nav() {
@@ -24,11 +25,11 @@ function nav() {
                     <ul
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow tracking-widest text-black">
-                        <li><a>Home</a></li>
-                        <li><a>Menu</a></li>
-                        <li><a>Reservation</a></li>
-                        <li><a>History</a></li>
-                        <li><a>Contact us</a></li>
+                        <li><Link to="/" >Home</Link></li>
+                        <li><Link to="/" >Menu</Link></li>
+                        <li><Link to="/" >Reservation</Link></li>
+                        <li><Link to="/" >History</Link></li>
+                        <li><Link to="/" >Contact us</Link></li>
                     </ul>
                 </div>
                 {/* logo */}
@@ -38,29 +39,29 @@ function nav() {
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 gap-32 text-lg text-black font-semibold tracking-widest">
                     <li>
-                        <a className="hover:text-xl hover:text-warning transition-all duration-200">Home</a>
+                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">Home</Link>
                     </li>
                     <li>
-                        <a className="hover:text-xl hover:text-warning transition-all duration-200">Menu</a>
+                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">Menu</Link>
                     </li>
                     <li>
-                        <a className="hover:text-xl hover:text-warning transition-all duration-200">Reservation</a>
+                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">Reservation</Link>
                     </li>
                     <li>
-                        <a className="hover:text-xl hover:text-warning transition-all duration-200">History</a>
+                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">History</Link>
                     </li>
                     <li>
-                        <a className="hover:text-xl hover:text-warning transition-all duration-200">Contact us</a>
+                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">Contact us</Link>
                     </li>
                 </ul>
             </div>
 
             <div className="navbar-end">
-                <a className=" flex px-4 py-1 gap-6 text-black border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white
-                duration-300 ease-in-out" href="../pages/register.jsx"> 
+                <Link to="register" className=" flex px-4 py-1 gap-6 text-black border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white
+                duration-300 ease-in-out"> 
                     <img src={Icon} alt="icon" className='h-6'/>
                     123456
-                </a>
+                </Link>
             </div>
         </div>
     )

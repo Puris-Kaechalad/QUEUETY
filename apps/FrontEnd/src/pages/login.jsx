@@ -4,8 +4,6 @@ import Navbar from '../component/nav'
 function login() {
     return (
         <Navbar />
-        
-
     )
 }
 
