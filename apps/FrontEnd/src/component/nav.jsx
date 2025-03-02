@@ -4,7 +4,7 @@ import Icon from '../assets/react.svg';
 
 function nav() {
     return (
-        <div className="navbar absolute fixed z-20 justify-between py-2 px-8 bg-gray-300 opacity-90">
+        <div className="navbar absolute fixed z-20 justify-between py-2 px-8">
             <div className="navbar-start">
                 {/* ซ่อนเมื่อจอมีขนาดใหญ่ */}
                 <div className="dropdown">
@@ -24,7 +24,7 @@ function nav() {
                     </div>
                     <ul
                         tabIndex={0}
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow tracking-widest text-black">
+                        className="menu menu-sm bg-white dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow tracking-widest text-black">
                         <li><Link to="/" >Home</Link></li>
                         <li><Link to="/" >Menu</Link></li>
                         <li><Link to="/" >Reservation</Link></li>
@@ -37,29 +37,28 @@ function nav() {
             </div>
 
             <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1 gap-32 text-lg text-black font-semibold tracking-widest">
+                <ul className="menu menu-horizontal px-1 gap-32 text-lg text-white font-semibold tracking-widest">
                     <li>
-                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">Home</Link>
+                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Home</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">Menu</Link>
+                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Menu</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">Reservation</Link>
+                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Reservation</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">History</Link>
+                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">History</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:text-xl hover:text-warning transition-all duration-200">Contact us</Link>
+                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Contact us</Link>
                     </li>
                 </ul>
             </div>
 
             <div className="navbar-end">
-                <Link to="register" className=" flex px-4 py-1 gap-6 text-black border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white
-                duration-300 ease-in-out"> 
-                    <img src={Icon} alt="icon" className='h-6'/>
+                <Link to="register" className=" flex px-4 py-1 text-white border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white
+                hover:scale-110 duration-300 ease-in-out"> 
                     123456
                 </Link>
             </div>
