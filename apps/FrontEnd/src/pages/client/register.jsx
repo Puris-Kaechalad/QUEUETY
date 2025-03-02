@@ -1,5 +1,5 @@
 import React from 'react'
-import Navbar from '../component/nav'
+import Navbar from '../../component/nav'
 
 export default function register() {
     return (
@@ -78,7 +78,7 @@ export default function register() {
                         REGISTER
                     </button>
 
-                    <p className="text-center text-gray-500 text-sm mt-3">Login</p>
+                    <button className="text-center text-gray-500 text-sm mt-3">Login</button>
                 </div>
             </div>
         </>
