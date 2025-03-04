@@ -57,9 +57,9 @@ function nav() {
             </div>
 
             <div className="navbar-end">
-                <Link to="login" className=" flex px-4 py-1 text-white border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white
+                <Link to="/login" className=" flex px-4 py-1 text-white border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white
                 hover:scale-110 duration-300 ease-in-out"> 
-                    123456
+                    Login
                 </Link>
             </div>
         </div>

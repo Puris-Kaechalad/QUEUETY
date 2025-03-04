@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 import Navbar from '../../component/nav'
 
 export default function register() {
@@ -79,12 +80,14 @@ export default function register() {
                             />
                         </div>
                     </div>
-
-                    <button className="w-full mt-6 bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600">
-                        REGISTER
-                    </button>
-                    <div className="text-center mt-4">
-                        <a className="text-gray-500 text-sm mt-3">Login</a>
+                    
+                    <div className="mt-8">
+                        <button className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600">
+                            REGISTER
+                        </button>
+                        <div className="text-center mt-4">
+                            <Link to="/login" className="text-gray-500 text-sm mt-3">Login</Link>
+                        </div>
                     </div>
                 </div>
             </div>

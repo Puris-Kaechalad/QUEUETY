@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 import Navbar from '../../component/nav'
 
 function login() {
@@ -30,7 +31,7 @@ function login() {
                     </button>
                     <div className="flex justify-start gap-2 mt-4">
                         <p className="text-gray-500 text-sm">Do not have an account yet?</p>
-                        <a className="text-sky-600 text-sm">Register</a>
+                        <Link to="/register" className="text-sky-600 text-sm">Register</Link>
                     </div>
 
                 </div>
