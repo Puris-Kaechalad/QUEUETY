@@ -8,7 +8,7 @@ export default function register() {
             <Navbar />
             <div className="flex justify-center items-center min-h-screen p-8 sm:p-0">
                 <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-                    <h2 className="text-3xl font-bold text-center text-black mb-6">Register</h2>
+                    <h2 className="text-3xl font-bold text-center text-black mb-6 tracking-wider">Register</h2>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -82,11 +82,11 @@ export default function register() {
                     </div>
                     
                     <div className="mt-8">
-                        <button className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600">
+                        <button className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition-all duration-200">
                             REGISTER
                         </button>
                         <div className="text-center mt-4">
-                            <Link to="/login" className="text-gray-500 text-sm mt-3">Login</Link>
+                            <Link to="/login" className="text-gray-500 text-md mt-3">Login</Link>
                         </div>
                     </div>
                 </div>

@@ -37,7 +37,7 @@ function nav() {
             </div>
 
             <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1 gap-32 text-lg text-white font-semibold tracking-widest">
+                <ul className="menu menu-horizontal px-1 gap-32 text-lg text-white font-semibold tracking-wider">
                     <li>
                         <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Home</Link>
                     </li>
