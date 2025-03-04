@@ -17,9 +17,9 @@ export default function sentRequest() {
                         />
                     </div>
 
-                    <div className="mt-8">
+                    <div className="mt-8 w-full">
                         <button className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition-all duration-200">
-                            SENT REQUEST
+                            <Link to="/sentOTP">SENT REQUEST</Link>
                         </button>
                         <div className="flex justify-center mt-4">
                             <Link to="/login" className="text-gray-500 text-md">Back</Link>
