@@ -25,15 +25,16 @@ function login() {
                             className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100 focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
-
-                    <button className="w-full mt-8 bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600">
-                        LOGIN
-                    </button>
-                    <div className="flex justify-start gap-2 mt-4">
-                        <p className="text-gray-500 text-sm">Do not have an account yet?</p>
-                        <Link to="/register" className="text-sky-600 text-sm">Register</Link>
+                    
+                    <div className="mt-8">
+                        <button className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600">
+                            LOGIN
+                        </button>
+                        <div className="flex justify-start gap-2 mt-4">
+                            <p className="text-gray-500 text-sm">Do not have an account yet?</p>
+                            <Link to="/register" className="text-sky-600 text-sm">Register</Link>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </>
