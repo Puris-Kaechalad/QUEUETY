@@ -50,7 +50,7 @@ function Login() {
                     </div>
                     
                     <div className="mt-8">
-                        <Link to="/forgot-password" className="flex text-sky-500 text-sm justify-self-end">
+                        <Link to="/sentRequest" className="flex text-sky-500 text-sm justify-self-end">
                             Forgot password?
                         </Link>
                         <button
