@@ -27,40 +27,42 @@ export default function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-      
+    
         if (formData.password !== formData.confirmPassword) {
-          setError("Passwords do not match");
-          return;
+            setError("Passwords do not match");
+            return;
         }
-      
+    
         try {
-          // พยายามลงทะเบียน
-          const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-          
-          // ตรวจสอบว่าได้ผู้ใช้จริง ๆ หรือไม่
-          const user = userCredential.user;
-          if (user) {
+            // สร้างบัญชีผู้ใช้ใน Firebase Authentication
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            const user = userCredential.user;
+    
+            // บันทึกข้อมูลเพิ่มเติมลง Firestore
+            await setDoc(doc(db, "users", user.uid), {
+                firstname: formData.firstname,
+                lastname: formData.lastname,
+                email: formData.email,
+                phone: formData.phone,
+                dob: formData.dob
+            });
+    
             setSuccess("Registered successfully! 🎉");
             setError(null);
-      
-            // รอ 2 วินาทีและพาไปหน้า login
+    
+            // Redirect ไปหน้า Login
             setTimeout(() => {
-              navigate("/login");
+                navigate("/login");
             }, 2000);
-          } else {
-            throw new Error("User not created"); // ถ้าไม่พบผู้ใช้จะ throw error
-          }
         } catch (err) {
-          // ตรวจจับข้อผิดพลาดและแสดงข้อความให้ผู้ใช้
-          if (err.code === 'auth/email-already-in-use') {
-            setError("This email is already in use. Please try with a different email.");
-          } else {
-            setError(err.message);
-          }
-          setSuccess(null); // ซ่อนข้อความ success เมื่อเกิดข้อผิดพลาด
+            if (err.code === 'auth/email-already-in-use') {
+                setError("This email is already in use. Please try with a different email.");
+            } else {
+                setError(err.message);
+            }
+            setSuccess(null);
         }
-      };
-      
+    };
 
     return (
         <>
