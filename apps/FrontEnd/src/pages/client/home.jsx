@@ -1,12 +1,27 @@
 import React from 'react'
 import Navbar from '../../component/nav'
+import { Link } from "react-router-dom";
+import steakImage from "../../assets/home_background.png";
 
 function home() {
   return (
     <>
       <Navbar />
-      <div className="w-full h-180 z-10 top-0 left-0">
+      <div className="flex justify-between item-center h-screen bg-gray-400 p-16 z-10">
+        <div>
+          <div >
+            <h1 className="text-5xl font-bold">Got plans for tonight's party?</h1>
+            <p className="mt-2 text-4xl">Let me help you find a seat!</p>
+            <div className="mt-8 flex space-x-4">
+              <button className="text-white px-4 py-2 border-1 black rounded-full font-bold">About us</button>
+              <button className="bg-yellow-500 px-4 py-2 rounded-full font-bold">Reserve now</button>
+            </div>
+          </div>
+        </div>
 
+        <div>
+          <img src={steakImage} alt="Steak" className="w-120" />
+        </div>
       </div>
 
       <div class="space-y-8">
