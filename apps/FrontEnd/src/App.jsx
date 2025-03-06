@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css'
-import Register from './pages/client/register'
-import Login from './pages/client/login'
-import SentRequest from './pages/client/sentRequest'
-import SentOTP from './pages/client/sentOTP'
-import ResetPassword from './pages/client/resetPass'
+import Register from './pages/registerSystem/register'
+import Login from './pages/registerSystem/login'
+import SentRequest from './pages/registerSystem/sentRequest'
+import SentOTP from './pages/registerSystem/sentOTP'
+import ResetPassword from './pages/registerSystem/resetPass'
 import Home from './pages/client/home'
 
 function App() {

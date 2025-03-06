@@ -17,7 +17,7 @@ function sentOTP() {
                     </div>
                     <div className="flex justify-start mt-4 gap-2">
                         <p className="text-gray-500 text-sm">Did not receive an OTP?</p>
-                        <p className="text-sky-600 text-sm">sent again</p>
+                        <p className="text-sky-600 text-sm">Sent again</p>
                     </div>
 
                     <div className="mt-8">
