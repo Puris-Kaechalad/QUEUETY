@@ -39,19 +39,19 @@ function nav() {
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 gap-32 text-lg text-white font-semibold tracking-wider">
                     <li>
-                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Home</Link>
+                        <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Home</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Menu</Link>
+                        <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Menu</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Reservation</Link>
+                        <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Reservation</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">History</Link>
+                        <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:scale-110 rounded-full hover:text-warning transition-all duration-200">Contact us</Link>
+                        <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</Link>
                     </li>
                 </ul>
             </div>

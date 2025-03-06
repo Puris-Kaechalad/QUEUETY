@@ -7,14 +7,16 @@ function home() {
   return (
     <>
       <Navbar />
-      <div className="flex justify-between item-center h-screen bg-gray-400 p-16 z-10">
+      <div className="lg:flex justify-between items-center h-screen bg-gray-400 p-16 z-10">
         <div>
-          <div >
-            <h1 className="text-5xl font-bold">Got plans for tonight's party?</h1>
-            <p className="mt-2 text-4xl">Let me help you find a seat!</p>
-            <div className="mt-8 flex space-x-4">
-              <button className="text-white px-4 py-2 border-1 black rounded-full font-bold">About us</button>
-              <button className="bg-yellow-500 px-4 py-2 rounded-full font-bold">Reserve now</button>
+          <div className="space-y-16">
+            <div>
+              <h1 className="text-5xl font-bold">Got plans for tonight's party?</h1>
+              <p className="mt-6 text-4xl">Let me help you find a seat!</p>
+            </div>
+            <div className="flex space-x-8">
+              <button className="text-white px-4 py-2 border-1 border-dashed rounded-full font-bold hover:bg-gray-500 transition-all duration-200 hover:scale-110 ">About us</button>
+              <button className="bg-yellow-500 shadow-lg px-4 py-2 rounded-full font-bold text-lg hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-120">Reserve now</button>
             </div>
           </div>
         </div>
