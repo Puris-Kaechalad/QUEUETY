@@ -4,7 +4,6 @@ import './App.css'
 import Register from './pages/registerSystem/register'
 import Login from './pages/registerSystem/login'
 import SentRequest from './pages/registerSystem/sentRequest'
-import SentOTP from './pages/registerSystem/sentOTP'
 import ResetPassword from './pages/registerSystem/resetPass'
 import Home from './pages/client/home'
 
@@ -16,7 +15,6 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/sentRequest" element={<SentRequest />} />
-        <Route path="/sentOTP" element={<SentOTP />} />
         <Route path="/resetPass" element={<ResetPassword />} />
       </Routes>
     </>

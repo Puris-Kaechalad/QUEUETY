@@ -8,34 +8,27 @@ import DownArrow from "../../assets/down_arrow.png"
 import Location from "../../assets/location.png"
 
 function home() {
-  // const [email, setEmail] = useState("");
-  // const [message, setMessage] = useState("");
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Email:", email);
-  //   console.log("Message:", message);
-  // };
 
   return (
     <>
       <Navbar />
       <section className="lg:flex home-top h-screen justify-between items-center p-16 z-10">
-        <div className="grid-rows-2 ">
+        <div className="grid-rows-2">
           <div className="space-y-16">
-            <div>
+            <div className="tracking-wider">
               <h1 className="text-5xl font-bold">Got plans for tonight's party?</h1>
               <p className="mt-8 text-4xl">Let me help you find a seat!</p>
             </div>
-            <div className="flex space-x-8">
-              <button className="text-white px-4 py-2 border-1 border-dashed rounded-full font-bold hover:bg-white hover:text-black transition-all duration-200 hover:scale-110 ">About us</button>
-              <button className="bg-yellow-600 shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">Reserve now</button>
+            <div className="flex space-x-8 ">
+              {/* <Link to="about-us" smooth={true} duration={500} className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110 ">About us</Link> */}
+              <a href="#about-us" className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110 ">About us</a>
+              <a className="flex items-center bg-yellow-600 shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">Reserve now</a>
             </div>
           </div>
         </div>
 
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-all duration-200 hover:scale-120">
-          <img src={DownArrow} alt="icon" className="h-16" />
+          <a href="#about-us"><img src={DownArrow} alt="icon" className="h-16" /></a>
         </div>
 
         <div>
@@ -43,7 +36,7 @@ function home() {
         </div>
       </section>
 
-      <section class="home-center flex justify-between items-center lg:flex">
+      <section id="about-us" class="home-center flex justify-between items-center lg:flex">
         <div className="w-1/2 ml-10 space-y-12  tracking-wider">
           <h1 className="text-4xl font-bold">
             Why QUEUETY?
@@ -65,32 +58,32 @@ function home() {
         </div>
       </section>
 
-      <section class="p-10 mb-0">
-        {/* <h2 className="text-xl font-semibold text-white mb-4">Contact us</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Enter your Email..."
-            className="w-full p-2 mb-3 border rounded bg-white text-black focus:outline-none"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <textarea
-            placeholder="Ask a question here..."
-            className="w-full p-2 mb-3 border rounded bg-white text-black focus:outline-none"
-            rows="4"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-[#c79a2e] text-white py-2 rounded hover:bg-[#a58023] transition"
-          >
-            Submit
-          </button>
-        </form> */}
+      <section class="home-bottom flex justify-center p-16 mb-0">
+        <div className="w-1/2">
+          <h2 className="text-4xl font-bold tracking-wider">
+            Contact us
+          </h2>
+          <p className="tracking-wider mt-4">
+            Need assistance or have a question? Let me help you.
+          </p>
+          <div className="mt-8">
+            <input
+              type="email"
+              placeholder="Enter your registered email..."
+              className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mt-6">
+            <textarea id="message" rows="4" class="block p-2 w-full text-sm text-black bg-white rounded-lg border focus:ring-2 focus:ring-blue-500" placeholder="Write your thoughts here..."></textarea>
+          </div>
+
+          <div className="flex justify-end mt-4">
+            <button className="bg-yellow-600 shadow-yellow-500 shadow-md px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">
+              SUBMIT
+            </button>
+          </div>
+        </div>
       </section >
     </>
   )

@@ -5,3 +5,7 @@
 .home-center{
     background-color: #783939;
 }
+
+.home-bottom {
+    background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%);
+}
