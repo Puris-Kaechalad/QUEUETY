@@ -13,7 +13,8 @@ export default function Register() {
         phone: "",
         dob: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        role: "customer" // กำหนด role เป็น 'customer' โดยอัตโนมัติ
     });
 
     const [error, setError] = useState(null);
@@ -38,13 +39,14 @@ export default function Register() {
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
             const user = userCredential.user;
     
-            // บันทึกข้อมูลเพิ่มเติมลง Firestore
+            // บันทึกข้อมูลเพิ่มเติมลง Firestore รวมถึง role
             await setDoc(doc(db, "users", user.uid), {
                 firstname: formData.firstname,
                 lastname: formData.lastname,
                 email: formData.email,
                 phone: formData.phone,
-                dob: formData.dob
+                dob: formData.dob,
+                role: formData.role // เก็บ role ลง Firestore เป็น 'customer'
             });
     
             setSuccess("Registered successfully! 🎉");

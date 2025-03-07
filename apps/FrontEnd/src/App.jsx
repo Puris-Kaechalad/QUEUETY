@@ -6,7 +6,7 @@ import Login from './pages/registerSystem/login'
 import SentRequest from './pages/registerSystem/sentRequest'
 import ResetPassword from './pages/registerSystem/resetPass'
 import Home from './pages/client/home'
-
+import Admin from './pages/roleSystem/Admin'
 function App() {
   return (
     <>
@@ -16,6 +16,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/sentRequest" element={<SentRequest />} />
         <Route path="/resetPass" element={<ResetPassword />} />
+        <Route path="/Admin" element={<Admin />} />
+
       </Routes>
     </>
   )
