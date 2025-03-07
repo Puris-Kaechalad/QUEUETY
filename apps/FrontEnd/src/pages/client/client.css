@@ -2,7 +2,7 @@
     background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%);
 }
 
-.home-center{
+.home-center {
     background-color: #783939;
 }
 
@@ -10,10 +10,30 @@
     background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%);
 }
 
-.content{
-    background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%);
+.content {
+    position: relative;
+    z-index: 1
 }
 
-.sidebar{
+.sidebar {
+    /* background-color: #1A0A0E; */
+    background-color: #2A0D13;
+}
+
+.content:before {
+    background-image: url("../../assets/menu-background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: brightness(50%);
+    z-index: -1;
+}
+
+.card {
     background-color: #783939;
 }
