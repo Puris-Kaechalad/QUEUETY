@@ -1,6 +1,14 @@
 import React from 'react'
 import Navbar from '../../component/nav'
 import './client.css'
+import Menu from "../../assets/menu-icon.png"
+import All from "../../assets/all.png"
+import Meat from "../../assets/meat.png"
+import Fried from "../../assets/fried.png"
+import Shrimp from "../../assets/shrimp.png"
+import Apple from "../../assets/apple.png"
+import Dessert from "../../assets/dessert.png"
+import Drink from "../../assets/drink.png"
 import Steak from "../../assets/steak.jpg"
 import Cupcake from "../../assets/cupcake.jpg"
 
@@ -10,41 +18,44 @@ function menu() {
             <Navbar />
             <div className="flex ">
                 <aside className="sidebar w-1/5">
-                    <div className="h-screen grid grid-rows-2 p-8 tracking-widest">
-                        <h2 className="text-4xl text-yellow-500 font-bold self-center justify-self-center">Menu</h2>
-                        <ul className="text-lg w-full space-y-2 self-start">
+                    <div className="h-screen grid grid-rows-1 p-8 tracking-widest">
+                        <div className="flex gap-2 items-center self-center justify-self-center">
+                            <img src={Menu} alt="icon"  className="h-12"/>
+                            <h2 className="text-4xl text-yellow-500 font-bold">Menu</h2>
+                        </div>
+                        <ul className="text-lg w-full space-y-3 self-start">
                             <li className="flex justify-between">
-                                <img src="" alt="icon" className="" />
+                                <img src={All} alt="icon" className="h-8" />
                                 <p>All</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src="" alt="icon" className="" />
+                                <img src={Meat} alt="icon" className="h-8" />
                                 <p>Meat</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src="" alt="icon" className="" />
+                                <img src={Fried} alt="icon" className="h-8" />
                                 <p>Fries</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src="" alt="icon" className="" />
+                                <img src={Shrimp} alt="icon" className="h-8" />
                                 <p>Sea food</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src="" alt="icon" className="" />
+                                <img src={Apple} alt="icon" className="h-8" />
                                 <p>Fruit</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src="" alt="icon" className="" />
+                                <img src={Dessert} alt="icon" className="h-8" />
                                 <p>Dessert</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src="" alt="icon" className="" />
+                                <img src={Drink} alt="icon" className="h-8" />
                                 <p>Drink</p>
                             </li>
                         </ul>
@@ -52,28 +63,28 @@ function menu() {
                 </aside>
                 <div className="content w-full py-16">
                     <div className="card-box py-4 flex justify-center flex-wrap gap-8 text-white tracking-widest text-xl font-semibold">
-                        <div className="w-64 card shadow-lg rounded-xl">
+                        <div className="w-64 card shadow-lg">
                             <div className="p-1">
                                 <img
                                     src={Steak}
-                                    alt="img" className="rounded-lg" />
+                                    alt="img" className="rounded-md" />
                             </div>
                             <div className="py-4 w-full flex justify-center">
                                 <h2>Beef steak</h2>
                             </div>
                         </div>
 
-                        <div className="w-64 card shadow-lg rounded-xl">
+                        <div className="w-64 card shadow-lg">
                             <div className="p-1">
                                 <img
                                     src={Cupcake}
-                                    alt="img" className="rounded-lg" />
+                                    alt="img" className="rounded-md" />
                             </div>
                             <div className="py-4 w-full flex justify-center">
                                 <h2>Strawberry cupcake</h2>
                             </div>
                         </div>
-                    
+
                     </div>
                 </div>
             </div>
