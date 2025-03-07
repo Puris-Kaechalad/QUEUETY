@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '../../component/nav'
-import './home.css'
+import './client.css'
 import { Link } from "react-router-dom";
 import steakImage from "../../assets/home_background.png";
 import HomeCenter from "../../assets/home_center.jpg";
@@ -49,7 +49,7 @@ function home() {
           </p>
           <div className="flex items-end gap-2">
             <img src={Location} alt="icon" className="h-6 " />
-            <a href="https://maps.app.goo.gl/c7EKUggoUhsD6UvE8" target="_blank" rel="noopener noreferrer" className="text-gray-300 underline underline-offset-4 hover:text-white transition-all duration-200">view on map</a>
+            <a href="https://maps.app.goo.gl/UrdZfEiY5ynGgCbbA" target="_blank" rel="noopener noreferrer" className="text-gray-300 underline underline-offset-4 hover:text-white transition-all duration-200">view on map</a>
           </div>
         </div>
 
