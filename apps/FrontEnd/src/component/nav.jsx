@@ -22,6 +22,7 @@ function nav() {
                                 d="M4 6h16M4 12h8m-8 6h16" />
                         </svg>
                     </div>
+                    
                     <ul
                         tabIndex={0}
                         className="menu menu-sm bg-white dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow tracking-widest text-black">
