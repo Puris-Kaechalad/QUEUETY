@@ -9,3 +9,11 @@
 .home-bottom {
     background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%);
 }
+
+.content{
+    background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%);
+}
+
+.sidebar{
+    background-color: #783939;
+}
