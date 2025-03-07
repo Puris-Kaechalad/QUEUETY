@@ -25,51 +25,51 @@ function menu() {
                         </div>
                         <ul className="text-lg w-full space-y-3 self-start">
                             <li className="flex justify-between">
-                                <img src={All} alt="icon" className="h-8" />
+                                <img src={All} alt="icon" className="h-6" />
                                 <p>All</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src={Meat} alt="icon" className="h-8" />
+                                <img src={Meat} alt="icon" className="h-6" />
                                 <p>Meat</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src={Fried} alt="icon" className="h-8" />
+                                <img src={Fried} alt="icon" className="h-6" />
                                 <p>Fries</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src={Shrimp} alt="icon" className="h-8" />
+                                <img src={Shrimp} alt="icon" className="h-6" />
                                 <p>Sea food</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src={Apple} alt="icon" className="h-8" />
+                                <img src={Apple} alt="icon" className="h-6" />
                                 <p>Fruit</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src={Dessert} alt="icon" className="h-8" />
+                                <img src={Dessert} alt="icon" className="h-6" />
                                 <p>Dessert</p>
                             </li>
                             <hr className="bg-red-500"></hr>
                             <li className="flex  justify-between">
-                                <img src={Drink} alt="icon" className="h-8" />
+                                <img src={Drink} alt="icon" className="h-6" />
                                 <p>Drink</p>
                             </li>
                         </ul>
                     </div>
                 </aside>
-                <div className="content w-full py-16">
-                    <div className="card-box py-4 flex justify-center flex-wrap gap-8 text-white tracking-widest text-xl font-semibold">
+                <div className="content w-full py-32">
+                    <div className="card-box py-4 flex justify-center flex-wrap gap-8 tracking-widest text-lg font-semibold">
                         <div className="w-64 card shadow-lg">
                             <div className="p-1">
                                 <img
                                     src={Steak}
                                     alt="img" className="rounded-md" />
                             </div>
-                            <div className="py-4 w-full flex justify-center">
+                            <div className="p-2 w-full text-center">
                                 <h2>Beef steak</h2>
                             </div>
                         </div>
@@ -80,8 +80,63 @@ function menu() {
                                     src={Cupcake}
                                     alt="img" className="rounded-md" />
                             </div>
-                            <div className="py-4 w-full flex justify-center">
-                                <h2>Strawberry cupcake</h2>
+                            <div className="p-2 w-full text-center">
+                                <h2>Strawberry cupcake with pasta sauce</h2>
+                            </div>
+                        </div>
+
+                        <div className="w-64 card shadow-lg">
+                            <div className="p-1">
+                                <img
+                                    src={Cupcake}
+                                    alt="img" className="rounded-md" />
+                            </div>
+                            <div className="p-2 w-full text-center">
+                                <h2>Strawberry cupcake </h2>
+                            </div>
+                        </div>
+
+                        <div className="w-64 card shadow-lg">
+                            <div className="p-1">
+                                <img
+                                    src={Cupcake}
+                                    alt="img" className="rounded-md" />
+                            </div>
+                            <div className="p-2 w-full text-center">
+                                <h2>Strawberry cupcake </h2>
+                            </div>
+                        </div>
+
+                        <div className="w-64 card shadow-lg">
+                            <div className="p-1">
+                                <img
+                                    src={Cupcake}
+                                    alt="img" className="rounded-md" />
+                            </div>
+                            <div className="p-2 w-full text-center">
+                                <h2>Strawberry cupcake </h2>
+                            </div>
+                        </div>
+
+                        <div className="w-64 card shadow-lg">
+                            <div className="p-1">
+                                <img
+                                    src={Cupcake}
+                                    alt="img" className="rounded-md" />
+                            </div>
+                            <div className="p-2 w-full text-center">
+                                <h2>Strawberry cupcake </h2>
+                            </div>
+                        </div>
+
+                        <div className="w-64 card shadow-lg">
+                            <div className="p-1">
+                                <img
+                                    src={Cupcake}
+                                    alt="img" className="rounded-md" />
+                            </div>
+                            <div className="p-2 w-full text-center">
+                                <h2>Strawberry cupcake </h2>
                             </div>
                         </div>
 
