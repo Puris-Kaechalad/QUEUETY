@@ -61,9 +61,10 @@ function menu() {
                         </ul>
                     </div>
                 </aside>
+
                 <div className="content w-full py-32">
                     <div className="card-box py-4 flex justify-center flex-wrap gap-8 tracking-widest text-lg font-semibold">
-                        <div className="w-64 card shadow-lg">
+                        <div className="w-64 card">
                             <div className="p-1">
                                 <img
                                     src={Steak}
@@ -74,7 +75,7 @@ function menu() {
                             </div>
                         </div>
 
-                        <div className="w-64 card shadow-lg">
+                        <div className="w-64 card">
                             <div className="p-1">
                                 <img
                                     src={Cupcake}
@@ -85,7 +86,7 @@ function menu() {
                             </div>
                         </div>
 
-                        <div className="w-64 card shadow-lg">
+                        <div className="w-64 card">
                             <div className="p-1">
                                 <img
                                     src={Cupcake}
@@ -96,7 +97,7 @@ function menu() {
                             </div>
                         </div>
 
-                        <div className="w-64 card shadow-lg">
+                        <div className="w-64 card">
                             <div className="p-1">
                                 <img
                                     src={Cupcake}
@@ -107,7 +108,7 @@ function menu() {
                             </div>
                         </div>
 
-                        <div className="w-64 card shadow-lg">
+                        <div className="w-64 card">
                             <div className="p-1">
                                 <img
                                     src={Cupcake}
@@ -118,7 +119,7 @@ function menu() {
                             </div>
                         </div>
 
-                        <div className="w-64 card shadow-lg">
+                        <div className="w-64 card">
                             <div className="p-1">
                                 <img
                                     src={Cupcake}
@@ -129,7 +130,7 @@ function menu() {
                             </div>
                         </div>
 
-                        <div className="w-64 card shadow-lg">
+                        <div className="w-64 card">
                             <div className="p-1">
                                 <img
                                     src={Cupcake}
