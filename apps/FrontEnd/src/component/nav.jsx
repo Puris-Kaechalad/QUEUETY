@@ -26,10 +26,10 @@ function nav() {
                         tabIndex={0}
                         className="menu menu-sm bg-white dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow tracking-widest text-black">
                         <li><Link to="/" >Home</Link></li>
-                        <li><Link to="/" >Menu</Link></li>
-                        <li><Link to="/" >Reservation</Link></li>
+                        <li><Link to="/menu" >Menu</Link></li>
+                        <li><Link to="/reservation" >Reservation</Link></li>
                         <li><Link to="/" >History</Link></li>
-                        <li><Link to="/" >Contact us</Link></li>
+                        <li><a href="#contact-us">Contact us</a></li>
                     </ul>
                 </div>
                 {/* logo */}
@@ -51,7 +51,7 @@ function nav() {
                         <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</Link>
+                        <a href="#contact-us" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a>
                     </li>
                 </ul>
             </div>

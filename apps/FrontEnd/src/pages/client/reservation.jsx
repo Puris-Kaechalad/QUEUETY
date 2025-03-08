@@ -5,7 +5,6 @@ import './client.css'
 import Mark from "../../assets/mark.png"
 import Book from "../../assets/booking.png"
 
-
 function reservation() {
     return (
         <>
@@ -139,8 +138,12 @@ function reservation() {
                 </div>
             </section>
 
+            {/* ---------live band */}
             <section>
+                <h2 className="text-4xl font-bold tracking-widest text-yellow-500">Live band schedule</h2>
+                <div>
 
+                </div>
             </section>
         </>
     )

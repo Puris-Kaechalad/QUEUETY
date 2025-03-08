@@ -58,7 +58,7 @@ function home() {
         </div>
       </section>
 
-      <section class="home-bottom flex justify-center p-16 mb-0">
+      <section id="contact-us" class="home-bottom flex justify-center p-16 mb-0">
         <div className="w-1/2">
           <h2 className="text-4xl font-bold tracking-wider">
             Contact us

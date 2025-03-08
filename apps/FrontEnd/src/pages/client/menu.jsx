@@ -17,7 +17,7 @@ function menu() {
         <>
             <Navbar />
             <div className="flex ">
-                <aside className="sidebar w-1/5">
+                <aside className="sidebar w-1/4">
                     <div className="h-screen grid grid-rows-1 p-8 tracking-widest">
                         <div className="flex gap-2 items-center self-center justify-self-center">
                             <img src={Menu} alt="icon"  className="h-12"/>

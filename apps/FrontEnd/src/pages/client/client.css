@@ -1,5 +1,6 @@
 .home-top {
-    background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%);
+    /* background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%); */
+    background-color: #2A0D13;
 }
 
 .home-center {
@@ -7,7 +8,8 @@
 }
 
 .home-bottom {
-    background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%);
+    /* background-image: linear-gradient(135deg, rgba(42, 13, 19, 0.49) 0%, rgba(42, 13, 19, 1) 68%); */
+    background-color: #2A0D13;
 }
 /* ----------------- end home */
 
