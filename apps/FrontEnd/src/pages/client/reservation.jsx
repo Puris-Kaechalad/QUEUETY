@@ -9,7 +9,7 @@ function reservation() {
     return (
         <>
             <Navbar />
-            <section className="reserve-top px-16 py-32">
+            <section className="reserve-top h-screen px-16 pt-32 pb-16">
                 <div>
                     <div>
                         <div className="flex gap-4 items-center">
@@ -139,9 +139,11 @@ function reservation() {
             </section>
 
             {/* ---------live band */}
-            <section>
-                <h2 className="text-4xl font-bold tracking-widest text-yellow-500">Live band schedule</h2>
+            <section className="live-band px-16 pt-16 pb-32">
                 <div>
+                    <div className="flex justify-center">
+                        <h2 className="text-4xl font-bold tracking-widest text-yellow-500">Live band schedule</h2>
+                    </div>
 
                 </div>
             </section>
