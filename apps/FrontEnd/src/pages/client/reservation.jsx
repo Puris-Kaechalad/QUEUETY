@@ -2,7 +2,6 @@ import React from 'react'
 import { Link } from "react-router-dom";
 import Navbar from '../../component/nav'
 import './client.css'
-// import './fullscreen.css'
 import DownArrow from "../../assets/down_arrow.png"
 import Mark from "../../assets/mark.png"
 import Book from "../../assets/booking.png"
@@ -44,7 +43,7 @@ function reservation() {
                                             <h2 className="text-4xl font-semibold">32</h2>
                                         </div>
                                         <div className="bg-yellow-600 px-4 py-1 mt-6 border-1 border-yellow-600 rounded-full hover:font-semibold hover:bg-transparent hover:border-1 hover:border-yellow-600 hover:border-dashed transition-all duration-250 hover:scale-110 transform">
-                                            <Link to="#" className="text-sm">RESERVE</Link>
+                                            <Link to="/confirm" className="text-sm">RESERVE</Link>
                                         </div>
                                     </div>
 
@@ -59,7 +58,7 @@ function reservation() {
                                             <h2 className="text-4xl font-semibold">32</h2>
                                         </div>
                                         <div className="bg-yellow-600 px-4 py-1 mt-6 border-1 border-yellow-600 rounded-full hover:font-semibold hover:bg-transparent hover:border-1 hover:border-yellow-600 hover:border-dashed transition-all duration-250 hover:scale-110 transform">
-                                            <Link to="#" className="text-sm">RESERVE</Link>
+                                            <Link to="/confirm" className="text-sm">RESERVE</Link>
                                         </div>
                                     </div>
 
@@ -148,7 +147,7 @@ function reservation() {
                 </section>
                 
                 {/* ---------live band */}
-                <section id="liveband" className="live-band max-w-7xl mx-auto">
+                <section id="liveband" className="live-band mx-auto">
                     <div className="p-16">
                         <div className="flex justify-center items-center gap-4 ">
                             <img src={Music} alt="icon" className="h-12"/>
@@ -162,7 +161,7 @@ function reservation() {
                                     <p className="text-xl tracking-wider">(3200฿ / 1 customer)</p>
                                 </div>
                                 <div className="mt-4">
-                                    <img src={Band1} alt="img" className="w-full rounded-lg shadow-black shadow-md" />
+                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
                             </div>
                             <div className="mt-16">
@@ -171,7 +170,7 @@ function reservation() {
                                     <p className="text-xl tracking-wider">(3200฿ / 1 customer)</p>
                                 </div>
                                 <div className="mt-4">
-                                    <img src={Band2} alt="img" className="w-full rounded-lg shadow-black shadow-md" />
+                                    <img src={Band2} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
                             </div>
                             <div className="mt-16">
@@ -180,7 +179,7 @@ function reservation() {
                                     <p className="text-xl tracking-wider">(3200฿ / 1 customer)</p>
                                 </div>
                                 <div className="mt-4">
-                                    <img src={Band1} alt="img" className="w-full rounded-lg shadow-black shadow-lg" />
+                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-lg" />
                                 </div>
                             </div>
                         </div>
@@ -190,5 +189,4 @@ function reservation() {
         </>
     )
 }
-
 export default reservation
