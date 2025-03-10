@@ -131,7 +131,7 @@ function reservation() {
                                         <Link to="#" className="text-sm">RESERVE</Link>
                                     </div>
                                 </div>
-
+        
                             </div>
                         </div>
                     </div>
