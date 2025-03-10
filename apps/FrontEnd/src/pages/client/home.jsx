@@ -22,7 +22,7 @@ function home() {
             <div className="flex space-x-8 ">
               {/* <Link to="about-us" smooth={true} duration={500} className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110 ">About us</Link> */}
               <a href="#about-us" className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110 ">About us</a>
-              <a className="flex items-center bg-yellow-600 shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">Reserve now</a>
+              <a className="flex items-center bg-yellow-600 shadow-black shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">Reserve now</a>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@ function home() {
           </div>
 
           <div className="flex justify-end mt-4">
-            <button className="bg-yellow-600 shadow-yellow-500 shadow-md px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">
+            <button className="bg-yellow-600 shadow-black shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">
               SUBMIT
             </button>
           </div>
