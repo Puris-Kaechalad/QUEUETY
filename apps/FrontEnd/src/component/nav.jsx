@@ -28,7 +28,7 @@ function nav() {
                         <li><Link to="/" >Home</Link></li>
                         <li><Link to="/menu" >Menu</Link></li>
                         <li><Link to="/reservation" >Reservation</Link></li>
-                        <li><Link to="/" >History</Link></li>
+                        <li><Link to="/history" >History</Link></li>
                         <li><a href="#contact-us">Contact us</a></li>
                     </ul>
                 </div>
@@ -48,7 +48,7 @@ function nav() {
                         <Link to="/reservation" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Reservation</Link>
                     </li>
                     <li>
-                        <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link>
+                        <Link to="/history" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link>
                     </li>
                     <li>
                         <a href="#contact-us" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a>
