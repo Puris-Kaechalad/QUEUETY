@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import Icon from '../assets/react.svg';
 
 function nav() {
     return (
@@ -51,7 +50,7 @@ function nav() {
                         <Link to="/history" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link>
                     </li>
                     <li>
-                        <a href="#contact-us" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a>
+                        <a href="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a>
                     </li>
                 </ul>
             </div>
