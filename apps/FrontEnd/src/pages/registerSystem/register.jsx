@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from "react-router-dom"; // นำเข้า useNavigate
-import { auth } from "../../firebaseConfig"; 
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore"; // นำเข้า Firestore
-import { getDatabase, ref, set } from "firebase/database"; // นำเข้า Realtime Database
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../../firebaseConfig";
+import { createUserWithEmailAndPassword, signOut } from "firebase/auth"; // นำเข้า signOut
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getDatabase, ref, set } from "firebase/database";
 
 import Navbar from '../../component/nav';
 
@@ -16,13 +16,13 @@ export default function Register() {
         dob: "",
         password: "",
         confirmPassword: "",
-        role: "customer" // กำหนด role เป็น 'customer' โดยอัตโนมัติ
+        role: "customer"
     });
 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    const navigate = useNavigate(); // กำหนด navigate
-    const db = getFirestore(); // เรียก Firestore
+    const navigate = useNavigate();
+    const db = getFirestore();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,19 +41,8 @@ export default function Register() {
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
             const user = userCredential.user;
     
-            // บันทึกข้อมูลเพิ่มเติมลง Firestore รวมถึง role
+            // บันทึกข้อมูลเพิ่มเติมลง Firestore
             await setDoc(doc(db, "users", user.uid), {
-                firstname: formData.firstname,
-                lastname: formData.lastname,
-                email: formData.email,
-                phone: formData.phone,
-                dob: formData.dob,
-                role: formData.role // เก็บ role ลง Firestore เป็น 'customer'
-            });
-
-            const dbRealtime = getDatabase(); // เชื่อมต่อกับ Realtime Database
-
-            await set(ref(dbRealtime, 'users/' + user.uid), { // บันทึกข้อมูลที่ตำแหน่ง users/{uid}
                 firstname: formData.firstname,
                 lastname: formData.lastname,
                 email: formData.email,
@@ -61,11 +50,25 @@ export default function Register() {
                 dob: formData.dob,
                 role: formData.role
             });
-    
-            setSuccess("Registered successfully! 🎉");
+
+            // บันทึกลง Firebase Realtime Database
+            const dbRealtime = getDatabase();
+            await set(ref(dbRealtime, 'users/' + user.uid), {
+                firstname: formData.firstname,
+                lastname: formData.lastname,
+                email: formData.email,
+                phone: formData.phone,
+                dob: formData.dob,
+                role: formData.role
+            });
+
+            // ออกจากระบบอัตโนมัติหลังจากสมัครเสร็จ
+            await signOut(auth);
+
+            setSuccess("Registered successfully! Please login.");
             setError(null);
     
-            // Redirect ไปหน้า Login
+            // Redirect ไปหน้า Login หลังจาก 2 วินาที
             setTimeout(() => {
                 navigate("/login");
             }, 2000);
