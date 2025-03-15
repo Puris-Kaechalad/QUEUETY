@@ -38,7 +38,7 @@ function home() {
 
       <section id="about-us" class="home-center flex justify-between items-center lg:flex">
         <div className="w-1/2 ml-10 space-y-12  tracking-wider">
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-4xl font-bold tracking-widest">
             Why QUEUETY?
           </h1>
           <p className="text-md">

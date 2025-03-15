@@ -7,7 +7,7 @@ function profile() {
         <>
             <Navbar />
             <div className="profile h-screen flex justify-center items-center">
-                <div className="profile-box w-1/3 space-y-10 p-8 rounded-lg shadow-black shadow-sm">
+                <div className="profile-box w-1/3 space-y-10 p-8 rounded-lg shadow-black shadow-xl">
                     <h2 className="text-3xl text-yellow-400 font-bold tracking-widest">Your Information</h2>
                     <div className="space-y-6">
                         <div className="flex justify-center gap-4 text-black text-md tracking-wider">

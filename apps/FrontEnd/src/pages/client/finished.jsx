@@ -10,13 +10,12 @@ function finished() {
             <Navbar />
             <div className="finished flex justify-center items-center px-auto py-32 ">
                 <div className="finished-box max-w-6xl m-auto p-8 space-y-8 shadow-black shadow-xl">
-                    <h2 className="text-center text-4xl text-yellow-500 font-bold tracking-widest">Reservation</h2>
+                    <h2 className="text-center text-4xl text-yellow-500 font-bold tracking-widest">Finished</h2>
                 
                         <div className="flex justify-center">
                             <img src={Band1} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
                         </div>
-                    
-
+                
                     <div className="flex gap-2 items-center text-2xl font-bold tracking-wider">
                         <p>Your queue:</p><p>48</p>
                     </div>

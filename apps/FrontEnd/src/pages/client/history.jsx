@@ -8,7 +8,7 @@ function history() {
         <>
             <Navbar />
             <div className="history h-screen px-auto py-16 flex justify-center items-center">
-                <div className="history-box p-8 max-w-6xl m-auto">
+                <div className="history-box p-8 max-w-6xl m-auto shadow-black shadow-xl">
                     <h2 className="text-4xl font-bold text-yellow-500 font-mono tracking-widest">
                         History
                     </h2>

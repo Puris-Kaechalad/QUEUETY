@@ -64,7 +64,7 @@ function confirm_info() {
 
                     <div className="flex gap-4 items-center tracking-wider">
                         <input type="checkbox" className="checkbox checkbox-sm border-2 border-white" />
-                        <p>I have read and agree to the <span className="font-bold text-yellow-500 underline underline-offset-4">reservation policy</span></p>
+                        <p>I have read and agree to the reservation policy</p>
                     </div>
 
                     <div className="text-center space-y-4 ">
