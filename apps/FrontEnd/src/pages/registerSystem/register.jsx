@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom"; // นำเข้า useN
 import { auth } from "../../firebaseConfig"; 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore"; // นำเข้า Firestore
+import { getDatabase, ref, set } from "firebase/database"; // นำเข้า Realtime Database
+
 import Navbar from '../../component/nav';
 
 export default function Register() {
@@ -47,6 +49,17 @@ export default function Register() {
                 phone: formData.phone,
                 dob: formData.dob,
                 role: formData.role // เก็บ role ลง Firestore เป็น 'customer'
+            });
+
+            const dbRealtime = getDatabase(); // เชื่อมต่อกับ Realtime Database
+
+            await set(ref(dbRealtime, 'users/' + user.uid), { // บันทึกข้อมูลที่ตำแหน่ง users/{uid}
+                firstname: formData.firstname,
+                lastname: formData.lastname,
+                email: formData.email,
+                phone: formData.phone,
+                dob: formData.dob,
+                role: formData.role
             });
     
             setSuccess("Registered successfully! 🎉");

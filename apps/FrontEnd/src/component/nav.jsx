@@ -1,11 +1,58 @@
-import React from 'react'
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { getDatabase, ref, get } from "firebase/database";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; // นำเข้า signOut
 
-function nav() {
+function Nav() {
+    const [firstname, setFirstname] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // เช็คสถานะการล็อกอิน
+    const [loading, setLoading] = useState(true); // รอตรวจสอบการล็อกอิน
+    const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนเส้นทางหลัง logout
+
+    useEffect(() => {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userId = user.uid;
+                const db = getDatabase();
+                const userRef = ref(db, 'users/' + userId);
+
+                get(userRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        setFirstname(snapshot.val().firstname);
+                        setIsLoggedIn(true);
+                    } else {
+                        console.log("No user data found");
+                    }
+                    setLoading(false); // เมื่อข้อมูลเสร็จแล้วให้หยุดการโหลด
+                }).catch((error) => {
+                    console.error(error);
+                    setLoading(false); // กรณีเกิดข้อผิดพลาดให้หยุดการโหลด
+                });
+            } else {
+                setIsLoggedIn(false);
+                setLoading(false); // เมื่อไม่ได้ล็อกอินให้หยุดการโหลด
+            }
+        });
+    }, []);
+
+    const handleLogout = () => {
+        setLoading(true); // ตั้งค่าให้เป็น loading ระหว่างการออกจากระบบ
+        const auth = getAuth();
+        signOut(auth).then(() => {
+            setIsLoggedIn(false); // รีเซ็ตสถานะการล็อกอิน
+            setFirstname(null); // รีเซ็ต firstname
+            setLoading(false); // หยุดสถานะการโหลด
+            navigate('/login'); // เปลี่ยนเส้นทางไปหน้า login
+        }).catch((error) => {
+            console.error("Logout error:", error);
+            setLoading(false); // หยุดสถานะการโหลด
+        });
+    };
+
     return (
         <div className="navbar absolute fixed z-20 justify-between py-2 px-8">
             <div className="navbar-start">
-                {/* ซ่อนเมื่อจอมีขนาดใหญ่ */}
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
                         <svg
@@ -31,38 +78,31 @@ function nav() {
                         <li><a href="#contact-us">Contact us</a></li>
                     </ul>
                 </div>
-                {/* logo */}
                 <a className="text-xl"><img src="#" alt="logo" /></a>
             </div>
 
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 gap-8 text-lg text-white tracking-wider">
-                    <li>
-                        <Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Home</Link>
-                    </li>
-                    <li>
-                        <Link to="/menu" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Menu</Link>
-                    </li>
-                    <li>
-                        <Link to="/reservation" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Reservation</Link>
-                    </li>
-                    <li>
-                        <Link to="/history" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link>
-                    </li>
-                    <li>
-                        <a href="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a>
-                    </li>
+                    <li><Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Home</Link></li>
+                    <li><Link to="/menu" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Menu</Link></li>
+                    <li><Link to="/reservation" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Reservation</Link></li>
+                    <li><Link to="/history" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link></li>
+                    <li><a href="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a></li>
                 </ul>
             </div>
 
             <div className="navbar-end">
-                <Link to="/login" className=" flex px-4 py-1 text-white font-bold border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white
-                hover:scale-110 duration-300 ease-in-out"> 
-                    Login
-                </Link>
+                {loading ? null : isLoggedIn ? (
+                    <div className="flex items-center">
+                        <span className="text-white mr-4">{firstname}</span>
+                        <button onClick={handleLogout} className="px-4 py-1 text-white font-bold border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white hover:scale-110 duration-300 ease-in-out">Logout</button>
+                    </div>
+                ) : (
+                    <Link to="/login" className="px-4 py-1 text-white font-bold border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white hover:scale-110 duration-300 ease-in-out">Login</Link>
+                )}
             </div>
         </div>
     )
 }
 
-export default nav
+export default Nav;
