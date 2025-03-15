@@ -1,12 +1,10 @@
 @import "tailwindcss";
 @plugin "daisyui";
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap'); */
 
 :root{
   background-color: #505050;
   --font-primary: 'JetBrains Mono', monospace;
-  /* background: linear-gradient(to bottom, white, gray);
-    clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%); */
 }
 
 body {
