@@ -94,8 +94,8 @@ function Nav() {
             <div className="navbar-end">
                 {loading ? null : isLoggedIn ? (
                     <div className="flex items-center">
-                        <span className="text-white mr-4">{firstname}</span>
-                        <button onClick={handleLogout} className="px-4 py-1 text-white font-bold border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white hover:scale-110 duration-300 ease-in-out">Logout</button>
+                        <Link to="/profile" className="text-white mr-4 px-4 py-1 border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white hover:scale-110 duration-300 ease-in-out">{firstname}</Link>
+                        <button onClick={handleLogout} className="text-white font-bold hover:text-gray-400 duration-300 ease-in-out">Logout</button>
                     </div>
                 ) : (
                     <Link to="/login" className="px-4 py-1 text-white font-bold border-1 border-white rounded-full tracking-widest hover:bg-white hover:text-warning hover:border-white hover:scale-110 duration-300 ease-in-out">Login</Link>
