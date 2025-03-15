@@ -10,6 +10,7 @@ import Reservation from './pages/client/reservation.jsx'
 import Confirm from './pages/client/confirm_info.jsx'
 import Finished from './pages/client/finished.jsx'
 import History from './pages/client/history.jsx'
+import Profile from './pages/client/profile.jsx'
 import Admin from './pages/roleSystem/Admin'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/confirm" element={<Confirm />} />
         <Route path="/finished" element={<Finished />} />
         <Route path="/history" element={<History />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/sentRequest" element={<SentRequest />} />

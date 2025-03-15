@@ -154,34 +154,54 @@ function reservation() {
                             <h2 className="text-4xl font-bold tracking-widest text-yellow-400">Upcoming live band</h2>
                             <img src={Music} alt="icon" className="h-12"/>
                         </div>
-                        <div>
-                            <div className="mt-16">
-                                <div className="flex justify-start items-center gap-4">
-                                    <h3 className="text-2xl font-bold tracking-wider">14 April 2025</h3>
-                                    <p className="text-xl tracking-wider">(3200฿ / 1 customer)</p>
+
+                        <div className="lg:flex flex-wrap">
+                            <div className="mt-16 lg:w-1/2 p-4">
+                                <div className="flex justify-start items-center gap-4 w-full">
+                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
+                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
                                 </div>
                                 <div className="mt-4">
                                     <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
                             </div>
-                            <div className="mt-16">
-                                <div className="flex justify-start items-center gap-4">
-                                    <h3 className="text-2xl font-bold tracking-wider">14 April 2025</h3>
-                                    <p className="text-xl tracking-wider">(3200฿ / 1 customer)</p>
+                            <div className="mt-16 lg:w-1/2 p-4">
+                                <div className="flex justify-start items-center gap-4 w-full">
+                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
+                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
                                 </div>
                                 <div className="mt-4">
-                                    <img src={Band2} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
+                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
                             </div>
-                            <div className="mt-16">
-                                <div className="flex justify-start items-center gap-4">
-                                    <h3 className="text-2xl font-bold tracking-wider">14 April 2025</h3>
-                                    <p className="text-xl tracking-wider">(3200฿ / 1 customer)</p>
+                            <div className="mt-16 lg:w-1/2 p-4">
+                                <div className="flex justify-start items-center gap-4 w-full">
+                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
+                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
                                 </div>
                                 <div className="mt-4">
-                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-lg" />
+                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
                             </div>
+                            <div className="mt-16 lg:w-1/2 p-4">
+                                <div className="flex justify-start items-center gap-4 w-full">
+                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
+                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
+                                </div>
+                                <div className="mt-4">
+                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
+                                </div>
+                            </div>
+                            <div className="mt-16 lg:w-1/2 p-4">
+                                <div className="flex justify-start items-center gap-4 w-full">
+                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
+                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
+                                </div>
+                                <div className="mt-4">
+                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
+                                </div>
+                            </div>
+                           
                         </div>
                     </div>
                 </section>
