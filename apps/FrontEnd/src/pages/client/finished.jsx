@@ -6,7 +6,7 @@ import Navbar from '../../component/nav';
 import './client.css';
 import Band1 from '../../assets/cocktail.jpg';
 
-function Finished() {
+function finished() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const reservationID = queryParams.get('reservationID'); // รับค่า reservationID
@@ -93,4 +93,4 @@ function Finished() {
     );
 }
 
-export default Finished;
+export default finished;

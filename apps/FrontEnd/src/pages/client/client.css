@@ -71,21 +71,21 @@
 }
 
 .live-band {
-    /* position: relative; */
-    background-color: #783939;
+    position: relative;
+    /* background-color: #2A0D13; */
 }
 
-/* .live-band::before {
-    background-color: #783939;
+.live-band::before {
+    background-color: #2A0D13;
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 100%;
+    opacity: 80%;
     z-index: -1;
-} */
+}
 /* ---------------end reservation */
 
 /* ---------------confirm info */
@@ -115,7 +115,7 @@
 }
 
 .confirm-box::before{
-    background-color: white;
+    background-color: #783939;
     content: "";
     position: absolute;
     top: 0;
@@ -156,7 +156,7 @@
 }
 
 .finished-box::before{
-    background-color: white;
+    background-color: #783939;
     content: "";
     position: absolute;
     top: 0;
@@ -196,14 +196,55 @@
 }
 
 .history-box::before{
-    background-color: white;
+    background-color: #783939;
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 25%;
+    opacity: 30%;
+    z-index: -1;
+    border-radius: 12px;
+}
+/* -------------------end history */
+
+/* -------------------profile */
+.profile{
+    position: relative;
+    z-index: 1;
+}
+
+.profile::before{
+    background-image: url("../../assets/menu-background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: brightness(45%);
+    z-index: -1;
+}
+
+.profile-box{
+    /* background-color: #783939; */
+    position: relative;
+    z-index: 1;
+}
+
+.profile-box::before{
+    background-color: #783939;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 30%;
     z-index: -1;
     border-radius: 12px;
 }
