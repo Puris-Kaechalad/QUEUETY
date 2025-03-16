@@ -1,4 +1,5 @@
 import React from 'react'
+import { useState } from 'react';
 import Navbar from '../../component/nav'
 import './client.css'
 import Menu from "../../assets/menu-icon.png"
@@ -13,6 +14,11 @@ import Steak from "../../assets/steak.jpg"
 import Cupcake from "../../assets/cupcake.jpg"
 
 function menu() {
+    const handleCategoryClick = (category) => {
+        console.log(`Selected category: ${category}`);
+        // สามารถเพิ่มฟังก์ชันกรองข้อมูลหรืออัปเดต state ได้ที่นี่
+    };
+
     return (
         <>
             <Navbar />
@@ -20,50 +26,57 @@ function menu() {
                 <aside className="sidebar w-1/4">
                     <div className="h-screen grid grid-rows-1 p-8 tracking-widest">
                         <div className="flex gap-2 items-center self-center justify-self-center">
-                            <img src={Menu} alt="icon"  className="h-12"/>
+                            <img src={Menu} alt="icon" className="h-12" />
                             <h2 className="text-4xl text-yellow-500 font-bold">Menu</h2>
                         </div>
-                        <ul className="text-lg w-full space-y-3 self-start">
-                            <li className="flex justify-between">
+                        <div className="text-lg w-full space-y-3 self-start">
+                            <button id="all" className="flex justify-between w-full" onClick={() => handleCategoryClick('All')}>
                                 <img src={All} alt="icon" className="h-6" />
                                 <p>All</p>
-                            </li>
+                            </button>
                             <hr className="bg-red-500"></hr>
-                            <li className="flex  justify-between">
+
+                            <button id="meat" className="flex justify-between w-full" onClick={() => handleCategoryClick('Meat')}>
                                 <img src={Meat} alt="icon" className="h-6" />
                                 <p>Meat</p>
-                            </li>
+                            </button>
                             <hr className="bg-red-500"></hr>
-                            <li className="flex  justify-between">
+
+                            <button id="fries" className="flex justify-between w-full" onClick={() => handleCategoryClick('Fries')}>
                                 <img src={Fried} alt="icon" className="h-6" />
                                 <p>Fries</p>
-                            </li>
+                            </button>
                             <hr className="bg-red-500"></hr>
-                            <li className="flex  justify-between">
+
+                            <button id="sea" className="flex justify-between w-full" onClick={() => handleCategoryClick('Sea')}>
                                 <img src={Shrimp} alt="icon" className="h-6" />
                                 <p>Sea food</p>
-                            </li>
+                            </button>
                             <hr className="bg-red-500"></hr>
-                            <li className="flex  justify-between">
+
+                            <button id="fruit" className="flex justify-between w-full" onClick={() => handleCategoryClick('Fruit')}>
                                 <img src={Apple} alt="icon" className="h-6" />
                                 <p>Fruit</p>
-                            </li>
+                            </button>
                             <hr className="bg-red-500"></hr>
-                            <li className="flex  justify-between">
+
+                            <button id="dessert" className="flex justify-between w-full" onClick={() => handleCategoryClick('Dessert')}>
                                 <img src={Dessert} alt="icon" className="h-6" />
                                 <p>Dessert</p>
-                            </li>
+                            </button>
                             <hr className="bg-red-500"></hr>
-                            <li className="flex  justify-between">
+
+                            <button id="drink" className="flex justify-between w-full" onClick={() => handleCategoryClick('Drink')}>
                                 <img src={Drink} alt="icon" className="h-6" />
                                 <p>Drink</p>
-                            </li>
-                        </ul>
+                            </button>
+                        </div>
                     </div>
                 </aside>
 
                 <div className="content w-full py-32">
                     <div className="card-box py-4 flex justify-center flex-wrap gap-8 tracking-widest text-lg font-semibold">
+
                         <div className="w-64 card">
                             <div className="p-1">
                                 <img
