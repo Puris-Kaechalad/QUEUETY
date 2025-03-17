@@ -1,9 +1,82 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import Navbar from '../../component/nav'
-import './client.css'
+import Navbar from '../../component/nav';
+import './client.css';
+import { ref, get } from 'firebase/database'; 
+import { dbRealtime } from "../../firebaseConfig"; 
 
-function history() {
+function History() {
+    const [reservations, setReservations] = useState([]); 
+
+    useEffect(() => {
+        const fetchReservations = async () => {
+            // ดึงข้อมูลการจองจาก Firebase
+            const reservationsRef = ref(dbRealtime, 'reservations');
+            const reservationsSnap = await get(reservationsRef);
+
+            if (reservationsSnap.exists()) {
+                const data = reservationsSnap.val();
+                let allReservations = [];
+
+                // แปลงข้อมูลใน Firebase ให้เป็น array
+                for (let dateKey in data) {
+                    const queues = data[dateKey];
+                    for (let queueID in queues) {
+                        allReservations.push({
+                            ...queues[queueID],
+                            reservationDate: dateKey // เพิ่มวันที่ลงไป
+                        });
+                    }
+                }
+
+                // อัพเดทข้อมูลผู้ใช้พร้อมกันกับการจอง
+                const updatedReservations = await updateReservationsWithUserData(allReservations);
+                setReservations(updatedReservations); // ตั้งค่าข้อมูลการจอง
+            } else {
+                console.log("No reservations found");
+            }
+        };
+
+        const fetchUserData = async (customerID) => {
+            const userRef = ref(dbRealtime, `users/${customerID}`);
+            const userSnap = await get(userRef);
+
+            if (userSnap.exists()) {
+                return userSnap.val(); // ส่งคืนข้อมูลผู้ใช้
+            } else {
+                console.log("User data not found");
+                return null;
+            }
+        };
+
+        // ปรับปรุงฟังก์ชันนี้ให้โหลดข้อมูลผู้ใช้พร้อมกับการจอง
+        const updateReservationsWithUserData = async (reservationsList) => {
+            const updatedReservations = await Promise.all(
+                reservationsList.map(async (reservation) => {
+                    const user = await fetchUserData(reservation.customerID);
+                    return {
+                        ...reservation,
+                        customerFirstName: user ? user.firstname : "Unknown"
+                    };
+                })
+            );
+            return updatedReservations;
+        };
+
+        fetchReservations(); // เรียกใช้ฟังก์ชันดึงข้อมูลการจอง
+
+    }, []); // ใช้ [] เพื่อให้ useEffect รันแค่ครั้งเดียวเมื่อหน้าโหลด
+
+    // ฟังก์ชันแปลงวันที่
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    };
+
     return (
         <>
             <Navbar />
@@ -13,7 +86,7 @@ function history() {
                         History
                     </h2>
                     <div className="overflow-x-auto mt-8">
-                        <table className="table tracking-wider ">
+                        <table className="table tracking-wider">
                             {/* head */}
                             <thead>
                                 <tr className="text-xl text-center text-white font-semibold font-mono">
@@ -21,82 +94,30 @@ function history() {
                                     <th>Seats</th>
                                     <th>Price</th>
                                     <th>Customer</th>
+                                    <th>Details</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* row 1 */}
-                                <tr className="text-lg text-end font-mono">
-                                    <th>1</th>
-                                    <td>8</td>
-                                    <td>25600</td>
-                                    <td>Apiwat Tassananutriyaporn</td>
-                                    <td className="text-sm text-center align-middle hover:text-gray-400 transition-all duration-200">
-                                        <Link to="/finished">more detail{" >>"}</Link>
-                                    </td>
-                                </tr>
-                                <tr className="text-lg text-end font-mono">
-                                    <th>2</th>
-                                    <td>8</td>
-                                    <td>25600</td>
-                                    <td>Apiwat Tassananutriyaporn</td>
-                                    <td className="text-sm text-center align-middle hover:text-gray-400 transition-all duration-200">
-                                        <Link to="/finished">more detail{" >>"}</Link>
-                                    </td>
-                                </tr>
-                                <tr className="text-lg text-end font-mono">
-                                    <th>3</th>
-                                    <td>8</td>
-                                    <td>25600</td>
-                                    <td>Apiwat Tassananutriyaporn</td>
-                                    <td className="text-sm text-center align-middle hover:text-gray-400 transition-all duration-200">
-                                        <Link to="/finished">more detail{" >>"}</Link>
-                                    </td>
-                                </tr>
-                                <tr className="text-lg text-end font-mono">
-                                    <th>4</th>
-                                    <td>8</td>
-                                    <td>25600</td>
-                                    <td>Apiwat Tassananutriyaporn</td>
-                                    <td className="text-sm text-center align-middle hover:text-gray-400 transition-all duration-200">
-                                        <Link to="/finished">more detail{" >>"}</Link>
-                                    </td>
-                                </tr>
-                                <tr className="text-lg text-end font-mono">
-                                    <th>5</th>
-                                    <td>8</td>
-                                    <td>25600</td>
-                                    <td>Apiwat Tassananutriyaporn</td>
-                                    <td className="text-sm text-center align-middle hover:text-gray-400 transition-all duration-200">
-                                        <Link to="/finished">more detail{" >>"}</Link>
-                                    </td>
-                                </tr>
-                                <tr className="text-lg text-end font-mono">
-                                    <th>6</th>
-                                    <td>8</td>
-                                    <td>25600</td>
-                                    <td>Apiwat Tassananutriyaporn</td>
-                                    <td className="text-sm text-center align-middle hover:text-gray-400 transition-all duration-200">
-                                        <Link to="/finished">more detail{" >>"}</Link>
-                                    </td>
-                                </tr>
-                                <tr className="text-lg text-end font-mono">
-                                    <th>7</th>
-                                    <td>8</td>
-                                    <td>25600</td>
-                                    <td>Apiwat Tassananutriyaporn</td>
-                                    <td className="text-sm text-center align-middle hover:text-gray-400 transition-all duration-200">
-                                        <Link to="/finished">more detail{" >>"}</Link>
-                                    </td>
-                                </tr>
-                                
+                                {reservations.map((reservation, index) => (
+                                    <tr key={index} className="text-lg text-end font-mono">
+                                        {/* แสดงวันที่จองในรูปแบบ "21 Mar 2025" */}
+                                        <th>{formatDate(reservation.reservationDate)}</th>  
+                                        <td>{reservation.seat}</td>
+                                        <td>{reservation.totalPrice}</td>
+                                        <td>{reservation.customerFirstName}</td> {/* แสดง firstname ของลูกค้า */}
+                                        <td className="text-sm text-center align-middle hover:text-gray-400 transition-all duration-200">
+                                            {/* ส่งค่า reservationID ผ่าน URL */}
+                                            <Link to={`/finished?reservationID=${reservation.reservationID}`}>more detail{" >>"}</Link>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-
         </>
-    )
+    );
 }
 
-export default history
+export default History;

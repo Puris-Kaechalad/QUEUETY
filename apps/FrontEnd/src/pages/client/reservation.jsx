@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from '../../component/nav';
 import './client.css';
 import DownArrow from "../../assets/down_arrow.png";
@@ -8,61 +8,92 @@ import Book from "../../assets/booking.png";
 import Music from "../../assets/music.png";
 import Band1 from '../../assets/cocktail.jpg';
 import { ref, get } from 'firebase/database';
-import { dbRealtime } from "../../firebaseConfig"; // นำเข้า Realtime Database
-import moment from 'moment'; // ใช้ moment.js เพื่อจัดการวันที่
+import { dbRealtime } from "../../firebaseConfig";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import moment from 'moment';
 
 const Reservation = () => {
-    const [dates, setDates] = useState([]); // สถานะของแต่ละวัน
+    const [dates, setDates] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [isPopupVisible, setIsPopupVisible] = useState(false); // state สำหรับ popup
+    const [popupMessage, setPopupMessage] = useState(''); // ข้อความสำหรับ popup
+    const navigate = useNavigate();
+    const auth = getAuth();
 
     useEffect(() => {
-        // ฟังก์ชันเพื่อดึงข้อมูลคิวจาก Realtime Database
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
         const fetchReservations = async () => {
             const dateRef = ref(dbRealtime, 'reservations');
             const snapshot = await get(dateRef);
-            
+    
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 const reservationDates = [];
-                const today = moment(); // วันที่ปัจจุบัน
-                const endDate = moment().add(7, 'days'); // วันที่สุดท้าย (7 วัน)
-
-                // กรองเฉพาะวันที่ตั้งแต่วันนี้ถึง 7 วันข้างหน้า
-                for (let m = moment(today); m.isBefore(endDate); m.add(1, 'days')) {
-                    const date = m.format("D MMM YYYY");
-                    const queues = data[date] || {}; // ถ้าไม่มีข้อมูลสำหรับวันนั้นให้ใช้ข้อมูลว่าง
-                    const remaining = 50 - Object.keys(queues).length; // คำนวณคิวที่เหลือ
-                    reservationDates.push({ date, remaining });
-                }
-
-                setDates(reservationDates);
-                setLoading(false);
-            } else {
-                console.log("No data available");
-                setLoading(false);
-                // กรณีที่ไม่มีข้อมูล
-                // สร้างข้อมูลให้สามารถแสดงวันจองได้
                 const today = moment();
-                const reservationDates = [];
-                for (let m = moment(today); m.isBefore(moment().add(7, 'days')); m.add(1, 'days')) {
+                const startDate = moment().add(1, 'days');
+                const endDate = moment().add(9, 'days');
+    
+                for (let m = moment(startDate); m.isBefore(endDate); m.add(1, 'days')) {
                     const date = m.format("D MMM YYYY");
-                    reservationDates.push({ date, remaining: 32 }); // สมมติว่า 32 คิวเหลือ
+                    const queues = data[date] || {};
+                    const remaining = 50 - Object.keys(queues).length;
+                    reservationDates.push({ date, remaining });
+                }   
+                setDates(reservationDates);
+            } else {
+                const reservationDates = [];
+                const startDate = moment().add(1, 'days');
+    
+                for (let m = moment(startDate); m.isBefore(moment().add(7, 'days')); m.add(1, 'days')) {
+                    const date = m.format("D MMM YYYY");
+                    reservationDates.push({ date, remaining: 32 });
                 }
                 setDates(reservationDates);
             }
+            setLoading(false);
         };
-
+    
         fetchReservations();
     }, []);
 
-    // ฟังก์ชันตรวจสอบเวลาปัจจุบันเพื่อป้องกันการจองหลัง 18:00
     const isBookingAvailable = (date) => {
         const now = moment();
         const targetDate = moment(date, "D MMM YYYY");
         if (targetDate.isSame(now, 'day')) {
-            return now.hour() < 18; // ตรวจสอบว่าเวลาตอนนี้น้อยกว่า 18:00 หรือไม่
+            return now.hour() < 18;
         }
-        return true; // ถ้าไม่ใช่วันนี้ สามารถจองได้
+        return true;
+    };
+
+    const handleReserve = async (date) => {
+        if (!user) {
+            navigate("/login", { state: { from: `/confirm?date=${encodeURIComponent(date)}` } });
+            return;
+        }
+
+        const reservationRef = ref(dbRealtime, 'reservations/' + date);
+        const snapshot = await get(reservationRef);
+
+        if (snapshot.exists()) {
+            const reservations = snapshot.val();
+            const userAlreadyBooked = Object.values(reservations).some(reservation => reservation.customerID === user.uid);
+
+            if (userAlreadyBooked) {
+                setPopupMessage("You have already booked this day.");
+                setIsPopupVisible(true); // แสดง popup
+                return;
+            }
+        }
+
+        navigate(`/confirm?date=${encodeURIComponent(date)}`);
     };
 
     if (loading) {
@@ -78,9 +109,7 @@ const Reservation = () => {
                         <div>
                             <div className="flex gap-4 items-center">
                                 <img src={Book} alt="icon" className="h-8" />
-                                <h2 className="text-4xl font-bold tracking-widest text-yellow-500">
-                                    Reservation
-                                </h2>
+                                <h2 className="text-4xl font-bold tracking-widest text-yellow-500">Reservation</h2>
                             </div>
                             <p className="text-lg tracking-wider mt-4 text-white">
                                 Please check queue remaining and choose any day you want :)
@@ -109,12 +138,14 @@ const Reservation = () => {
                                                     <h2 className="text-4xl font-semibold">{day.remaining}</h2>
                                                 </div>
 
-                                                {/* ถ้าที่เหลือมากกว่า 0 ให้กดจองได้ */}
                                                 {day.remaining > 0 && isBookingAvailable(day.date) ? (
-                                                    <div className="bg-yellow-600 px-4 py-1 mt-6 border-1 border-yellow-600 rounded-full hover:font-semibold hover:bg-transparent hover:border-1 hover:border-yellow-600 hover:border-dashed transition-all duration-250 hover:scale-110 transform">
-                                                        <Link to={`/confirm?date=${encodeURIComponent(day.date)}`} className="text-sm">
-                                                            RESERVE
-                                                        </Link>
+                                                    <div 
+                                                        className="bg-yellow-600 px-4 py-1 mt-6 border-1 border-yellow-600 rounded-full 
+                                                        hover:font-semibold hover:bg-transparent hover:border-1 hover:border-yellow-600 
+                                                        hover:border-dashed transition-all duration-250 hover:scale-110 transform"
+                                                        onClick={() => handleReserve(day.date)}
+                                                    >
+                                                        <span className="text-sm">RESERVE</span>
                                                     </div>
                                                 ) : (
                                                     <div className="bg-gray-500 px-4 py-1 mt-6 border-1 border-gray-500 rounded-full opacity-50 cursor-not-allowed">
@@ -188,14 +219,28 @@ const Reservation = () => {
                                 <div className="mt-4">
                                     <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
-                            </div>
+                            </div>  
                            
                         </div>
                     </div>
                 </section>
             </div>
+
+            
+            {/* Popup */}
+            {isPopupVisible && (
+                <div className="popup-overlay">
+                    <div className="popup-content">
+                        <p>{popupMessage}</p>
+                        <button onClick={() => setIsPopupVisible(false)} className="popup-close-btn">Close</button>
+                    </div>
+                </div>
+            )}
         </>
-    )
-}
+    );
+};
+        
+    
+
 
 export default Reservation;

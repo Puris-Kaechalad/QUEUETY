@@ -33,22 +33,23 @@ function ConfirmInfo() {
 
     const handleConfirm = async () => {
         if (!auth.currentUser || !userData) return alert("User not logged in!");
-
-        const reservationID = uuidv4(); // สร้าง reservationID
+    
         const totalPrice = seats * 3200;
-
+    
         // ใช้ push() เพื่อเพิ่มข้อมูลการจองลงในแต่ละวันและแต่ละ queue
         const reservationsRef = ref(dbRealtime, `reservations/${date}`);
         const newReservationRef = push(reservationsRef); // เพิ่มข้อมูลใหม่ในแต่ละวันที่เลือก
+    
+        // ใช้ newReservationRef.key เป็น reservationID
         await set(newReservationRef, {
             customerID: auth.currentUser.uid,
-            reservationID,
+            reservationID: newReservationRef.key,  // ใช้ key ที่ Firebase สร้างขึ้น
             seat: seats,
             totalPrice,
         });
-
+    
         // ไปหน้า Finished พร้อมแนบ reservationID
-        navigate(`/finished?reservationID=${reservationID}`);
+        navigate(`/finished?reservationID=${newReservationRef.key}`);
     };
 
     return (
@@ -106,7 +107,7 @@ function ConfirmInfo() {
                         >
                             CONFIRM
                         </button>
-                        <a href="/reservation" className="hover:text-red-700 transition-all duration-250 hover:scale-110">Cancel</a>
+                        <a href="/reservation" className="hover:text-red-700 transition-all duration-250 hover:scale-110">back</a>
                     </div>
                 </div>
             </div>
