@@ -12,6 +12,8 @@ import Finished from './pages/client/finished.jsx'
 import History from './pages/client/history.jsx'
 import Profile from './pages/client/profile.jsx'
 import Admin from './pages/roleSystem/Admin'
+import Staff from './pages/roleSystem/Staff'
+import Promo from './pages/roleSystem/Promo'
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/sentRequest" element={<SentRequest />} />
         <Route path="/Admin" element={<Admin />} />
+        <Route path="/Staff" element={<Staff />} />
+        <Route path="/Promo" element={<Promo />} />
       </Routes>
     </>
   )

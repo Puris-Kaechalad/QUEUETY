@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { getFirestore, collection, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
+import { ref, get, update } from 'firebase/database'; // ใช้ update แทน set
+import { dbRealtime } from '../../firebaseConfig'; // Import จาก Firebase config
+import { getAuth, onAuthStateChanged } from 'firebase/auth'; // นำเข้า onAuthStateChanged
 import Navbar from '../../component/nav';
 
 function Admin() {
@@ -8,8 +10,37 @@ function Admin() {
     const [role, setRole] = useState("customer");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [userRole, setUserRole] = useState(""); // สถานะ role ของผู้ใช้
+    const [loading, setLoading] = useState(true); // เพิ่มสถานะการโหลด
     const navigate = useNavigate();
-    const db = getFirestore();
+    const auth = getAuth(); // ใช้ Firebase Auth เพื่อดึงข้อมูลผู้ใช้
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                // ดึงข้อมูล role ของผู้ใช้จาก Realtime Database
+                const userRef = ref(dbRealtime, `users/${currentUser.uid}`);
+                get(userRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        if (userData.role !== "admin") {
+                            // ถ้าไม่ใช่ admin ให้ redirect ไปหน้าอื่น
+                            navigate("/unauthorized"); // หน้า Unauthorized หรือหน้าอื่น ๆ
+                        } else {
+                            setUserRole(userData.role); // ถ้าเป็น admin ให้เซ็ต role
+                        }
+                    } else {
+                        navigate("/unauthorized");
+                    }
+                    setLoading(false); // ตั้งสถานะว่าโหลดเสร็จแล้ว
+                });
+            } else {
+                setLoading(false); // หากไม่มีผู้ใช้
+            }
+        });
+
+        return () => unsubscribe(); // Unsubscribe เมื่อใช้เสร็จ
+    }, [auth, navigate]); // เพิ่ม `auth` และ `navigate` ใน array dependencies
 
     const handleRoleUpdate = async () => {
         setError("");
@@ -17,27 +48,40 @@ function Admin() {
 
         try {
             // ค้นหาผู้ใช้ที่มี email ตรงกับที่กรอก
-            const usersRef = collection(db, "users");
-            const q = query(usersRef, where("email", "==", email));
-            const querySnapshot = await getDocs(q);
+            const usersRef = ref(dbRealtime, "users");
+            const snapshot = await get(usersRef);
+            const usersData = snapshot.val();
+            let userId = null;
 
-            if (querySnapshot.empty) {
+            // ค้นหาผู้ใช้ที่มี email ตรงกับที่กรอก
+            for (let id in usersData) {
+                if (usersData[id].email === email) {
+                    userId = id;
+                    break;
+                }
+            }
+
+            if (!userId) {
                 setError("Invalid email: User not found");
                 return;
             }
 
-            // ดึง UID ของผู้ใช้
-            const userDoc = querySnapshot.docs[0];
-            const userId = userDoc.id;
-
             // อัปเดต role โดยไม่ลบข้อมูลเก่า
-            await setDoc(doc(db, "users", userId), { role: role }, { merge: true });
+            await update(ref(dbRealtime, `users/${userId}`), { role: role }); // ใช้ update แทน set
 
             setSuccess("Role updated successfully!");
         } catch (err) {
             setError("Something went wrong. Please try again.");
         }
     };
+
+    if (loading) {
+        return <p>Loading...</p>; // แสดงข้อความขณะโหลด
+    }
+
+    if (userRole !== "admin") {
+        return <p>You are not authorized to view this page.</p>; // หากไม่ใช่ admin แสดงข้อความนี้
+    }
 
     return (
         <>
