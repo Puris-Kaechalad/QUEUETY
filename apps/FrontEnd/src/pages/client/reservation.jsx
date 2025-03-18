@@ -37,25 +37,37 @@ const Reservation = () => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 const reservationDates = [];
-                const today = moment();
                 const startDate = moment().add(1, 'days');
-                const endDate = moment().add(9, 'days');
+                const endDate = moment().add(7, 'days');  // ตั้งค่าให้แสดงวันที่ 7 วัน
     
+                // ตรวจสอบการเพิ่มวันให้ครบ 7 วัน
                 for (let m = moment(startDate); m.isBefore(endDate); m.add(1, 'days')) {
                     const date = m.format("D MMM YYYY");
                     const queues = data[date] || {};
                     const remaining = 50 - Object.keys(queues).length;
                     reservationDates.push({ date, remaining });
-                }   
+                }
+    
+                // ถ้าไม่ครบ 7 วัน ให้ทำการเติมวันให้ครบ
+                if (reservationDates.length < 7) {
+                    const missingDatesCount = 7 - reservationDates.length;
+                    for (let i = 0; i < missingDatesCount; i++) {
+                        const missingDate = moment().add(i + 1, 'days').format("D MMM YYYY");
+                        reservationDates.push({ date: missingDate, remaining: 50 });
+                    }
+                }
+    
                 setDates(reservationDates);
             } else {
+                // ถ้าไม่มีข้อมูลใน Firebase ให้สร้างวันเอง
                 const reservationDates = [];
                 const startDate = moment().add(1, 'days');
     
                 for (let m = moment(startDate); m.isBefore(moment().add(7, 'days')); m.add(1, 'days')) {
                     const date = m.format("D MMM YYYY");
-                    reservationDates.push({ date, remaining: 32 });
+                    reservationDates.push({ date, remaining: 50 });
                 }
+    
                 setDates(reservationDates);
             }
             setLoading(false);
@@ -63,6 +75,7 @@ const Reservation = () => {
     
         fetchReservations();
     }, []);
+    
 
     const isBookingAvailable = (date) => {
         const now = moment();
