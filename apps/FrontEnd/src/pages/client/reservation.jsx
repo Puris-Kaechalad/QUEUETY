@@ -158,7 +158,7 @@ const Reservation = () => {
                                                         hover:border-dashed transition-all duration-250 hover:scale-110 transform"
                                                         onClick={() => handleReserve(day.date)}
                                                     >
-                                                        <span className="text-sm">RESERVE</span>
+                                                        <span className="text-sm cursor-pointer">RESERVE</span>
                                                     </div>
                                                 ) : (
                                                     <div className="bg-gray-500 px-4 py-1 mt-6 border-1 border-gray-500 rounded-full opacity-50 cursor-not-allowed">
@@ -197,42 +197,7 @@ const Reservation = () => {
                                     <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
                             </div>
-                            <div className="mt-16 lg:w-1/2 p-4">
-                                <div className="flex justify-start items-center gap-4 w-full">
-                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
-                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
-                                </div>
-                                <div className="mt-4">
-                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
-                                </div>
-                            </div>
-                            <div className="mt-16 lg:w-1/2 p-4">
-                                <div className="flex justify-start items-center gap-4 w-full">
-                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
-                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
-                                </div>
-                                <div className="mt-4">
-                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
-                                </div>
-                            </div>
-                            <div className="mt-16 lg:w-1/2 p-4">
-                                <div className="flex justify-start items-center gap-4 w-full">
-                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
-                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
-                                </div>
-                                <div className="mt-4">
-                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
-                                </div>
-                            </div>
-                            <div className="mt-16 lg:w-1/2 p-4">
-                                <div className="flex justify-start items-center gap-4 w-full">
-                                    <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
-                                    <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
-                                </div>
-                                <div className="mt-4">
-                                    <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
-                                </div>
-                            </div>  
+                            
                            
                         </div>
                     </div>
@@ -243,9 +208,9 @@ const Reservation = () => {
             {/* Popup */}
             {isPopupVisible && (
                 <div className="popup-overlay">
-                    <div className="popup-content">
-                        <p>{popupMessage}</p>
-                        <button onClick={() => setIsPopupVisible(false)} className="popup-close-btn">Close</button>
+                    <div className="popup-content space-y-6">
+                        <p className="text-lg">{popupMessage}</p>
+                        <button onClick={() => setIsPopupVisible(false)} className="btn bg-red-600 border-transparent px-8 py-1 hover:bg-transparent hover:border-red-600 hover:text-black duration-200">Close</button>
                     </div>
                 </div>
             )}

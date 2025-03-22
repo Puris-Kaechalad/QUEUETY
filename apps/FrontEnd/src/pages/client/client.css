@@ -271,8 +271,9 @@
     z-index: -1;
     border-radius: 12px;
 }
-/* Pop up */
+/* --------------------end profile */
 
+/* --------------------Pop up */
 .popup-overlay {
     position: fixed;
     top: 0;
@@ -288,15 +289,13 @@
 
 .popup-content {
     background-color: white;
-    padding: 20px;
+    padding: 16px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-    max-width: 400px;
-    width: 100%;
-    color: black; /* เพิ่มบรรทัดนี้เพื่อเปลี่ยนสีฟอนต์เป็นสีดำ */
+    color: black;
 }
-
+/* 
 .popup-close-btn {
     margin-top: 20px;
     background-color: #f44336;
@@ -310,5 +309,5 @@
 
 .popup-close-btn:hover {
     background-color: #d32f2f;
-}
+} */
 

@@ -55,7 +55,7 @@ function Login() {
                         </Link>
                         <button
                             onClick={handleLogin}
-                            className="w-full bg-blue-500 text-white font-semibold py-2 mt-4 rounded-lg hover:bg-blue-600 transition-all duration-200"
+                            className="w-full bg-blue-500 text-white font-semibold py-2 mt-4 rounded-lg cursor-pointer hover:bg-blue-600 transition-all duration-200"
                         >
                             LOGIN
                         </button>

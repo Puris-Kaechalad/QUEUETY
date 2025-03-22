@@ -146,7 +146,7 @@ export default function Register() {
                         </div>
 
                         <div className="mt-8">
-                            <button type="submit" className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition-all duration-200">
+                            <button type="submit" className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition-all duration-200">
                                 REGISTER
                             </button>
                             <div className="text-center mt-4">

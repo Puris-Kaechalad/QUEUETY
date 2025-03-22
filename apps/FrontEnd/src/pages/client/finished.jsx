@@ -70,16 +70,16 @@ function Finished() {
 
     const handleCancel = async () => {
         if (!reservationData) return;
-    
+
         // กำหนด path ที่จะลบข้อมูล
         const reservationRef = ref(dbRealtime, `reservations/${reservationData.reservationDate}/${reservationID}`);
-        
+
         try {
             // ลบข้อมูลจาก path ที่กำหนด
             await remove(reservationRef);
             console.log(`Reservation with ID ${reservationID} has been cancelled.`);
             setShowPopup(true);  // แสดง popup เมื่อการยกเลิกสำเร็จ
-            
+
             // รีเฟรชข้อมูลหรือเปลี่ยนหน้า
             setTimeout(() => {
                 window.location.href = '/';  // Redirect ไปที่หน้าอื่น (หน้า Home)
@@ -89,13 +89,13 @@ function Finished() {
             alert("Failed to cancel reservation.");
         }
     };
-    
-    
+
+
     return (
         <>
             <Navbar />
             <div className="finished flex justify-center items-center px-auto py-32 ">
-                <div className="finished-box max-w-6xl m-auto p-8 space-y-8 shadow-black shadow-xl">
+                <div className="finished-box max-w-6xl m-auto p-8 space-y-12 shadow-black shadow-xl">
                     <h2 className="text-center text-4xl text-yellow-500 font-bold tracking-widest">Reservation</h2>
 
                     <div className="flex justify-center">
@@ -103,6 +103,8 @@ function Finished() {
                     </div>
 
                     <div className="text-md tracking-wider space-y-4">
+                        <h3 className="text-3xl font-bold">Queue: 50</h3>
+                        <hr />
                         <div className="flex justify-between">
                             <p>Day/Month/Year</p>
                             <p>{reservationData ? formatDate(reservationData.reservationDate) : "Loading..."}</p>
@@ -119,19 +121,24 @@ function Finished() {
                             <p>Net price</p>
                             <p>{reservationData ? `${reservationData.totalPrice}฿` : "Loading..."}</p>
                         </div>
+                        <hr />
+                        <div>
+                            <p>- You can check in between 6:00 PM - 7:00 PM.</p>
+                            <p>- Please don’t forget to secure your spot.</p>
+                        </div>
                     </div>
 
-                    <div className="text-center space-y-4">
-                        <Link to="/" className="text-2xl font-bold">Back to home</Link>
-                    </div>
-
-                    {/* ปุ่ม Cancel */}
-                    <div className="text-center mt-4">
-                        <button 
-                            className="bg-red-500 text-white p-2 rounded-md font-bold"
+                    <div className="text-center space-y-6">
+                        <div>
+                            <Link to="/" className="bg-yellow-600 px-4 py-2 rounded-lg border-1 border-transparent text-2xl font-bold hover:bg-transparent hover:border-yellow-600 hover:border-dashed transition-all duration-200 hover:scale-110">
+                                Back to home
+                            </Link>
+                        </div>
+                        <button
+                            className="text-white p-2 text-lg cursor-pointer hover:text-gray-400 duration-200"
                             onClick={handleCancel}
                         >
-                            Cancel Reservation
+                            Cancel Queue
                         </button>
                     </div>
                 </div>
@@ -140,8 +147,9 @@ function Finished() {
             {/* Popup */}
             {showPopup && (
                 <div className="popup-overlay">
-                    <div className="popup-content">
-                        <h3 className="text-2xl font-semibold text-green-500">Reservation cancelled successfully!</h3>
+                    <div className="popup-content space-y-4 max-w-1-4">
+                        <h3 className="text-3xl font-bold">Your queue was cancelled</h3>
+                        <p>Returning to home page..</p>
                     </div>
                 </div>
             )}

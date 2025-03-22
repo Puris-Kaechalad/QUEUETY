@@ -16,7 +16,7 @@ function home() {
         <div className="grid-rows-2">
           <div className="space-y-16">
             <div className="tracking-wider">
-              <h1 className="text-5xl font-bold">Got plans for tonight's party?</h1>
+              <h1 className="text-5xl font-bold text-yellow-500 text-shadow-black text-shadow-lg">Got plans for tonight's party?</h1>
               <p className="mt-8 text-4xl">Let me help you find a seat!</p>
             </div>
             <div className="flex space-x-8 ">
