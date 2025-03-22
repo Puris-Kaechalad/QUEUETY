@@ -37,14 +37,14 @@ function Profile() {
                     <div className="space-y-6">
                         {userData ? (
                             <>
-                                <div className="flex justify-center gap-4 text-black text-md tracking-wider">
-                                    <p className="w-1/2 bg-white px-4 py-2 rounded-md">{userData.firstname}</p>
-                                    <p className="w-1/2 bg-white px-4 py-2 rounded-md">{userData.lastname}</p>
+                                <div className="flex justify-center gap-4 text-white text-md tracking-wider">
+                                    <p className="w-1/2 bg-transparent border-1 px-4 py-2 rounded-md">{userData.firstname}</p>
+                                    <p className="w-1/2 bg-transparent border-1 px-4 py-2 rounded-md">{userData.lastname}</p>
                                 </div>
-                                <p className="w-full bg-white px-4 py-2 text-black text-md tracking-wider rounded-md">{userData.email}</p>
-                                <div className="flex justify-center gap-4 text-black text-md tracking-wider">
-                                    <p className="w-1/2 bg-white px-4 py-2 rounded-md">{userData.phone}</p>
-                                    <p className="w-1/2 bg-white px-4 py-2 rounded-md">{userData.dob}</p>
+                                <p className="w-full bg-transparent border-1 px-4 py-2 text-white text-md tracking-wider rounded-md">{userData.email}</p>
+                                <div className="flex justify-center gap-4 text-white text-md tracking-wider">
+                                    <p className="w-1/2 bg-transparent border-1 px-4 py-2 rounded-md">{userData.phone}</p>
+                                    <p className="w-1/2 bg-transparent border-1 px-4 py-2 rounded-md">{userData.dob}</p>
                                 </div>
                             </>
                         ) : (

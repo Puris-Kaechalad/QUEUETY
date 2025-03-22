@@ -4,6 +4,7 @@ import { auth } from "../../firebaseConfig";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth"; // นำเข้า signOut
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getDatabase, ref, set } from "firebase/database";
+import '../client/client.css';
 
 import Navbar from '../../component/nav';
 
@@ -85,9 +86,9 @@ export default function Register() {
     return (
         <>
             <Navbar />
-            <div className="flex justify-center items-center min-h-screen p-8 sm:p-0">
-                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-                    <h2 className="text-3xl font-bold text-center text-black mb-6 tracking-wider">Register</h2>
+            <div className="regis flex justify-center items-center min-h-screen p-8 sm:p-0">
+                <div className="regis-box p-8 rounded-lg shadow-lg w-full max-w-lg shadow-black shadow-lg">
+                    <h2 className="text-3xl font-bold text-center text-yellow-500 mb-6 tracking-wider">Register</h2>
 
                     {error && <p className="text-red-500">{error}</p>}
                     {success && <p className="text-green-500">{success}</p>}
@@ -95,62 +96,62 @@ export default function Register() {
                     <form onSubmit={handleRegister}>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-600">Firstname</label>
+                                <label className="block text-sm font-medium text-white">Firstname</label>
                                 <input name="firstname" type="text" placeholder="Enter your firstname..."
                                     value={formData.firstname} onChange={handleChange}
-                                    className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100" />
+                                    className="input text-white w-full mt-1 p-2  border-1 border-white rounded-lg bg-transparent" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-600">Lastname</label>
+                                <label className="block text-sm font-medium text-white">Lastname</label>
                                 <input name="lastname" type="text" placeholder="Enter your lastname..."
                                     value={formData.lastname} onChange={handleChange}
-                                    className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100" />
+                                    className="input text-white w-full mt-1 p-2  border-1 border-white rounded-lg bg-transparent" />
                             </div>
                         </div>
 
                         <div className="mt-4">
-                            <label className="block text-sm font-medium text-gray-600">Email</label>
+                            <label className="block text-sm font-medium text-white">Email</label>
                             <input name="email" type="email" placeholder="Enter your email..."
                                 value={formData.email} onChange={handleChange}
-                                className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100" />
+                                className="input text-white w-full mt-1 p-2  border-1 border-white rounded-lg bg-transparent" />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 mt-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-600">Phone number</label>
+                                <label className="block text-sm font-medium text-white">Phone number</label>
                                 <input name="phone" type="tel" placeholder="Enter your phone number..."
                                     value={formData.phone} onChange={handleChange}
-                                    className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100" />
+                                    className="input text-white w-full mt-1 p-2  border-1 border-white rounded-lg bg-transparent" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-600">Date of birth</label>
+                                <label className="block text-sm font-medium text-white">Date of birth</label>
                                 <input name="dob" type="text" placeholder="dd/mm/yyyy"
                                     value={formData.dob} onChange={handleChange}
-                                    className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100" />
+                                    className="input text-white w-full mt-1 p-2  border-1 border-white rounded-lg bg-transparent" />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 mt-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-600">Create Password</label>
+                                <label className="block text-sm font-medium text-white">Create Password</label>
                                 <input name="password" type="password" placeholder="Create password..."
                                     value={formData.password} onChange={handleChange}
-                                    className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100" />
+                                    className="input text-white w-full mt-1 p-2  border-1 border-white rounded-lg bg-transparent" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-600">Confirm Password</label>
+                                <label className="block text-sm font-medium text-white">Confirm Password</label>
                                 <input name="confirmPassword" type="password" placeholder="Confirm password..."
                                     value={formData.confirmPassword} onChange={handleChange}
-                                    className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100" />
+                                    className="input text-white w-full mt-1 p-2 border-1 border-white rounded-lg bg-transparent" />
                             </div>
                         </div>
 
-                        <div className="mt-8">
-                            <button type="submit" className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition-all duration-200">
+                        <div className="mt-8 tracking-wider">
+                            <button type="submit" className="w-full bg-yellow-600 text-white text-xl font-semibold py-2 border-1 border-transparent rounded-lg cursor-pointer hover:bg-transparent hover:border-yellow-600 transition-all duration-200">
                                 REGISTER
                             </button>
                             <div className="text-center mt-4">
-                                <Link to="/login" className="text-gray-500 text-md mt-3">Login</Link>
+                                <Link to="/login" className="text-white text-lg mt-3 hover:text-gray-400 duration-200">Login</Link>
                             </div>
                         </div>
                     </form>
