@@ -141,7 +141,7 @@ const Reservation = () => {
                                             <div className="day tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible">
 
                                                 {/* admin only ----------------------- */}
-                                                <div className="">
+                                                <div className="hidden">
                                                     <details className="absolute -top-2 -right-0">
                                                         <summary className="btn p-1 border-none shadow-none bg-white rounded-full">
                                                             <img src={Edit} alt="edit" className="h-5 " />
@@ -167,7 +167,7 @@ const Reservation = () => {
                                                                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                                             </form>
                                                             <h3 className="font-bold text-lg">Edit detail</h3>
-                                                            
+
                                                         </div>
                                                     </dialog>
 
