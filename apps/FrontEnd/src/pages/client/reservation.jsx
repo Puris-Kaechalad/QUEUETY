@@ -5,6 +5,7 @@ import './client.css';
 import DownArrow from "../../assets/down_arrow.png";
 import Mark from "../../assets/mark.png";
 import Book from "../../assets/booking.png";
+import Edit from "../../assets/pencil.png";
 import Music from "../../assets/music.png";
 import Band1 from '../../assets/cocktail.jpg';
 import { ref, get } from 'firebase/database';
@@ -129,11 +130,6 @@ const Reservation = () => {
                             </p>
                         </div>
                         <div className="mt-8 w-full p-4">
-                            {/* <div  className="flex justify-end items-center py-2">
-                                <button className="px-2 py-1 bg-green-600 rounded-lg">
-                                    Edit
-                                </button>
-                            </div> */}
                             <div className="overflow-x-scroll">
                                 <div className="flex flex-nowrap space-x-4 min-w-max">
                                     {dates.length === 0 ? (
@@ -142,33 +138,79 @@ const Reservation = () => {
                                         </div>
                                     ) : (
                                         dates.map((day, index) => (
-                                            <div key={index} className="day grid place-items-center space-y-4 tracking-wider py-4 px-8 rounded-lg">
-                                                <h3 className="text-2xl font-bold">{day.date}</h3>
-                                                <div className="flex justify-center gap-2 tracking-wider">
-                                                    <img src={Mark} alt="icon" className="h-6" />
-                                                    <p className={day.remaining > 0 ? "text-green-500" : "text-red-500"}>
-                                                        {day.remaining > 0 ? "Available" : "Full"}
-                                                    </p>
-                                                </div>
-                                                <div className="text-center tracking-wider">
-                                                    <p className="text-sm">remaining</p>
-                                                    <h2 className="text-4xl font-semibold">{day.remaining}</h2>
-                                                </div>
+                                            <div className="day tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible">
 
-                                                {day.remaining > 0 && isBookingAvailable(day.date) ? (
-                                                    <div
-                                                        className="bg-yellow-600 px-4 py-1 mt-6 border-1 border-yellow-600 rounded-full 
-                                                        hover:font-semibold hover:bg-transparent hover:border-1 hover:border-yellow-600 
-                                                        hover:border-dashed transition-all duration-250 hover:scale-110 transform"
-                                                        onClick={() => handleReserve(day.date)}
-                                                    >
-                                                        <span className="text-sm cursor-pointer">RESERVE</span>
+                                                {/* admin only ----------------------- */}
+                                                <div className="">
+                                                    <details className="absolute -top-2 -right-0">
+                                                        <summary className="btn p-1 border-none shadow-none bg-white rounded-full">
+                                                            <img src={Edit} alt="edit" className="h-5 " />
+                                                        </summary>
+                                                        <div className="flex justify-end mt-2">
+                                                            <ul className="dropdown-content bg-white text-black text-center z-10 p-4 rounded-lg w-64 absolute space-y-4">
+                                                                <li>
+                                                                    <button className="btn bg-transparent text-black cursor-pointer hover:bg-sky-500" onClick={() => document.getElementById('edit').showModal()}>Edit detail
+                                                                    </button>
+                                                                </li>
+                                                                <hr />
+                                                                <li>
+                                                                    <button className="btn bg-transparent text-black cursor-pointer hover:bg-sky-500" onClick={() => document.getElementById('change').showModal()}>Change to live band
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </details>
+
+                                                    <dialog id="edit" className="modal">
+                                                        <div className="modal-box bg-white text-black">
+                                                            <form method="dialog">
+                                                                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                                            </form>
+                                                            <h3 className="font-bold text-lg">Edit detail</h3>
+                                                            
+                                                        </div>
+                                                    </dialog>
+
+                                                    <dialog id="change" className="modal">
+                                                        <div className="modal-box bg-white text-black">
+                                                            <form method="dialog">
+                                                                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                                            </form>
+                                                            <h3 className="font-bold text-lg">Hello!</h3>
+                                                            <p className="py-4">Press ESC key or click on ✕ button to close</p>
+                                                        </div>
+                                                    </dialog>
+                                                </div>
+                                                {/* admin only ----------------------- */}
+
+                                                <div key={index} className=" grid place-items-center space-y-4 ">
+                                                    <h3 className="text-2xl font-bold">{day.date}</h3>
+                                                    <div className="flex justify-center gap-2 tracking-wider">
+                                                        <img src={Mark} alt="icon" className="h-6" />
+                                                        <p className={day.remaining > 0 ? "text-green-500" : "text-red-500"}>
+                                                            {day.remaining > 0 ? "Available" : "Full"}
+                                                        </p>
                                                     </div>
-                                                ) : (
-                                                    <div className="bg-gray-500 px-4 py-1 mt-6 border-1 border-gray-500 rounded-full opacity-50 cursor-not-allowed">
-                                                        <span className="text-sm">{day.remaining > 0 ? "Full" : "Not available"}</span>
+                                                    <div className="text-center tracking-wider">
+                                                        <p className="text-sm">remaining</p>
+                                                        <h2 className="text-4xl font-semibold">{day.remaining}</h2>
                                                     </div>
-                                                )}
+
+                                                    {day.remaining > 0 && isBookingAvailable(day.date) ? (
+                                                        <div
+                                                            className="bg-yellow-600 px-4 py-1 mt-6 border-1 border-yellow-600 rounded-full 
+                                                            hover:font-semibold hover:bg-transparent hover:border-1 hover:border-yellow-600 
+                                                            hover:border-dashed transition-all duration-250 hover:scale-110 transform"
+                                                            onClick={() => handleReserve(day.date)}
+                                                        >
+                                                            <span className="text-sm cursor-pointer">RESERVE</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="bg-gray-500 px-4 py-1 mt-6 border-1 border-gray-500 rounded-full opacity-50 cursor-not-allowed">
+                                                            <span className="text-sm">{day.remaining > 0 ? "Full" : "Not available"}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         ))
                                     )}
@@ -208,7 +250,6 @@ const Reservation = () => {
                 </section>
             </div>
 
-
             {/* Popup */}
             {isPopupVisible && (
                 <div className="popup-overlay">
@@ -221,8 +262,5 @@ const Reservation = () => {
         </>
     );
 };
-
-
-
 
 export default Reservation;

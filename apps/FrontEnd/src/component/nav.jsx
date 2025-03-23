@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; // นำเข้า signOut
+import Logo from "../assets/logo.png";
 
 function Nav() {
     const [firstname, setFirstname] = useState(null);
@@ -78,7 +79,7 @@ function Nav() {
                         <li><a href="#contact-us">Contact us</a></li>
                     </ul>
                 </div>
-                <a className="text-xl"><img src="#" alt="logo" /></a>
+                <a className="text-xl"><img src={Logo} alt="logo" className="h-18" /></a>
             </div>
 
             <div className="navbar-center hidden lg:flex">
