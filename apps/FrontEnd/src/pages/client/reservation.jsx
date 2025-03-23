@@ -33,13 +33,13 @@ const Reservation = () => {
         const fetchReservations = async () => {
             const dateRef = ref(dbRealtime, 'reservations');
             const snapshot = await get(dateRef);
-    
+
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 const reservationDates = [];
                 const startDate = moment().add(1, 'days');
                 const endDate = moment().add(7, 'days');  // ตั้งค่าให้แสดงวันที่ 7 วัน
-    
+
                 // ตรวจสอบการเพิ่มวันให้ครบ 7 วัน
                 for (let m = moment(startDate); m.isBefore(endDate); m.add(1, 'days')) {
                     const date = m.format("D MMM YYYY");
@@ -47,7 +47,7 @@ const Reservation = () => {
                     const remaining = 50 - Object.keys(queues).length;
                     reservationDates.push({ date, remaining });
                 }
-    
+
                 // ถ้าไม่ครบ 7 วัน ให้ทำการเติมวันให้ครบ
                 if (reservationDates.length < 7) {
                     const missingDatesCount = 7 - reservationDates.length;
@@ -56,26 +56,26 @@ const Reservation = () => {
                         reservationDates.push({ date: missingDate, remaining: 50 });
                     }
                 }
-    
+
                 setDates(reservationDates);
             } else {
                 // ถ้าไม่มีข้อมูลใน Firebase ให้สร้างวันเอง
                 const reservationDates = [];
                 const startDate = moment().add(1, 'days');
-    
+
                 for (let m = moment(startDate); m.isBefore(moment().add(7, 'days')); m.add(1, 'days')) {
                     const date = m.format("D MMM YYYY");
                     reservationDates.push({ date, remaining: 50 });
                 }
-    
+
                 setDates(reservationDates);
             }
             setLoading(false);
         };
-    
+
         fetchReservations();
     }, []);
-    
+
 
     const isBookingAvailable = (date) => {
         const now = moment();
@@ -100,7 +100,7 @@ const Reservation = () => {
             const userAlreadyBooked = Object.values(reservations).some(reservation => reservation.customerID === user.uid);
 
             if (userAlreadyBooked) {
-                setPopupMessage("You have already booked this day.");
+                setPopupMessage("You have already reserved this day.");
                 setIsPopupVisible(true); // แสดง popup
                 return;
             }
@@ -128,8 +128,12 @@ const Reservation = () => {
                                 Please check queue remaining and choose any day you want :)
                             </p>
                         </div>
-
                         <div className="mt-8 w-full p-4">
+                            {/* <div  className="flex justify-end items-center py-2">
+                                <button className="px-2 py-1 bg-green-600 rounded-lg">
+                                    Edit
+                                </button>
+                            </div> */}
                             <div className="overflow-x-scroll">
                                 <div className="flex flex-nowrap space-x-4 min-w-max">
                                     {dates.length === 0 ? (
@@ -152,7 +156,7 @@ const Reservation = () => {
                                                 </div>
 
                                                 {day.remaining > 0 && isBookingAvailable(day.date) ? (
-                                                    <div 
+                                                    <div
                                                         className="bg-yellow-600 px-4 py-1 mt-6 border-1 border-yellow-600 rounded-full 
                                                         hover:font-semibold hover:bg-transparent hover:border-1 hover:border-yellow-600 
                                                         hover:border-dashed transition-all duration-250 hover:scale-110 transform"
@@ -182,9 +186,9 @@ const Reservation = () => {
                 <section id="liveband" className="live-band mx-auto">
                     <div className="p-16">
                         <div className="flex justify-center items-center gap-4 ">
-                            <img src={Music} alt="icon" className="h-12"/>
+                            <img src={Music} alt="icon" className="h-12" />
                             <h2 className="text-4xl font-bold tracking-widest text-yellow-400">Upcoming live band</h2>
-                            <img src={Music} alt="icon" className="h-12"/>
+                            <img src={Music} alt="icon" className="h-12" />
                         </div>
 
                         <div className="lg:flex flex-wrap">
@@ -197,14 +201,14 @@ const Reservation = () => {
                                     <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
                             </div>
-                            
-                           
+
+
                         </div>
                     </div>
                 </section>
             </div>
 
-            
+
             {/* Popup */}
             {isPopupVisible && (
                 <div className="popup-overlay">
@@ -217,8 +221,8 @@ const Reservation = () => {
         </>
     );
 };
-        
-    
+
+
 
 
 export default Reservation;

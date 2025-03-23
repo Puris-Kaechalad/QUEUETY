@@ -130,7 +130,7 @@ function Finished() {
 
                     <div className="text-center space-y-6">
                         <div>
-                            <Link to="/" className="bg-yellow-600 px-4 py-2 rounded-lg border-1 border-transparent text-2xl font-bold hover:bg-transparent hover:border-yellow-600 hover:border-dashed transition-all duration-200 hover:scale-110">
+                            <Link to="/" className="bg-yellow-600 text-2xl font-bold py-2 px-4 rounded-lg border-transparent border-1 cursor-pointer hover:bg-transparent hover:border-yellow-500 hover:border-dashed transition-all duration-200">
                                 Back to home
                             </Link>
                         </div>

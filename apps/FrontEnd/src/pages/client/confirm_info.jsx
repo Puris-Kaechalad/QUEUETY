@@ -121,7 +121,7 @@ function ConfirmInfo() {
                         <div>
                             <button
                                 onClick={handleConfirm}
-                                className="bg-yellow-600 text-2xl font-bold py-1 px-4 rounded-lg border-transparent border-1 cursor-pointer hover:bg-transparent hover:border-yellow-500 hover:border-dashed transition-all duration-250 hover:scale-110"
+                                className="bg-yellow-600 text-2xl font-bold py-1 px-4 rounded-lg border-transparent border-1 cursor-pointer hover:bg-transparent hover:border-yellow-500 hover:border-dashed transition-all duration-200"
                             >
                                 CONFIRM
                             </button>
