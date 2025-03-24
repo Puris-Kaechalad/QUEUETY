@@ -38,8 +38,8 @@ const Reservation = () => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 const reservationDates = [];
-                const startDate = moment().add(1, 'days').startOf('day'); // ใช้ startOf('day') เพื่อให้เวลาเป็นเวลาเริ่มต้นของวัน
-                const endDate = moment().add(7, 'days').endOf('day'); // ใช้ endOf('day') เพื่อให้เวลาเป็นเวลา 23:59:59 ของวัน
+                const startDate = moment().add(1, 'days');
+                const endDate = moment().add(7, 'days');  // ตั้งค่าให้แสดงวันที่ 7 วัน
 
                 // ตรวจสอบการเพิ่มวันให้ครบ 7 วัน
                 for (let m = moment(startDate); m.isBefore(endDate); m.add(1, 'days')) {
@@ -140,7 +140,7 @@ const Reservation = () => {
                                         dates.map((day, index) => (
                                             <div className="day tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible">
 
-                                                {/* admin only ----------------------- */}
+                                            {/* admin only ----------------------- */}
                                                 <div className="hidden">
                                                     <details className="absolute -top-2 -right-0">
                                                         <summary className="btn p-1 border-none shadow-none bg-white rounded-full">
