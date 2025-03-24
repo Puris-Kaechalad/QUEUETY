@@ -14,6 +14,7 @@ function Finished() {
     const [reservationData, setReservationData] = useState(null);
     const [userData, setUserData] = useState(null);  // เพิ่ม state สำหรับข้อมูลผู้ใช้
     const [showPopup, setShowPopup] = useState(false); // state สำหรับแสดง popup
+    const [queueNumber, setQueueNumber] = useState(null); // state สำหรับหมายเลขคิว
 
     // ฟังก์ชันแปลงวันที่
     const formatDate = (dateString) => {
@@ -45,6 +46,7 @@ function Finished() {
                                 reservationDate: dateKey // เพิ่มวันที่จาก key
                             });
                             fetchUserData(queues[queueID].customerID);  // ดึงข้อมูลผู้ใช้
+                            setQueueNumber(Object.keys(queues).length + 1); // คำนวณหมายเลขคิว (เพิ่ม 1 จากจำนวนการจอง)
                             return;
                         }
                     }
@@ -90,7 +92,6 @@ function Finished() {
         }
     };
 
-
     return (
         <>
             <Navbar />
@@ -103,7 +104,7 @@ function Finished() {
                     </div>
 
                     <div className="text-md tracking-wider space-y-4">
-                        <h3 className="text-3xl font-bold">Queue: 50</h3>
+                        <h3 className="text-3xl font-bold">Queue: {queueNumber ? queueNumber : "Loading..."}</h3> {/* แสดงหมายเลขคิว */}
                         <hr />
                         <div className="flex justify-between">
                             <p>Day/Month/Year</p>

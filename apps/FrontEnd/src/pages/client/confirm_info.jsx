@@ -18,6 +18,7 @@ function ConfirmInfo() {
     const [userData, setUserData] = useState(null);
     const [seats, setSeats] = useState(0);
     const [isChecked, setIsChecked] = useState(false); // เช็คว่าได้ติ๊กช่องหรือยัง
+    const [remainingQueue, setRemainingQueue] = useState(50); // จำนวนที่นั่งที่เหลือ
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -29,8 +30,22 @@ function ConfirmInfo() {
                 }
             }
         };
+
+        const fetchRemainingQueue = async () => {
+            // ดึงข้อมูลการจองในวันที่เลือกจาก Firebase
+            const reservationsRef = ref(dbRealtime, `reservations/${date}`);
+            const snapshot = await get(reservationsRef);
+            
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const bookedSeats = Object.keys(data).length; // จำนวนการจองที่มีอยู่
+                setRemainingQueue(50 - bookedSeats); // คำนวณจำนวนที่นั่งที่เหลือ
+            }
+        };
+
         fetchUserData();
-    }, []);
+        fetchRemainingQueue();
+    }, [date]); // เมื่อเปลี่ยนวันที่ให้ดึงข้อมูลใหม่
 
     const handleConfirm = async () => {
         if (!auth.currentUser || !userData) return alert("User not logged in!");
@@ -42,6 +57,11 @@ function ConfirmInfo() {
 
         if (!isChecked) {
             alert("Please agree to the reservation policy!");
+            return;
+        }
+
+        if (seats > remainingQueue) {
+            alert("Not enough seats available!");
             return;
         }
 
@@ -86,7 +106,7 @@ function ConfirmInfo() {
                     </div>
 
                     <div className="text-md tracking-wider space-y-4">
-                        <h3 className="text-3xl font-bold">Remaining queue: 50</h3>
+                        <h3 className="text-3xl font-bold">Remaining queue: {remainingQueue}</h3> {/* แสดงจำนวนที่นั่งที่เหลือ */}
                         <hr />
                         <div className="flex justify-between">
                             <p>Day/Month/Year</p>
