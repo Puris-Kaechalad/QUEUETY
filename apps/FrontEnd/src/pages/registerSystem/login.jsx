@@ -4,11 +4,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";  // ตรวจสอบว่า path ถูกต้อง
 import Navbar from '../../component/nav';
 import '../client/client.css';
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";  // นำเข้าไอคอนเพื่อแสดง/ซ่อนรหัสผ่าน
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false); // เพิ่มสถานะการแสดงรหัสผ่าน
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -39,15 +41,22 @@ function Login() {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-                    <div className="mt-4 tracking-wider">
+                    <div className="mt-4 tracking-wider relative">
                         <label className="block text-sm font-medium text-white">Password</label>
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}  // ใช้ type ขึ้นอยู่กับสถานะของ showPassword
                             placeholder="Enter your registered password..."
                             className="input text-white w-full mt-1 p-2 border-1 border-white rounded-lg bg-transparent focus:ring-2 focus:ring-blue-500"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)} // สลับการแสดงรหัสผ่าน
+                            className="absolute right-2 top-8 text-white"
+                        >
+                            {showPassword ? <AiFillEye size={22} /> : <AiFillEyeInvisible size={22} />} {/* ใช้ไอคอน */}
+                        </button>
                     </div>
                     
                     <div className="mt-8 tracking-wider">

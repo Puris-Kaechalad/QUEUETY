@@ -7,6 +7,7 @@ import { getDatabase, ref, set } from "firebase/database";
 import '../client/client.css';
 
 import Navbar from '../../component/nav';
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";  // นำเข้าไอคอนสำหรับการแสดง/ซ่อนรหัสผ่าน
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -22,6 +23,8 @@ export default function Register() {
 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [showPassword, setShowPassword] = useState(false); // เพิ่มสถานะการแสดงรหัสผ่าน
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // เพิ่มสถานะการแสดงยืนยันรหัสผ่าน
     const navigate = useNavigate();
     const db = getFirestore();
 
@@ -134,15 +137,33 @@ export default function Register() {
                         <div className="grid grid-cols-2 gap-4 mt-4">
                             <div>
                                 <label className="block text-sm font-medium text-white">Create Password</label>
-                                <input name="password" type="password" placeholder="Create password..."
-                                    value={formData.password} onChange={handleChange}
-                                    className="input text-white w-full mt-1 p-2  border-1 border-white rounded-lg bg-transparent" />
+                                <div className="relative">
+                                    <input name="password" type={showPassword ? "text" : "password"} placeholder="Create password..."
+                                        value={formData.password} onChange={handleChange}
+                                        className="input text-white w-full mt-1 p-2  border-1 border-white rounded-lg bg-transparent" />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}  // สลับการแสดงรหัสผ่าน
+                                        className="absolute right-2 top-3 text-white"
+                                    >
+                                        {showPassword ? <AiFillEye size={24} /> : <AiFillEyeInvisible size={24} />}
+                                    </button>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-white">Confirm Password</label>
-                                <input name="confirmPassword" type="password" placeholder="Confirm password..."
-                                    value={formData.confirmPassword} onChange={handleChange}
-                                    className="input text-white w-full mt-1 p-2 border-1 border-white rounded-lg bg-transparent" />
+                                <div className="relative">
+                                    <input name="confirmPassword" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password..."
+                                        value={formData.confirmPassword} onChange={handleChange}
+                                        className="input text-white w-full mt-1 p-2 border-1 border-white rounded-lg bg-transparent" />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}  // สลับการแสดงรหัสผ่าน
+                                        className="absolute right-2 top-3 text-white"
+                                    >
+                                        {showConfirmPassword ? <AiFillEye size={22} /> : <AiFillEyeInvisible size={22} />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
