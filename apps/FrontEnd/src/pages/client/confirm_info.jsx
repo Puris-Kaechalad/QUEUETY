@@ -17,6 +17,7 @@ function ConfirmInfo() {
 
     const [userData, setUserData] = useState(null);
     const [seats, setSeats] = useState(0);
+    const [isChecked, setIsChecked] = useState(false); // เช็คว่าได้ติ๊กช่องหรือยัง
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -33,6 +34,16 @@ function ConfirmInfo() {
 
     const handleConfirm = async () => {
         if (!auth.currentUser || !userData) return alert("User not logged in!");
+
+        if (seats <= 0) {
+            alert("Please specify a valid number of seats!");
+            return;
+        }
+
+        if (!isChecked) {
+            alert("Please agree to the reservation policy!");
+            return;
+        }
 
         const totalPrice = seats * 3200;
 
@@ -75,7 +86,7 @@ function ConfirmInfo() {
                     </div>
 
                     <div className="text-md tracking-wider space-y-4">
-                        <h3 className="text-3xl font-bold">Reamining queue: 50</h3>
+                        <h3 className="text-3xl font-bold">Remaining queue: 50</h3>
                         <hr />
                         <div className="flex justify-between">
                             <p>Day/Month/Year</p>
@@ -98,7 +109,7 @@ function ConfirmInfo() {
                         </div>
                     </div>
 
-
+                    {/* ช่องกรอกจำนวนที่นั่ง */}
                     <div className="flex gap-4 items-center">
                         <p className="text-lg font-bold tracking-wider">Specify seats</p>
                         <input
@@ -110,8 +121,14 @@ function ConfirmInfo() {
                         />
                     </div>
 
+                    {/* ช่องติ๊ก */}
                     <div className="flex gap-4 items-center">
-                        <input type="checkbox" className="checkbox h-6 border-2" />
+                        <input
+                            type="checkbox"
+                            className="checkbox h-6 border-2"
+                            checked={isChecked}
+                            onChange={(e) => setIsChecked(e.target.checked)}
+                        />
                         <p>
                             I have read and agree the above reservation policy.
                         </p>

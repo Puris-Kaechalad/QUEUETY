@@ -4,11 +4,18 @@ import Navbar from '../../component/nav';
 import './client.css';
 import { ref, get } from 'firebase/database'; 
 import { dbRealtime } from "../../firebaseConfig"; 
+import { getAuth } from "firebase/auth";
 
 function History() {
     const [reservations, setReservations] = useState([]); 
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
+        // ตรวจสอบว่าใครล็อกอินอยู่
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+        setUser(currentUser);
+
         const fetchReservations = async () => {
             // ดึงข้อมูลการจองจาก Firebase
             const reservationsRef = ref(dbRealtime, 'reservations');
@@ -29,8 +36,11 @@ function History() {
                     }
                 }
 
+                // กรองเฉพาะการจองของผู้ใช้ที่ล็อกอินอยู่
+                const userReservations = allReservations.filter(reservation => reservation.customerID === currentUser.uid);
+
                 // อัพเดทข้อมูลผู้ใช้พร้อมกันกับการจอง
-                const updatedReservations = await updateReservationsWithUserData(allReservations);
+                const updatedReservations = await updateReservationsWithUserData(userReservations);
                 setReservations(updatedReservations); // ตั้งค่าข้อมูลการจอง
             } else {
                 console.log("No reservations found");
@@ -63,7 +73,11 @@ function History() {
             return updatedReservations;
         };
 
-        fetchReservations(); // เรียกใช้ฟังก์ชันดึงข้อมูลการจอง
+        if (currentUser) {
+            fetchReservations(); // เรียกใช้ฟังก์ชันดึงข้อมูลการจองเฉพาะของผู้ใช้ที่ล็อกอิน
+        } else {
+            console.log("User is not logged in.");
+        }
 
     }, []); // ใช้ [] เพื่อให้ useEffect รันแค่ครั้งเดียวเมื่อหน้าโหลด
 

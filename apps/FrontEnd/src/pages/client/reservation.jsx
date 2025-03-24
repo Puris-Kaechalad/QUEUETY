@@ -38,8 +38,8 @@ const Reservation = () => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 const reservationDates = [];
-                const startDate = moment().add(1, 'days');
-                const endDate = moment().add(7, 'days');  // ตั้งค่าให้แสดงวันที่ 7 วัน
+                const startDate = moment().add(1, 'days').startOf('day'); // ใช้ startOf('day') เพื่อให้เวลาเป็นเวลาเริ่มต้นของวัน
+                const endDate = moment().add(7, 'days').endOf('day'); // ใช้ endOf('day') เพื่อให้เวลาเป็นเวลา 23:59:59 ของวัน
 
                 // ตรวจสอบการเพิ่มวันให้ครบ 7 วัน
                 for (let m = moment(startDate); m.isBefore(endDate); m.add(1, 'days')) {
