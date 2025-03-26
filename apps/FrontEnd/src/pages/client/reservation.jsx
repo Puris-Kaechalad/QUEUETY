@@ -6,6 +6,8 @@ import DownArrow from "../../assets/down_arrow.png";
 import Mark from "../../assets/mark.png";
 import Book from "../../assets/booking.png";
 import Edit from "../../assets/pencil.png";
+import Add from "../../assets/plus.png";
+import Del from "../../assets/bin.png";
 import Music from "../../assets/music.png";
 import Band1 from '../../assets/cocktail.jpg';
 import { ref, get } from 'firebase/database';
@@ -141,20 +143,22 @@ const Reservation = () => {
                                             <div className="day tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible">
 
                                                 {/* admin only ----------------------- */}
-                                                <div className="hidden">
+                                                <div className="">
                                                     <details className="absolute -top-2 -right-0">
                                                         <summary className="btn p-1 border-none shadow-none bg-white rounded-full">
                                                             <img src={Edit} alt="edit" className="h-5 " />
                                                         </summary>
                                                         <div className="flex justify-end mt-2">
-                                                            <ul className="dropdown-content bg-white text-black text-center z-10 p-4 rounded-lg w-64 absolute space-y-4">
+                                                            <ul className="dropdown-content bg-white text-black text-center z-10 p-4 rounded-lg w-50 absolute space-y-4">
                                                                 <li>
-                                                                    <button className="btn bg-transparent text-black cursor-pointer hover:bg-sky-500" onClick={() => document.getElementById('edit').showModal()}>Edit detail
+                                                                    <button className="btn bg-transparent text-black cursor-pointer hover:bg-sky-500" onClick={() => document.getElementById('edit').showModal()}>
+                                                                        Edit detail
                                                                     </button>
                                                                 </li>
                                                                 <hr />
                                                                 <li>
-                                                                    <button className="btn bg-transparent text-black cursor-pointer hover:bg-sky-500" onClick={() => document.getElementById('change').showModal()}>Change to live band
+                                                                    <button className="btn bg-transparent text-black cursor-pointer hover:bg-sky-500" onClick={() => document.getElementById('change').showModal()}>
+                                                                        Change to live band
                                                                     </button>
                                                                 </li>
                                                             </ul>
@@ -166,8 +170,18 @@ const Reservation = () => {
                                                             <form method="dialog">
                                                                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                                             </form>
-                                                            <h3 className="font-bold text-lg">Edit detail</h3>
-
+                                                            <h3 className="font-bold text-2xl">Edit detail</h3>
+                                                            <p>dd/mm/yyyy</p>
+                                                            <div className="mt-8 text-center">
+                                                                <label className="text-lg">Price</label>
+                                                                <div className="flex gap-2 justify-center mt-2">
+                                                                    <input type="text" placeholder="499" className="w-1/4" />
+                                                                    <p>฿</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex justify-center mt-8">
+                                                                <button className="bg-sky-500 px-4 py-1 rounded-full hover:scale-110 duration-200 cursor-pointer">Confirm</button>
+                                                            </div>
                                                         </div>
                                                     </dialog>
 
@@ -176,8 +190,23 @@ const Reservation = () => {
                                                             <form method="dialog">
                                                                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                                             </form>
-                                                            <h3 className="font-bold text-lg">Hello!</h3>
-                                                            <p className="py-4">Press ESC key or click on ✕ button to close</p>
+                                                            <h3 className="font-bold text-2xl">Change to live band</h3>
+                                                            <p>dd/mm/yyyy</p>
+                                                            <div className="mt-8 text-center space-y-6">
+                                                                <label className="text-lg">Price</label>
+                                                                <div className="flex gap-2 justify-center mt-2">
+                                                                    <input type="text" placeholder="499" className="w-1/4" />
+                                                                    <p>฿</p>
+                                                                </div>
+
+                                                                <label className="text-lg">Picture</label>
+                                                                <div className="flex justify-center mt-2">
+                                                                    <input type="file" accept="image" className="w-1/3" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex justify-center mt-8">
+                                                                <button className="bg-sky-500 px-4 py-1 rounded-full hover:scale-110 duration-200 cursor-pointer">Confirm</button>
+                                                            </div>
                                                         </div>
                                                     </dialog>
                                                 </div>
@@ -233,17 +262,125 @@ const Reservation = () => {
                             <img src={Music} alt="icon" className="h-12" />
                         </div>
 
+                        {/* admin add band------------------------ */}
+                        <div className="mt-8">
+                            <details className="text-center">
+                                <summary className="btn bg-transparent border-none shadow-none">
+                                    <button className="btn bg-white text-lg text-sky-500 cursor-pointer" onClick={() => document.getElementById('add').showModal()}>
+                                        Add band
+                                    </button>
+                                </summary>
+                            </details>
+
+                            <dialog id="add" className="modal">
+                                <div className="modal-box bg-white text-black">
+                                    <form method="dialog">
+                                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                    </form>
+                                    <h3 className="font-bold text-2xl">Add band</h3>
+                                    <div className="mt-8 text-center space-y-6">
+                                        <label className="text-lg">Date</label>
+                                        <div className="flex gap-2 justify-center mt-2">
+                                            <input type="text" placeholder="dd/mm/yyyy" className="w-1/4" />
+
+                                        </div>
+
+                                        <label className="text-lg">Price</label>
+                                        <div className="flex gap-2 justify-center mt-2">
+                                            <input type="text" placeholder="499" className="w-1/4" />
+                                            <p>฿</p>
+                                        </div>
+
+                                        <label className="text-lg">Picture</label>
+                                        <div className="flex justify-center mt-2">
+                                            <input type="file" accept="image" className="w-1/3" />
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center mt-8">
+                                        <button className="bg-sky-500 px-4 py-1 rounded-full hover:scale-110 duration-200 cursor-pointer">Confirm</button>
+                                    </div>
+                                </div>
+                            </dialog>
+                        </div>
+                        {/* admin add band------------------------ */}
+
                         <div className="lg:flex flex-wrap">
                             <div className="mt-16 lg:w-1/2 p-4">
                                 <div className="flex justify-start items-center gap-4 w-full">
                                     <h3 className="text-xl font-bold tracking-wider">14 April 2025</h3>
                                     <p className="text-lg tracking-wider">(3200฿ / 1 customer)</p>
                                 </div>
-                                <div className="mt-4">
+                                <div className="mt-4 relative overflow-visible">
+
+                                    {/* admin edit, del button--------- */}
+                                    <div className="absolute -top-0 -right-1">
+                                        <div className="flex">
+                                            <details className="">
+                                                <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
+                                                    <button className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all" onClick={() => document.getElementById('editBand').showModal()}>
+                                                        <img src={Edit} alt="edit icon" className="h-6 bg-white" />
+                                                    </button>
+                                                </summary>
+                                            </details>
+                                            <details className="">
+                                                <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
+                                                    <button className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all" onClick={() => document.getElementById('delBand').showModal()}>
+                                                        <img src={Del} alt="del icon" className="h-6" />
+                                                    </button>
+                                                </summary>
+                                            </details>
+                                        </div>
+                                    </div>
+                                    {/* admin edit, del button--------- */}
+
                                     <img src={Band1} alt="img" className="w-full rounded-xl shadow-black shadow-md" />
                                 </div>
                             </div>
 
+                            {/* admin edit, del popup--------- */}
+                            <div className="">
+                                <dialog id="editBand" className="modal">
+                                    <div className="modal-box bg-white text-black">
+                                        <form method="dialog">
+                                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                        </form>
+                                        <h3 className="font-bold text-2xl">Edit band</h3>
+                                        <p>dd/mm/yyyy</p>
+                                        <div className="mt-8 text-center space-y-6">
+                                            <label className="text-lg">Price</label>
+                                            <div className="flex gap-2 justify-center mt-2">
+                                                <input type="text" placeholder="499" className="w-1/4" />
+                                                <p>฿</p>
+                                            </div>
+
+                                            <label className="text-lg">Picture</label>
+                                            <div className="flex justify-center mt-2">
+                                                <input type="file" accept="image" className="w-1/3" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center mt-8">
+                                            <button className="bg-sky-500 px-4 py-1 rounded-full hover:scale-110 duration-200 cursor-pointer">Confirm</button>
+                                        </div>
+                                    </div>
+                                </dialog>
+
+                                <dialog id="delBand" className="modal">
+                                    <div className="modal-box bg-white text-black">
+                                        <form method="dialog">
+                                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                        </form>
+                                        <h3 className="font-bold text-2xl">Remove band</h3>
+                                        <p>dd/mm/yyyy</p>
+                                        <div className="mt-8 text-center">
+                                            <p className="text-lg font-semibold">Are you sure you want to remove this band?</p>
+                                        </div>
+                                        <div className="flex justify-center mt-12">
+                                            <button className="bg-red-500 text-white px-4 py-1 rounded-full hover:scale-110 duration-200 cursor-pointer">Confirm</button>
+                                        </div>
+                                    </div>
+                                </dialog>
+                            </div>
+                            {/* admin edit, del popup--------- */}
 
                         </div>
                     </div>
