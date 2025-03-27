@@ -87,10 +87,18 @@ function Nav() {
                     <li><Link to="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Home</Link></li>
                     <li><Link to="/menu" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Menu</Link></li>
                     <li><Link to="/reservation" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Reservation</Link></li>
-                    {isLoggedIn && ( // เงื่อนไขที่ตรวจสอบสถานะการล็อกอิน
+                    
+                    {/* admin, user history ---------- */}
+                    {isLoggedIn && (
                         <li><Link to="/history" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link></li>
                     )}
-                    <li><a href="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a></li>
+                    <li><Link to="/reserveHistory" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">adHistory</Link></li>
+                    {/* ---------- */}
+
+                    {/* contact us, user database ---------- */}
+                    <li className=""><a href="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a></li>
+                    <li><Link to="/userInfo" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">User</Link></li>
+                    {/* ---------- */}
                 </ul>
             </div>
 

@@ -232,7 +232,9 @@ const Reservation = () => {
                                                             hover:border-dashed transition-all duration-250 hover:scale-110 transform"
                                                             onClick={() => handleReserve(day.date)}
                                                         >
-                                                            <span className="text-sm cursor-pointer">RESERVE</span>
+                                                            {/* admin viewing------------- */}
+                                                            <span className="text-sm cursor-pointer hidden">RESERVE</span>
+                                                            <span className="text-sm cursor-pointer">View</span>
                                                         </div>
                                                     ) : (
                                                         <div className="bg-gray-500 px-4 py-1 mt-6 border-1 border-gray-500 rounded-full opacity-50 cursor-not-allowed">

@@ -13,6 +13,8 @@ import Profile from './pages/client/profile.jsx'
 import Admin from './pages/roleSystem/Admin'
 import Staff from './pages/roleSystem/Staff'
 import Promo from './pages/roleSystem/Promo'
+import UserInfo from './pages/admin/userInfo.jsx'
+import ReserveHistory from './pages/admin/reserveHistory.jsx'
 
 // menu
 import Menu from './pages/client/Menu/menu.jsx'
@@ -40,6 +42,8 @@ function App() {
         <Route path="/Admin" element={<Admin />} />
         <Route path="/Staff" element={<Staff />} />
         <Route path="/Promo" element={<Promo />} />
+        <Route path="/userInfo" element={<UserInfo />} />
+        <Route path="/reserveHistory" element={<ReserveHistory />} />
 
         {/* menu */}
         <Route path="/menu" element={<Menu />} />
