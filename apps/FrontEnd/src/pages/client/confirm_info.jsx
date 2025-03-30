@@ -125,9 +125,6 @@ function ConfirmInfo() {
         }
     };
     
-    
-    
-
     return (
         <>
             <Navbar />
@@ -187,6 +184,7 @@ function ConfirmInfo() {
                             value={seats}
                             onChange={(e) => setSeats(parseInt(e.target.value))}
                         />
+                        <p>499฿ / 1 Customer</p>
                     </div>
 
                     {/* ช่องติ๊ก */}
