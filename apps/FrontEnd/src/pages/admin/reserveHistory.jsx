@@ -3,11 +3,12 @@ import { useLocation } from "react-router-dom";
 import { ref, get } from 'firebase/database';
 import { dbRealtime } from "../../firebaseConfig";
 import Navbar from '../../component/nav';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import './admin.css';
 import moment from 'moment';
+import { FaCheck, FaTimes } from 'react-icons/fa'; // สำหรับใช้ไอคอนติ๊กถูกและกากบาท
 
 function ReserveHistory() {
-    const itemsPerPage = 7;
     const [currentPage, setCurrentPage] = useState(1);
     const [reservations, setReservations] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -19,6 +20,8 @@ function ReserveHistory() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const selectedDateFromURL = queryParams.get('selectedDate');
+    const [userRole, setUserRole] = useState("");
+    const [confirmedReservations, setConfirmedReservations] = useState([]); // เก็บรายการที่ติ๊กถูก
 
     const fetchData = async (selectedDate) => {
         setIsLoading(true);
@@ -28,7 +31,6 @@ function ReserveHistory() {
             const data = snapshot.val();
             let reservationsList = [];
             let userFetchPromises = [];
-            let queueCount = 1;
 
             Object.keys(data).forEach((date) => {
                 if (date === selectedDate) {
@@ -42,10 +44,8 @@ function ReserveHistory() {
                                 customerID: reservation.customerID,
                                 seat: reservation.seat,
                                 totalPrice: reservation.totalPrice,
-                                queue: queueCount,
+                                queue: reservation.queue, // ✅ ดึง queue จาก database จริง
                             });
-                            queueCount++;
-
                             const userRef = ref(dbRealtime, `users/${reservation.customerID}`);
                             userFetchPromises.push(get(userRef));
                         }
@@ -75,14 +75,24 @@ function ReserveHistory() {
 
     const getDateRange = () => {
         const today = moment();
-        const startDate = today.clone().subtract(7, 'days');
-        const endDate = today.clone().add(7, 'days');
-        setDisplayDate(`${startDate.format("D MMM YYYY")} - ${endDate.format("D MMM YYYY")}`);
-
+        let startDate, endDate;
         let dateBtns = [];
-        for (let i = -7; i <= 7; i++) {
-            dateBtns.push(today.clone().add(i, 'days').format("D MMM"));
+
+        if (userRole === "admin") {
+            startDate = today.clone().subtract(7, 'days');
+            endDate = today.clone().add(7, 'days');
+            for (let i = -7; i <= 7; i++) {
+                dateBtns.push(today.clone().add(i, 'days').format("D MMM"));
+            }
+        } else if (userRole === "staff") {
+            startDate = today.clone();
+            endDate = today.clone().add(7, 'days');
+            for (let i = 0; i <= 7; i++) {
+                dateBtns.push(today.clone().add(i, 'days').format("D MMM"));
+            }
         }
+
+        setDisplayDate(`${startDate.format("D MMM YYYY")} - ${endDate.format("D MMM YYYY")}`);
         setDateButtons(dateBtns);
         setMinDate(startDate.format("D MMM YYYY"));
         setMaxDate(endDate.format("D MMM YYYY"));
@@ -109,6 +119,32 @@ function ReserveHistory() {
         }
     };
 
+    const handleConfirm = (reservationID) => {
+        // Toggle the confirmed reservation by checking if it already exists
+        if (confirmedReservations.includes(reservationID)) {
+            // If it's already confirmed, remove it (set as not confirmed)
+            setConfirmedReservations(prevState => prevState.filter(id => id !== reservationID));
+        } else {
+            // If it's not confirmed, add it to the confirmed reservations list
+            setConfirmedReservations(prevState => [...prevState, reservationID]);
+        }
+    };
+
+    useEffect(() => {
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            if (currentUser) {
+                const userRef = ref(dbRealtime, `users/${currentUser.uid}`);
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    setUserRole(snapshot.val().role);
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     useEffect(() => {
         if (selectedDateFromURL) {
             setSelectedDate(selectedDateFromURL);
@@ -118,9 +154,11 @@ function ReserveHistory() {
     }, [selectedDateFromURL]);
 
     useEffect(() => {
-        fetchData(selectedDate);
-        getDateRange();
-    }, [selectedDate]);
+        if (userRole) {
+            getDateRange();
+            fetchData(selectedDate);
+        }
+    }, [selectedDate, userRole]);
 
     return (
         <>
@@ -142,8 +180,9 @@ function ReserveHistory() {
                                     <th>Queue</th>
                                     <th>Customer</th>
                                     <th>Seat</th>
-                                    <th>Price</th>
                                     <th>Phone number</th>
+                                    {userRole === "admin" && <th>Price</th>} {/* เพิ่ม Price เฉพาะ admin */}
+                                    {userRole === "staff" && <th>Confirmed</th>} {/* เพิ่ม column เฉพาะ staff */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -159,8 +198,21 @@ function ReserveHistory() {
                                                 <td>{reservation.queue}</td>
                                                 <td>{reservation.user.firstname} {reservation.user.lastname}</td>
                                                 <td>{reservation.seat}</td>
-                                                <td>{reservation.totalPrice}฿</td>
                                                 <td>{reservation.user.phone}</td>
+                                                {userRole === "admin" && (
+                                                    <td>{reservation.totalPrice}฿</td> // ปรับให้ admin เห็น
+                                                )}
+                                                {userRole === "staff" && (
+                                                    <td>
+                                                         <button 
+                                                            className={`rounded-full p-2 hover:scale-110 transition-all duration-200 
+                                                            ${confirmedReservations.includes(reservation.reservationID) ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}
+                                                            onClick={() => handleConfirm(reservation.reservationID)}  // เพิ่มฟังก์ชันติ๊กถูก
+                                                        >
+                                                            {confirmedReservations.includes(reservation.reservationID) ? <FaTimes /> : <FaCheck />} {/* ไอคอนติ๊กถูกและกากบาท */}
+                                                        </button>
+                                                    </td>
+                                                )}
                                             </tr>
                                         ))
                                     ) : (
@@ -173,18 +225,18 @@ function ReserveHistory() {
                         </table>
                     </div>
 
-                    <div className="mt-5 flex items-center justify-center">
+                    <div className="mt-5 flex items-center justify-center gap-8">
                         <button
                             onClick={() => handleNextPrevious('previous')}
                             disabled={moment(selectedDate, "D MMM YYYY").isSameOrBefore(moment(minDate, "D MMM YYYY"))}
-                            className="px-4 py-2 bg-blue-500 rounded text-white"
+                            className="px-4 py-2 bg-blue-500 rounded text-white hover:bg-blue-600 disabled:opacity-50"
                         >
                             Previous
                         </button>
                         <button
                             onClick={() => handleNextPrevious('next')}
                             disabled={moment(selectedDate, "D MMM YYYY").isSameOrAfter(moment(maxDate, "D MMM YYYY"))}
-                            className="px-4 py-2 bg-blue-500 rounded text-white"
+                            className="px-4 py-2 bg-blue-500 rounded text-white hover:bg-blue-600 disabled:opacity-50"
                         >
                             Next
                         </button>

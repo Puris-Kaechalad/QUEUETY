@@ -101,9 +101,10 @@
 }
 
 .card {
-    background-color: #783939;
+    background-color: transparent;  /* เปลี่ยนเป็น transparent เพื่อไม่ให้ทับซ้อนกับ image */
     box-shadow: 3px 5px 14px 10px rgba(0, 0, 0, 0.16);
 }
+
 /* -------------------- end menu */
 
 /* ------------------- reservation */

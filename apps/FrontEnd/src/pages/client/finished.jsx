@@ -4,7 +4,6 @@ import { ref, get, remove } from 'firebase/database';
 import { dbRealtime } from "../../firebaseConfig";
 import Navbar from '../../component/nav';
 import './client.css';
-import Band1 from '../../assets/cocktail.jpg';
 
 function Finished() {
     const location = useLocation();
@@ -15,6 +14,7 @@ function Finished() {
     const [userData, setUserData] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
     const [queueNumber, setQueueNumber] = useState(null);
+    const [imageUrl, setImageUrl] = useState(null); // ✅ เพิ่ม state
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -44,9 +44,15 @@ function Finished() {
                                 reservationDate: dateKey
                             });
                             fetchUserData(queues[queueID].customerID);
-
-                            // ✅ ดึงหมายเลขคิวจริงจากข้อมูล
                             setQueueNumber(queues[queueID].queue);
+
+                            // ✅ ดึง image ของวันนั้น
+                            const imageRef = ref(dbRealtime, `reservations/${dateKey}/imageUrl`);
+                            const imageSnap = await get(imageRef);
+                            if (imageSnap.exists()) {
+                                setImageUrl(imageSnap.val());
+                            }
+
                             return;
                         }
                     }
@@ -96,9 +102,9 @@ function Finished() {
                     <h2 className="text-center text-4xl text-yellow-500 font-bold tracking-widest">Reservation</h2>
 
                     <div className="flex justify-center">
-                        {reservationData && reservationData.imageUrl ? (
-                            <img src={reservationData.imageUrl} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
-                        ) : null}
+                        {imageUrl && (
+                            <img src={imageUrl} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
+                        )}
                     </div>
 
                     <div className="text-md tracking-wider space-y-4">

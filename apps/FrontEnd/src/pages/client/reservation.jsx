@@ -33,12 +33,18 @@ const Reservation = () => {
     const [selectedConcert, setSelectedConcert] = useState(null); // ใช้สำหรับเก็บคอนเสิร์ตที่เลือก
     const [bandDate, setBandDate] = useState("");  // เก็บวันที่
     const [bandPrice, setBandPrice] = useState("");  // เก็บราคา
+    const [imageUrls, setImageUrls] = useState({});
+    const [isConcertDays, setIsConcertDays] = useState({});
 
-
+    const [reservationDates, setReservationDates] = useState([]);
+   
+    
+    
+    
     useEffect(() => {
-        const fetchData = async () => {
-            if (!selectedDate) return;  // ถ้าไม่มี selectedDate เลย ให้ไม่ทำอะไร
+        if (!selectedDate) return; // ถ้าไม่มี selectedDate ให้ return
 
+        const fetchData = async () => {
             const imageRef = ref(dbRealtime, `reservations/${selectedDate}/imageUrl`);
             const concertRef = ref(dbRealtime, `reservations/${selectedDate}/isConcertDay`);
 
@@ -46,16 +52,60 @@ const Reservation = () => {
             const concertSnapshot = await get(concertRef);
 
             if (imageSnapshot.exists()) {
-                setImageUrl(imageSnapshot.val());  // อัปเดต URL ของรูปภาพ
+                setImageUrl(imageSnapshot.val());
+            } else {
+                console.log("No imageUrl found for this date");
             }
 
             if (concertSnapshot.exists()) {
-                setIsConcertDay(concertSnapshot.val());  // อัปเดตสถานะคอนเสิร์ต
+                setIsConcertDay(concertSnapshot.val());
+            } else {
+                console.log("No isConcertDay found for this date");
             }
         };
 
         fetchData();
-    }, [selectedDate]); // เมื่อ selectedDate เปลี่ยนแปลง จะทำการดึงข้อมูลใหม่
+    }, [selectedDate]); // เมื่อ selectedDate เปลี่ยนแปลง, จะทำการดึงข้อมูลใหม่
+
+    // useEffect สำหรับ 7 วันที่แสดง
+    useEffect(() => {
+        const fetchSevenDaysData = async () => {
+            const updatedDates = [];
+            const updatedImageUrls = {};
+            const updatedIsConcertDays = {};
+
+            // ลูปผ่าน 7 วันที่ต้องการตรวจสอบ
+            for (let m = moment().startOf('day'); m.isBefore(moment().add(7, 'days')); m.add(1, 'days')) {
+                const date = m.format("D MMM YYYY");
+                updatedDates.push({ date, remaining: 50 }); // เพิ่มวันใน 7 วันที่แสดง
+
+                const imageRef = ref(dbRealtime, `reservations/${date}/imageUrl`);
+                const concertRef = ref(dbRealtime, `reservations/${date}/isConcertDay`);
+
+                const imageSnapshot = await get(imageRef);
+                const concertSnapshot = await get(concertRef);
+
+                if (imageSnapshot.exists()) {
+                    updatedImageUrls[date] = imageSnapshot.val();
+                } else {
+                    updatedImageUrls[date] = null;
+                }
+
+                if (concertSnapshot.exists()) {
+                    updatedIsConcertDays[date] = concertSnapshot.val();
+                } else {
+                    updatedIsConcertDays[date] = false;
+                }
+            }
+
+            // อัปเดตข้อมูล state
+            setReservationDates(updatedDates);
+            setImageUrls(updatedImageUrls);
+            setIsConcertDays(updatedIsConcertDays);
+        };
+
+        fetchSevenDaysData();
+    }, []); // ทำงานครั้งเดียวเมื่อหน้าโหลด
 
 
     useEffect(() => {
@@ -142,7 +192,7 @@ const Reservation = () => {
                     const { imageUrl, price, isConcertDay } = data[date];
 
                     // ตรวจสอบว่าเป็นวันคอนเสิร์ตหรือไม่ (ถ้าไม่มี key isConcertDay ให้ถือว่าเป็น false)
-                    const isConcert = isConcertDay === false; // ถ้า isConcertDay เป็น false หรือไม่มี, ถือว่าเป็นวันคอนเสิร์ต
+                    const isConcert = isConcertDay === true; // ถ้า isConcertDay เป็น false หรือไม่มี, ถือว่าเป็นวันคอนเสิร์ต
 
                     // ถ้า isConcertDay เป็น false หรือไม่มีเลย, ถือว่าเป็นวันคอนเสิร์ต
                     if (isConcert) {
@@ -187,57 +237,49 @@ const Reservation = () => {
 
     // Confirm action ใน Edit Dialog
     const handleEditConfirm = async () => {
-        const formattedDate = moment(selectedConcert.date, "D MMM YYYY").format("D MMM YYYY");
-        setSelectedDate(formattedDate);  // ตั้งค่าหรือจัดเก็บวันที่ใหม่
-
         const priceRef = ref(dbRealtime, `reservations/${selectedDate}/price`);
         const concertRef = ref(dbRealtime, `reservations/${selectedDate}/isConcertDay`);
-
-
-        // บันทึกราคา, รูปภาพ และสถานะคอนเสิร์ตลงใน Firebase
+        const imageRef = ref(dbRealtime, `reservations/${selectedDate}/imageUrl`);
+        const liveBandRef = ref(dbRealtime, `liveBands/${selectedDate}`);
+    
+        await set(liveBandRef, {
+            date: selectedDate,
+            price: price,
+            imageUrl: imageUrl,
+        });
         await set(priceRef, price);
-        await set(concertRef, isConcertDay);
-
-        document.getElementById('edit').close(); // ปิด dialog หลังบันทึก
+        await set(concertRef, true); // เปลี่ยนเป็น live band
+        await set(imageRef, imageUrl); // บันทึก url ตอน confirm
+    
+        document.getElementById('change').close();
+        alert("Live band updated successfully!");
     };
+    
 
     // ฟังก์ชันอัปโหลดภาพไปยัง Cloudinary และบันทึก URL ลงใน Firebase
     const handleImageChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
             const formData = new FormData();
-            formData.append("image", file);  // เพิ่มไฟล์ที่เลือก
-
+            formData.append("image", file);
+    
             try {
-                // ส่ง POST request ไปยัง ImgBB API
                 const response = await axios.post('https://api.imgbb.com/1/upload?key=d11593c766f5add0af53144a89c145fa', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'  // ส่งเป็นแบบ multipart/form-data
-                    }
+                    headers: { 'Content-Type': 'multipart/form-data' }
                 });
-
-                // ดึง URL ของรูปภาพที่อัพโหลด
+    
                 const uploadedImageUrl = response.data.data.url;
-                setImageUrl(uploadedImageUrl);  // เก็บ URL ของภาพที่ได้จาก ImgBB
-
-                // บันทึก URL ลงใน Firebase Realtime Database
-                const imageRef = ref(dbRealtime, `reservations/${selectedDate}/imageUrl`);
-                await set(imageRef, uploadedImageUrl);
-
-                console.log("Uploaded Image URL:", uploadedImageUrl);  // ตรวจสอบ URL ที่ได้จาก ImgBB
-
-                // ปิด Dialog หลังจากการอัพโหลดเสร็จสิ้น
-                document.getElementById('change').close();  // ปิด Dialog "Change to live band"
+                setImageUrl(uploadedImageUrl); // เก็บไว้ก่อน ยังไม่บันทึกลง Firebase
                 alert("Image uploaded successfully!");
-
             } catch (error) {
-                console.error("Error uploading image:", error);  // ตรวจสอบ error
+                console.error("Error uploading image:", error);
                 alert("Error uploading image. Please check the console for details.");
             }
         } else {
             alert("No file selected");
         }
     };
+    
 
     // ฟังก์ชันลบคอนเสิร์ตจาก Firebase
     const handleDeleteConcert = async () => {
@@ -282,12 +324,37 @@ const Reservation = () => {
         await set(concertRef, {
             price: price,
             imageUrl: imageUrl,
-            isConcertDay: isConcertDay,
+            isConcertDay: true,
         });
-
+        const liveBandRef = ref(dbRealtime, `liveBands/${formattedDate}`);
+        await set(liveBandRef, {
+            date: formattedDate,
+            price: price,
+            imageUrl: imageUrl,
+        });
         console.log("Saved concert on:", formattedDate); // ตรวจสอบวันที่ที่บันทึกใน Firebase
         document.getElementById('add').close(); // ปิด Dialog
     };
+    useEffect(() => {
+        const fetchConcertData = async () => {
+            const bandRef = ref(dbRealtime, 'liveBands');
+            const snapshot = await get(bandRef);
+
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const concertDays = Object.keys(data).map((key) => ({
+                    date: data[key].date,
+                    price: data[key].price,
+                    imageUrl: data[key].imageUrl,
+                }));
+
+                setConcertData(concertDays);
+            }
+        };
+
+        fetchConcertData();
+    }, []);
+
 
     const handleClearFakeQueue = async (date) => {
         const reservationRef = ref(dbRealtime, `reservations/${date}`);
@@ -379,13 +446,22 @@ const Reservation = () => {
                                     ) : (
                                         dates.map((day, index) => (
                                             <div
-                                                className="day tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible"
-                                                style={{
-                                                    backgroundImage: isConcertDay
-                                                        ? `url(${imageUrl})` // ใช้รูปที่อัปโหลดในกรณีที่เป็นวันคอนเสิร์ต
-                                                        : `url('default-background.jpg')` // ถ้าไม่ใช่ จะใช้ภาพพื้นหลังปกติ
-                                                }}
-                                            >
+                                            key={index}
+                                            className="card tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible"
+                                            style={{
+                                                // เช็คว่า isConcertDay = true หรือไม่ ถ้ามีจะใช้ imageUrl เป็นพื้นหลัง
+                                                backgroundImage: isConcertDays[day.date] && imageUrls[day.date]
+                                                    ? `url(${imageUrls[day.date]})`  // ถ้าวันนี้เป็นวันคอนเสิร์ตและมี imageUrl
+                                                    : 'none',  // ถ้าไม่ใช่คอนเสิร์ตหรือไม่มี imageUrl, จะไม่แสดง backgroundImage
+                                                backgroundColor: !isConcertDays[day.date] || !imageUrls[day.date] ? '#783939' : 'transparent',  // ใช้สีพื้นหลังน้ำตาลถ้าไม่มี imageUrl หรือไม่ใช่คอนเสิร์ต
+                                                minHeight: '200px',  // เพิ่มความสูงขั้นต่ำให้เห็นภาพ
+                                                backgroundSize: 'cover', // ทำให้ภาพขยายเต็มพื้นที่
+                                                backgroundPosition: 'center' // จัดตำแหน่งภาพกลาง
+                                            }}
+                                        >
+                            
+    
+
 
                                                 {/* admin only ----------------------- */}
                                                 {userRole === "admin" && (
