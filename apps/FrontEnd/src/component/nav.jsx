@@ -92,7 +92,7 @@ function Nav() {
                         {/* admin only */}
                     </ul>
                 </div>
-                <a className="text-xl"><img src={Logo} alt="logo" className="h-18" /></a>
+                <Link className="text-xl" to="/"><img src={Logo} alt="logo" className="h-18" /></Link>
             </div>
 
             <div className="navbar-center hidden lg:flex">
