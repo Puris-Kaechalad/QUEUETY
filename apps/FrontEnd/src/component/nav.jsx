@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; // นำเข้า signOut
 import Logo from "../assets/logo.png";
+import { HashLink } from 'react-router-hash-link';
+
 
 function Nav() {
     const [firstname, setFirstname] = useState(null);
@@ -115,8 +117,13 @@ function Nav() {
 
                     {/* contact us */}
                     {userRole !== "admin" && (
-                    <li><a href="#contact-us" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a></li>
-                    )}
+                        <li>
+                            <HashLink smooth to="/#contact-us" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">
+                            Contact us
+                            </HashLink>
+                        </li>
+                        )}
+
                 </ul>
 
             </div>
