@@ -11,13 +11,21 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.8",
+<<<<<<< HEAD
     "axios": "^1.8.4",
+=======
+    "aws-amplify": "^6.14.1",
+    "aws-sdk": "^2.1692.0",
+    "axios": "^1.8.4",
+    "emailjs-com": "^3.2.0",
+>>>>>>> cd344767fb6a95356b9ed47e488d11370a2eda21
     "firebase": "^11.5.0",
     "moment": "^2.30.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.2.0",
+    "react-router-hash-link": "^2.4.3",
     "tailwindcss": "^4.0.8",
     "uuid": "^11.1.0"
   },

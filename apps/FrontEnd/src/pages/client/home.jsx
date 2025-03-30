@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Navbar from '../../component/nav'
 import './client.css'
 import { Link } from "react-router-dom";
@@ -6,12 +6,48 @@ import steakImage from "../../assets/home_background.png";
 import HomeCenter from "../../assets/home_center.jpg";
 import DownArrow from "../../assets/down_arrow.png"
 import Location from "../../assets/location.png"
+import emailjs from 'emailjs-com';
 
-function home() {
+function Home() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const templateParams = {
+      email,
+      message,
+    };
+
+    emailjs
+      .send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      )
+      .then(
+        () => {
+          alert('Message sent successfully!');
+          setEmail('');
+          setMessage('');
+          setLoading(false);
+        },
+        (error) => {
+          alert('Failed to send message. Please try again.');
+          console.error(error);
+          setLoading(false);
+        }
+      );
+  };
 
   return (
     <>
       <Navbar />
+      {/* Section 1 */}
       <section className="lg:flex home-top h-screen justify-between items-center p-16 z-10">
         <div className="grid-rows-2">
           <div className="space-y-16">
@@ -19,8 +55,7 @@ function home() {
               <h1 className="text-5xl font-bold text-yellow-500 text-shadow-black text-shadow-lg">Got plans for tonight's party?</h1>
               <p className="mt-8 text-4xl">Let me help you find a seat!</p>
             </div>
-            <div className="flex space-x-8 ">
-              {/* <Link to="about-us" smooth={true} duration={500} className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110 ">About us</Link> */}
+            <div className="flex space-x-8">
               <a href="#about-us" className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110 ">About us</a>
               <Link to="/reservation" className="flex items-center bg-yellow-600 shadow-black shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">Reserve now</Link>
             </div>
@@ -36,8 +71,9 @@ function home() {
         </div>
       </section>
 
-      <section id="about-us" class="home-center flex justify-between items-center lg:flex">
-        <div className="w-1/2 ml-10 space-y-12  tracking-wider">
+      {/* Section 2 */}
+      <section id="about-us" className="home-center flex justify-between items-center lg:flex">
+        <div className="w-1/2 ml-10 space-y-12 tracking-wider">
           <h1 className="text-4xl font-bold tracking-widest">
             Why QUEUETY?
           </h1>
@@ -45,7 +81,7 @@ function home() {
             Skip the long lines! QUEUETY helps you book your restaurant queue in advance, ensuring a smooth and stress-free dining experience, while listening to live music every night.
           </p>
           <p className="text-md">
-            See you at KMUTNB 1518 Pracharat 1 Road,Wongsawang, Bangsue, Bangkok 10800
+            See you at KMUTNB 1518 Pracharat 1 Road, Wongsawang, Bangsue, Bangkok 10800
           </p>
           <div className="flex items-end gap-2">
             <img src={Location} alt="icon" className="h-6 " />
@@ -53,13 +89,14 @@ function home() {
           </div>
         </div>
 
-        <div className="">
+        <div>
           <img src={HomeCenter} alt="img" className="h-90" />
         </div>
       </section>
 
-      <section id="contact-us" class="home-bottom flex justify-center p-16 mb-0">
-        <div className="w-1/2">
+      {/* Section 3 - Contact Us */}
+      <section id="contact-us" className="home-bottom flex justify-center p-16 mb-0">
+        <form className="w-1/2" onSubmit={handleSubmit}>
           <h2 className="text-4xl font-bold tracking-wider">
             Contact us
           </h2>
@@ -69,24 +106,38 @@ function home() {
           <div className="mt-8">
             <input
               type="email"
-              placeholder="Enter your registered email..."
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email..."
               className="input text-black w-full mt-1 p-2 border rounded-lg bg-gray-100 focus:ring-2 focus:ring-blue-500"
+              required
             />
           </div>
 
           <div className="mt-6">
-            <textarea id="message" rows="4" class="block p-2 w-full text-sm text-black bg-white rounded-lg border focus:ring-2 focus:ring-blue-500" placeholder="Write your thoughts here..."></textarea>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows="4"
+              className="block p-2 w-full text-sm text-black bg-white rounded-lg border focus:ring-2 focus:ring-blue-500"
+              placeholder="Write your message..."
+              required
+            />
           </div>
 
           <div className="flex justify-end mt-4">
-            <button className="bg-yellow-600 shadow-black shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">
-              SUBMIT
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-yellow-600 shadow-black shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110"
+            >
+              {loading ? 'Sending...' : 'SUBMIT'}
             </button>
           </div>
-        </div>
-      </section >
+        </form>
+      </section>
     </>
   )
 }
 
-export default home
+export default Home;
