@@ -7,6 +7,7 @@ import Mark from "../../assets/mark.png";
 import Book from "../../assets/booking.png";
 import Edit from "../../assets/pencil.png";
 import Del from "../../assets/bin.png";
+import Cross from "../../assets/cross.png";
 import Music from "../../assets/music.png";
 import Band1 from '../../assets/cocktail.jpg';
 import { ref, get, set, remove } from 'firebase/database';
@@ -288,35 +289,60 @@ const Reservation = () => {
         document.getElementById('add').close(); // ปิด Dialog
     };
 
-
+    const handleClearFakeQueue = async (date) => {
+        const reservationRef = ref(dbRealtime, `reservations/${date}`);
+        const snapshot = await get(reservationRef);
+    
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const updates = {};
+    
+            Object.keys(data).forEach(key => {
+                if (key.startsWith("testUser")) {
+                    updates[key] = null; // ลบ key นี้
+                }
+            });
+    
+            await set(reservationRef, {
+                ...data,
+                ...updates,
+            });
+    
+            alert(`Cleared fake queue for ${date}`);
+        }
+    };
+    
 
     const handleReserve = async (date) => {
         if (!user) {
             navigate("/login", { state: { from: `/confirm?date=${encodeURIComponent(date)}` } });
             return;
         }
-
+    
         const reservationRef = ref(dbRealtime, 'reservations/' + date);
         const snapshot = await get(reservationRef);
-
+    
         if (snapshot.exists()) {
             const reservations = snapshot.val();
-            const userAlreadyBooked = Object.values(reservations).some(reservation => reservation.customerID === user.uid);
-
-            if (userAlreadyBooked) {
-                setPopupMessage("You have already reserved this day.");
-                setIsPopupVisible(true); // แสดง popup
+            const userReservation = Object.values(reservations).find(
+                (reservation) => reservation.customerID === user.uid
+            );
+    
+            if (userReservation) {
+                // ถ้าเคยจอง → ไปหน้า finished ทันที
+                navigate(`/finished?reservationID=${userReservation.reservationID}`);
                 return;
             }
         }
-
+    
         // ดึงราคาของวันที่เลือกจาก Firebase
         const priceRef = ref(dbRealtime, `reservations/${date}/price`);
         const priceSnapshot = await get(priceRef);
-        const selectedPrice = priceSnapshot.exists() ? priceSnapshot.val() : 499; // ใช้ราคา 499 ถ้าไม่มีการตั้งราคาใหม่
-
+        const selectedPrice = priceSnapshot.exists() ? priceSnapshot.val() : 499;
+    
         navigate(`/confirm?date=${encodeURIComponent(date)}&price=${selectedPrice}`);
     };
+    
     // ฟังก์ชันสำหรับการดูข้อมูลการจองในวันนั้น
     const handleViewReservation = (date) => {
         navigate(`/reserveHistory?selectedDate=${encodeURIComponent(date)}`);  // ส่ง selectedDate ไปที่ ReserveHistory
@@ -362,6 +388,73 @@ const Reservation = () => {
                                             >
 
                                                 {/* admin only ----------------------- */}
+                                                {userRole === "admin" && (
+    <div className="mt-12 text-center space-y-4">
+        <button
+            className="bg-yellow-500 text-white px-4 py-2 rounded-full hover:scale-110 duration-200"
+            onClick={async () => {
+                const targetDate = dates[0].date; // เติมวันแรก
+                const reservationRef = ref(dbRealtime, `reservations/${targetDate}`);
+                const snapshot = await get(reservationRef);
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    let count = 0;
+                    Object.keys(data).forEach(key => {
+                        if (data[key].customerID) count++;
+                    });
+
+                    const updates = {};
+                    for (let i = count; i < 50; i++) {
+                        updates[`testUser${i}`] = { customerID: `test-user-${i}` };
+                    }
+
+                    await set(reservationRef, {
+                        ...data,
+                        ...updates,
+                    });
+
+                    alert(`🎯 เติม queue ให้เต็มแล้วสำหรับวันที่ ${targetDate}`);
+                }
+            }}
+        >
+            ➕ Fill Fake Queue
+        </button>
+
+        <button
+            className="bg-red-600 text-white px-4 py-2 rounded-full hover:scale-110 duration-200 ml-4"
+            onClick={async () => {
+                const targetDate = dates[0].date;
+                const reservationRef = ref(dbRealtime, `reservations/${targetDate}`);
+                const snapshot = await get(reservationRef);
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const updates = {};
+
+                    Object.keys(data).forEach(key => {
+                        if (key.startsWith("testUser")) {
+                            updates[key] = null;
+                        }
+                    });
+
+                    await set(ref(dbRealtime, `reservations/${targetDate}`), {
+                        ...data,
+                        ...updates,
+                    });
+
+                    alert(`🗑️ Cleared fake queue for ${targetDate}`);
+                }
+            }}
+        >
+            🗑️ Clear Fake Queue
+        </button>
+    </div>
+)}
+
+
+                                                
+                                                
                                                 {userRole === "admin" && (
                                                     <div className="">
                                                         <details className="absolute -top-2 -right-0">
@@ -467,11 +560,16 @@ const Reservation = () => {
                                                 <div key={index} className="grid place-items-center space-y-4">
                                                     <h3 className="text-2xl font-bold">{day.date}</h3>
                                                     <div className="flex justify-center gap-2 tracking-wider">
-                                                        <img src={Mark} alt="icon" className="h-6" />
+                                                        <img
+                                                            src={day.remaining > 0 ? Mark : Cross} // ✅ ถ้าว่างใช้ Mark, ถ้าเต็มใช้ Del (ไอคอนถังขยะที่คุณ import ไว้)
+                                                            alt="icon"
+                                                            className="h-6"
+                                                        />
                                                         <p className={day.remaining > 0 ? "text-green-500" : "text-red-500"}>
                                                             {day.remaining > 0 ? "Available" : "Full"}
                                                         </p>
                                                     </div>
+
                                                     <div className="text-center tracking-wider">
                                                         <p className="text-sm">remaining</p>
                                                         <h2 className="text-4xl font-semibold">{day.remaining}</h2>
@@ -497,7 +595,7 @@ const Reservation = () => {
                                                         </div>
                                                     ) : (
                                                         <div className="bg-gray-500 px-4 py-1 mt-6 border-1 border-gray-500 rounded-full opacity-50 cursor-not-allowed">
-                                                            <span className="text-sm">{day.remaining > 0 ? "Full" : "Not available"}</span>
+                                                            <span className="text-sm">{day.remaining > 0 ? "Full" : "Unavailable"}</span>
                                                         </div>
                                                     )}
                                                 </div>

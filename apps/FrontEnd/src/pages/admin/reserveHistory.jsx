@@ -1,48 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
-import { ref, get } from 'firebase/database';  // ใช้ firebase เพื่อดึงข้อมูลจาก Realtime Database
-import { dbRealtime } from "../../firebaseConfig";  // เชื่อมกับ Firebase Realtime Database
+import { ref, get } from 'firebase/database';
+import { dbRealtime } from "../../firebaseConfig";
 import Navbar from '../../component/nav';
 import './admin.css';
-import moment from 'moment';  // ใช้ moment.js สำหรับการจัดการวันที่
+import moment from 'moment';
 
 function ReserveHistory() {
-    const itemsPerPage = 7;  // จำนวนวันที่จะแสดงต่อหน้า (7 วัน)
+    const itemsPerPage = 7;
     const [currentPage, setCurrentPage] = useState(1);
-    const [reservations, setReservations] = useState([]); // เก็บข้อมูลการจอง
-    const [userData, setUserData] = useState({}); // เก็บข้อมูลผู้ใช้ (First Name, Last Name, Phone)
+    const [reservations, setReservations] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [displayDate, setDisplayDate] = useState(null); // เก็บวันที่ที่จะแสดง
-    const [dateButtons, setDateButtons] = useState([]); // เก็บวันที่ที่จะใช้ในปุ่ม
-    const [selectedDate, setSelectedDate] = useState(moment().format("D MMM YYYY")); // เก็บวันที่ที่เลือกให้เป็นวันที่ปัจจุบัน
-    const [minDate, setMinDate] = useState(null); // วันที่เริ่มต้น
-    const [maxDate, setMaxDate] = useState(null); // วันที่สุดท้าย
+    const [displayDate, setDisplayDate] = useState(null);
+    const [dateButtons, setDateButtons] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(moment().format("D MMM YYYY"));
+    const [minDate, setMinDate] = useState(null);
+    const [maxDate, setMaxDate] = useState(null);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const selectedDateFromURL = queryParams.get('selectedDate');
 
-    // ฟังก์ชันดึงข้อมูลการจองจาก Firebase
     const fetchData = async (selectedDate) => {
         setIsLoading(true);
-        const reservationRef = ref(dbRealtime, 'reservations'); // ดึงข้อมูลจาก 'reservations'
-
-        // ดึงข้อมูลจาก Firebase
+        const reservationRef = ref(dbRealtime, 'reservations');
         const snapshot = await get(reservationRef);
         if (snapshot.exists()) {
-            const data = snapshot.val(); // ดึงข้อมูลทั้งหมด
+            const data = snapshot.val();
             let reservationsList = [];
-            let queueCount = 1;  // เริ่มต้นคิวที่ 1 สำหรับวันนั้น
+            let userFetchPromises = [];
+            let queueCount = 1;
 
-            // ฟอร์แมทข้อมูลจาก Firebase และเพิ่มวัน
             Object.keys(data).forEach((date) => {
-                // ตรวจสอบว่า date ตรงกับ selectedDate หรือไม่
                 if (date === selectedDate) {
                     const dateReservations = data[date];
-
                     Object.keys(dateReservations).forEach((reservationID) => {
                         const reservation = dateReservations[reservationID];
-
-                        // ตรวจสอบว่ามีการจองจริงหรือไม่ โดยตรวจสอบ reservationID, customerID, seat และ totalPrice
                         if (reservation.reservationID && reservation.customerID && reservation.seat && reservation.totalPrice !== 'No price') {
                             reservationsList.push({
                                 reservationDate: date,
@@ -50,66 +42,58 @@ function ReserveHistory() {
                                 customerID: reservation.customerID,
                                 seat: reservation.seat,
                                 totalPrice: reservation.totalPrice,
-                                phone: reservation.phone || 'No phone',  // กรณีไม่มีหมายเลขโทรศัพท์
-                                queue: queueCount, // คำนวณหมายเลขคิวที่เพิ่มขึ้น
+                                queue: queueCount,
                             });
-                            queueCount++; // เพิ่มคิวสำหรับการจองถัดไป
+                            queueCount++;
+
+                            const userRef = ref(dbRealtime, `users/${reservation.customerID}`);
+                            userFetchPromises.push(get(userRef));
                         }
                     });
                 }
             });
 
-            // ตั้งจำนวนการจองทั้งหมดเพื่อใช้ในการคำนวณจำนวนหน้า
-            setReservations(reservationsList); // เก็บข้อมูลลงใน state
+            const userSnapshots = await Promise.all(userFetchPromises);
+            const userDataMap = {};
+            userSnapshots.forEach((snap, index) => {
+                if (snap.exists()) {
+                    userDataMap[reservationsList[index].customerID] = snap.val();
+                }
+            });
+
+            reservationsList = reservationsList.map((res) => ({
+                ...res,
+                user: userDataMap[res.customerID] || { firstname: "Unknown", lastname: "", phone: "No phone" }
+            }));
+
+            setReservations(reservationsList);
         } else {
             console.log('No reservations found.');
         }
         setIsLoading(false);
     };
 
-    // ฟังก์ชันเพื่อดึงข้อมูลผู้ใช้จาก customerID
-    const fetchUserData = async (customerID) => {
-        const userRef = ref(dbRealtime, `users/${customerID}`);
-        const snapshot = await get(userRef);
-        if (snapshot.exists()) {
-            setUserData(snapshot.val());
-        } else {
-            console.log("User data not found for customerID:", customerID);
+    const getDateRange = () => {
+        const today = moment();
+        const startDate = today.clone().subtract(7, 'days');
+        const endDate = today.clone().add(7, 'days');
+        setDisplayDate(`${startDate.format("D MMM YYYY")} - ${endDate.format("D MMM YYYY")}`);
+
+        let dateBtns = [];
+        for (let i = -7; i <= 7; i++) {
+            dateBtns.push(today.clone().add(i, 'days').format("D MMM"));
         }
+        setDateButtons(dateBtns);
+        setMinDate(startDate.format("D MMM YYYY"));
+        setMaxDate(endDate.format("D MMM YYYY"));
     };
 
-    // ฟังก์ชันเพื่อจัดการแสดงวันที่ปัจจุบันและ 7 วันถัดไป
-    // ฟังก์ชันเพื่อจัดการแสดงวันที่ปัจจุบันและ 7 วันถัดไป
-const getDateRange = () => {
-    const today = moment();  // วันที่ปัจจุบัน
-    const startDate = today.clone().subtract(7, 'days'); // 7 วันที่ผ่านมา
-    const endDate = today.clone().add(7, 'days'); // 7 วันถัดไป
-
-    // ตั้งค่า displayDate เป็น 14 วัน (7 วันก่อนหน้า + 7 วันหลัง)
-    setDisplayDate(`${startDate.format("D MMM YYYY")} - ${endDate.format("D MMM YYYY")}`);  // แสดงช่วงวันที่
-
-    // สร้างปุ่มวันที่
-    let dateBtns = [];
-    for (let i = -7; i <= 7; i++) {
-        // แสดงเฉพาะวันที่และเดือนใน UI
-        dateBtns.push(today.clone().add(i, 'days').format("D MMM"));
-    }
-    setDateButtons(dateBtns);
-
-    // กำหนดวันที่เริ่มต้นและสุดท้าย
-    setMinDate(startDate.format("D MMM YYYY"));
-    setMaxDate(endDate.format("D MMM YYYY"));
-};
-
-
-    // ฟังก์ชันสำหรับการเลือกวันที่จากปุ่ม
     const handleDateSelect = (date) => {
-        const formattedDate = `${date} ${moment().year()}`;  // เพิ่มปีเข้าไป
-        setSelectedDate(formattedDate);  // ตั้งค่ารูปแบบวันที่ที่เลือก
-        fetchData(formattedDate);  // เรียกใช้ฟังก์ชันดึงข้อมูลตามวันที่ที่เลือก
+        const formattedDate = `${date} ${moment().year()}`;
+        setSelectedDate(formattedDate);
+        fetchData(formattedDate);
     };
 
-    // ฟังก์ชันสำหรับการเปลี่ยนหน้า (Next/Previous)
     const handleNextPrevious = (direction) => {
         const today = moment(selectedDate, "D MMM YYYY");
         let newSelectedDate;
@@ -124,18 +108,19 @@ const getDateRange = () => {
             setSelectedDate(newSelectedDate);
         }
     };
+
     useEffect(() => {
         if (selectedDateFromURL) {
-            setSelectedDate(selectedDateFromURL);  // ตั้งค่าจาก URL
+            setSelectedDate(selectedDateFromURL);
         } else {
-            setSelectedDate(moment().format("D MMM YYYY"));  // ใช้วันที่ปัจจุบันถ้าไม่มีค่าจาก URL
+            setSelectedDate(moment().format("D MMM YYYY"));
         }
     }, [selectedDateFromURL]);
 
     useEffect(() => {
-        fetchData(selectedDate);  // เรียกใช้ฟังก์ชันดึงข้อมูลตามวันที่ที่เลือก
-        getDateRange();  // เรียกใช้เพื่อกำหนดช่วงวันที่ที่จะแสดง
-    }, [selectedDate]);  // เมื่อเลือกวันที่จะทำการดึงข้อมูลใหม่
+        fetchData(selectedDate);
+        getDateRange();
+    }, [selectedDate]);
 
     return (
         <>
@@ -146,12 +131,11 @@ const getDateRange = () => {
                         Reservation History
                     </h2>
                     <h3 className="text-2xl mt-4 text-white font-semibold">
-                        {displayDate}  {/* แสดงช่วงวันที่ */}
+                        {displayDate}
                     </h3>
 
                     <div className="overflow-x-auto mt-8">
                         <table className="table tracking-wider">
-                            {/* head */}
                             <thead>
                                 <tr className="text-xl text-center text-white font-semibold">
                                     <th>Reservation Date</th>
@@ -169,19 +153,16 @@ const getDateRange = () => {
                                     </tr>
                                 ) : (
                                     reservations.length > 0 ? (
-                                        reservations.map((reservation, index) => {
-                                            fetchUserData(reservation.customerID); // ดึงข้อมูลผู้ใช้
-                                            return (
-                                                <tr key={index} className="text-lg text-center">
-                                                    <td>{moment(reservation.reservationDate).format("D MMM YYYY")}</td>
-                                                    <td>{reservation.queue}</td> {/* แสดงหมายเลขคิว */}
-                                                    <td>{userData.firstname} {userData.lastname}</td> {/* ชื่อผู้ใช้ */}
-                                                    <td>{reservation.seat}</td>
-                                                    <td>{reservation.totalPrice}฿</td>
-                                                    <td>{userData.phone || "No phone"}</td> {/* หมายเลขโทรศัพท์ */}
-                                                </tr>
-                                            );
-                                        })
+                                        reservations.map((reservation, index) => (
+                                            <tr key={index} className="text-lg text-center">
+                                                <td>{moment(reservation.reservationDate).format("D MMM YYYY")}</td>
+                                                <td>{reservation.queue}</td>
+                                                <td>{reservation.user.firstname} {reservation.user.lastname}</td>
+                                                <td>{reservation.seat}</td>
+                                                <td>{reservation.totalPrice}฿</td>
+                                                <td>{reservation.user.phone}</td>
+                                            </tr>
+                                        ))
                                     ) : (
                                         <tr>
                                             <td colSpan="6" className="text-center py-5">No reservations available for this date</td>
@@ -192,7 +173,6 @@ const getDateRange = () => {
                         </table>
                     </div>
 
-                    {/* Pagination */}
                     <div className="mt-5 flex items-center justify-center">
                         <button
                             onClick={() => handleNextPrevious('previous')}
@@ -210,19 +190,16 @@ const getDateRange = () => {
                         </button>
                     </div>
 
-                    {/* Page numbers as Date buttons */}
                     <div className="mt-4 flex justify-center gap-2">
-                        {dateButtons.map((date, index) => {
-                            return (
-                                <button
-                                    key={index}
-                                    onClick={() => handleDateSelect(date)}  // เลือกวันที่จากปุ่ม
-                                    className={`px-4 py-2 rounded ${selectedDate === `${date} ${moment().year()}` ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
-                                >
-                                    {date}
-                                </button>
-                            );
-                        })}
+                        {dateButtons.map((date, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleDateSelect(date)}
+                                className={`px-4 py-2 rounded ${selectedDate === `${date} ${moment().year()}` ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+                            >
+                                {date}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>

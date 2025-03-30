@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from "react-router-dom";
-import { ref, get, remove } from 'firebase/database'; // นำเข้า Realtime Database
-import { dbRealtime } from "../../firebaseConfig";  // ใช้ dbRealtime แทน dbFirestore
+import { ref, get, remove } from 'firebase/database';
+import { dbRealtime } from "../../firebaseConfig";
 import Navbar from '../../component/nav';
 import './client.css';
 import Band1 from '../../assets/cocktail.jpg';
@@ -9,14 +9,13 @@ import Band1 from '../../assets/cocktail.jpg';
 function Finished() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const reservationID = queryParams.get('reservationID'); // รับค่า reservationID
+    const reservationID = queryParams.get('reservationID');
 
     const [reservationData, setReservationData] = useState(null);
-    const [userData, setUserData] = useState(null);  // เพิ่ม state สำหรับข้อมูลผู้ใช้
-    const [showPopup, setShowPopup] = useState(false); // state สำหรับแสดง popup
-    const [queueNumber, setQueueNumber] = useState(null); // state สำหรับหมายเลขคิว
+    const [userData, setUserData] = useState(null);
+    const [showPopup, setShowPopup] = useState(false);
+    const [queueNumber, setQueueNumber] = useState(null);
 
-    // ฟังก์ชันแปลงวันที่
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -29,28 +28,25 @@ function Finished() {
     useEffect(() => {
         const fetchReservationData = async () => {
             if (!reservationID) return;
-    
-            const reservationsRef = ref(dbRealtime, 'reservations'); // ดึงข้อมูลจาก Firebase
+
+            const reservationsRef = ref(dbRealtime, 'reservations');
             const reservationsSnap = await get(reservationsRef);
-    
+
             if (reservationsSnap.exists()) {
                 const reservations = reservationsSnap.val();
-    
-                // ค้นหาการจองที่ตรงกับ reservationID
+
                 for (let dateKey in reservations) {
                     const queues = reservations[dateKey];
                     for (let queueID in queues) {
                         if (queues[queueID].reservationID === reservationID) {
-                            // ถ้าเจอการจองที่ตรงกับ reservationID
                             setReservationData({
                                 ...queues[queueID],
                                 reservationDate: dateKey
                             });
-                            fetchUserData(queues[queueID].customerID);  // ดึงข้อมูลผู้ใช้
-                            
-                            // คำนวณหมายเลขคิว
-                            const queueCount = Object.keys(queues).length; // คำนวณจำนวนการจองในวันนั้น
-                            setQueueNumber(queueCount); // หมายเลขคิวที่ถูกต้องจะเท่ากับจำนวนการจองที่มีในวันนั้น
+                            fetchUserData(queues[queueID].customerID);
+
+                            // ✅ ดึงหมายเลขคิวจริงจากข้อมูล
+                            setQueueNumber(queues[queueID].queue);
                             return;
                         }
                     }
@@ -59,7 +55,7 @@ function Finished() {
                 console.log("No reservation found with this ID");
             }
         };
-    
+
         const fetchUserData = async (customerID) => {
             const userRef = ref(dbRealtime, `users/${customerID}`);
             const userSnap = await get(userRef);
@@ -69,27 +65,23 @@ function Finished() {
                 console.log("User data not found");
             }
         };
-    
+
         fetchReservationData();
     }, [reservationID]);
-    
 
     const handleCancel = async () => {
         if (!reservationData) return;
 
-        // กำหนด path ที่จะลบข้อมูล
         const reservationRef = ref(dbRealtime, `reservations/${reservationData.reservationDate}/${reservationID}`);
 
         try {
-            // ลบข้อมูลจาก path ที่กำหนด
             await remove(reservationRef);
             console.log(`Reservation with ID ${reservationID} has been cancelled.`);
-            setShowPopup(true);  // แสดง popup เมื่อการยกเลิกสำเร็จ
+            setShowPopup(true);
 
-            // รีเฟรชข้อมูลหรือเปลี่ยนหน้า
             setTimeout(() => {
-                window.location.href = '/';  // Redirect ไปที่หน้าอื่น (หน้า Home)
-            }, 2000);  // รอ 2 วินาทีแล้วไปหน้า Home
+                window.location.href = '/';
+            }, 2000);
         } catch (error) {
             console.error("Error cancelling reservation:", error);
             alert("Failed to cancel reservation.");
@@ -106,11 +98,11 @@ function Finished() {
                     <div className="flex justify-center">
                         {reservationData && reservationData.imageUrl ? (
                             <img src={reservationData.imageUrl} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
-                        ) : null} {/* ถ้าไม่มี imageUrl จะไม่แสดงอะไรเลย */}
+                        ) : null}
                     </div>
 
                     <div className="text-md tracking-wider space-y-4">
-                        <h3 className="text-3xl font-bold">Queue: {queueNumber ? queueNumber : "Loading..."}</h3> {/* แสดงหมายเลขคิว */}
+                        <h3 className="text-3xl font-bold">Queue: {queueNumber ? queueNumber : "Loading..."}</h3>
                         <hr />
                         <div className="flex justify-between">
                             <p>Day/Month/Year</p>
@@ -118,7 +110,7 @@ function Finished() {
                         </div>
                         <div className="flex justify-between">
                             <p>Name</p>
-                            <p>{userData ? `${userData.firstname} ${userData.lastname}` : "Loading..."}</p>  {/* แสดงชื่อจาก userData */}
+                            <p>{userData ? `${userData.firstname} ${userData.lastname}` : "Loading..."}</p>
                         </div>
                         <div className="flex justify-between">
                             <p>Number of seats</p>
@@ -151,7 +143,6 @@ function Finished() {
                 </div>
             </div>
 
-            {/* Popup */}
             {showPopup && (
                 <div className="popup-overlay">
                     <div className="popup-content space-y-4 max-w-1-4">

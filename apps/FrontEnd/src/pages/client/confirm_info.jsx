@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
-import { ref, get, set, push } from 'firebase/database'; // เพิ่ม push
+import { ref, get, set, push, runTransaction } from 'firebase/database';
 import { auth, dbRealtime } from "../../firebaseConfig";
 import Navbar from '../../component/nav';
 import './client.css';
@@ -11,14 +11,15 @@ function ConfirmInfo() {
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
-    const date = queryParams.get('date'); // รับค่าจาก URL สำหรับวัน
-    const price = queryParams.get('price'); // รับราคาจาก URL
+    const date = queryParams.get('date');
+    const price = queryParams.get('price');
 
+    const [totalPrice, setTotalPrice] = useState(0);
     const [userData, setUserData] = useState(null);
     const [seats, setSeats] = useState(0);
-    const [isChecked, setIsChecked] = useState(false); // เช็คว่าได้ติ๊กช่องหรือยัง
-    const [remainingQueue, setRemainingQueue] = useState(50); // จำนวนที่นั่งที่เหลือ
-    const [imageUrl, setImageUrl] = useState(null); // เก็บ URL ของภาพจาก Firebase
+    const [isChecked, setIsChecked] = useState(false);
+    const [remainingQueue, setRemainingQueue] = useState(50);
+    const [imageUrl, setImageUrl] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -32,41 +33,39 @@ function ConfirmInfo() {
         };
 
         const fetchRemainingQueue = async () => {
-            // ดึงข้อมูลการจองในวันที่เลือกจาก Firebase
             const reservationsRef = ref(dbRealtime, `reservations/${date}`);
             const snapshot = await get(reservationsRef);
-        
+
             if (snapshot.exists()) {
                 const data = snapshot.val();
-        
-                // กรองเฉพาะการจองที่มี customerID เท่านั้น
                 const validReservations = Object.keys(data).filter(key => data[key].customerID);
-        
-                // จำนวนการจองที่มีอยู่
                 const bookedSeats = validReservations.length;
-        
-                // คำนวณจำนวนที่นั่งที่เหลือ
                 setRemainingQueue(50 - bookedSeats);
             } else {
-                // ถ้าไม่มีข้อมูลการจองในวันที่เลือก
-                setRemainingQueue(50); // หมายความว่าทุกที่นั่งยังว่าง
+                setRemainingQueue(50);
             }
         };
-        
 
         const fetchImageUrl = async () => {
-            // ดึง URL รูปจาก Firebase (ในกรณีที่มีการอัปโหลดรูปไว้ใน Firebase)
             const imageRef = ref(dbRealtime, `reservations/${date}/imageUrl`);
             const snapshot = await get(imageRef);
             if (snapshot.exists()) {
-                setImageUrl(snapshot.val()); // ถ้ามี URL ให้เก็บใน state
+                setImageUrl(snapshot.val());
             }
         };
 
         fetchUserData();
         fetchRemainingQueue();
         fetchImageUrl();
-    }, [date]); // เมื่อเปลี่ยนวันที่ให้ดึงข้อมูลใหม่
+    }, [date]);
+
+    useEffect(() => {
+        if (seats >= 1) {
+            setTotalPrice(seats * price);
+        } else {
+            setTotalPrice(0);
+        }
+    }, [seats, price]);
 
     const handleConfirm = async () => {
         if (!auth.currentUser || !userData) {
@@ -89,35 +88,29 @@ function ConfirmInfo() {
             return;
         }
     
-        const totalPrice = seats * price; // ใช้ราคาที่ส่งมาจาก URL
+        const totalPrice = seats * price;
     
         try {
-            const reservationsRef = ref(dbRealtime, `reservations/${date}`); // ดึงข้อมูลจาก Firebase ตามวันที่ที่เลือก
-            
-            // ดึงข้อมูลการจองในวันนั้น ๆ
-            const snapshot = await get(reservationsRef);
-            let queueNumber = 1; // ตั้งค่าเริ่มต้นของคิวเป็น 1
+            // ✅ ใช้ Transaction runningNumber ต่อวัน
+            const runningRef = ref(dbRealtime, `reservations/${date}/runningNumber`);
+            const result = await runTransaction(runningRef, (currentValue) => {
+                return (currentValue || 0) + 1;
+            });
     
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                const reservationsOnDate = Object.keys(data).filter((key) => data[key].reservationID); // กรองเฉพาะรายการที่มี reservationID
+            const queueNumber = result.snapshot.val(); // queue ของวันนั้น
     
-                queueNumber = reservationsOnDate.length + 1; // คำนวณหมายเลขคิวใหม่
-            }
-    
-            // ใช้ push เพื่อสร้างการจองใหม่ใน Firebase
+            // 🔥 บันทึกการจอง
+            const reservationsRef = ref(dbRealtime, `reservations/${date}`);
             const newReservationRef = push(reservationsRef);
     
-            // บันทึกการจองใหม่พร้อมหมายเลขคิว
             await set(newReservationRef, {
                 customerID: auth.currentUser.uid,
                 reservationID: newReservationRef.key,
                 seat: seats,
                 totalPrice,
-                queue: queueNumber,  // บันทึกหมายเลขคิว
+                queue: queueNumber,
             });
     
-            // หลังจากบันทึกข้อมูลแล้วเปลี่ยนเส้นทางไปหน้า finished พร้อมกับ reservationID
             navigate(`/finished?reservationID=${newReservationRef.key}`);
         } catch (error) {
             console.error("Error confirming reservation: ", error);
@@ -125,6 +118,7 @@ function ConfirmInfo() {
         }
     };
     
+
     return (
         <>
             <Navbar />
@@ -143,7 +137,6 @@ function ConfirmInfo() {
                         </div>
                     </div>
 
-                    {/* แสดงรูปภาพจาก Firebase ถ้ามี imageUrl */}
                     {imageUrl && (
                         <div className="flex justify-center">
                             <img src={imageUrl} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
@@ -174,7 +167,6 @@ function ConfirmInfo() {
                         </div>
                     </div>
 
-                    {/* ช่องกรอกจำนวนที่นั่ง */}
                     <div className="flex gap-4 items-center">
                         <p className="text-lg font-bold tracking-wider">Specify seats</p>
                         <input
@@ -184,10 +176,9 @@ function ConfirmInfo() {
                             value={seats}
                             onChange={(e) => setSeats(parseInt(e.target.value))}
                         />
-                        <p>499฿ / 1 Customer</p>
+                        <p>{seats > 0 ? `${totalPrice} ฿` : `${price} ฿ / seat`}</p>
                     </div>
 
-                    {/* ช่องติ๊ก */}
                     <div className="flex gap-4 items-center">
                         <input
                             type="checkbox"
