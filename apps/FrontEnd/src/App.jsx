@@ -15,6 +15,7 @@ import UserInfo from './pages/admin/userInfo.jsx'
 import ReserveHistory from './pages/admin/reserveHistory.jsx'
 
 // menu
+import MenuLayout from './pages/client/Menu/menuLayout.jsx'
 import Menu from './pages/client/Menu/menu.jsx'
 import Meat from './pages/client/Menu/meat.jsx';
 import Fries from './pages/client/Menu/fries.jsx'
@@ -42,13 +43,15 @@ function App() {
         <Route path="/reserveHistory" element={<ReserveHistory />} />
 
         {/* menu */}
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/menu/Meat" element={<Meat />} />
-        <Route path="/menu/fries" element={<Fries />} />
-        <Route path="/menu/seaFood" element={<SeaFood />} />
-        <Route path="/menu/fruit" element={<Fruit />} />
-        <Route path="/menu/dessert" element={<Dessert />} />
-        <Route path="/menu/drink" element={<Drink />} />
+        <Route path="/menu" element={<MenuLayout />}>
+          <Route index element={<Menu />} />
+          <Route path="Meat" element={<Meat />} />
+          <Route path="fries" element={<Fries />} />
+          <Route path="seaFood" element={<SeaFood />} />
+          <Route path="fruit" element={<Fruit />} />
+          <Route path="dessert" element={<Dessert />} />
+          <Route path="drink" element={<Drink />} />
+        </Route>
         {/* end menu */}
 
       </Routes>

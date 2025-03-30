@@ -1,6 +1,10 @@
 import React from 'react'
-import { useState } from 'react';
 import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import axios from 'axios';
+import { ref, push } from 'firebase/database';
+import { dbRealtime } from '../firebaseConfig';
+import { MenuContext } from "../context/menuContext";
 import '../pages/client/client.css'
 import Menu from "../assets/menu-icon.png"
 import All from "../assets/all.png"
@@ -14,10 +18,49 @@ import Edit from "../assets/pencil.png";
 import Del from "../assets/bin.png";
 
 function foodMenu() {
-    const [activePage, setActivePage] = useState(null); // สถานะ active page
+    const [category, setCategory] = useState("");
+    const [menuName, setMenuName] = useState("");
+    const [menuImage, setMenuImage] = useState(null);
+    const [deleteName, setDeleteName] = useState("");
+    const { addMenu, deleteMenu } = useContext(MenuContext);
 
-    const handleClick = (page) => {
-        setActivePage(page); // เมื่อคลิกจะตั้งค่าหน้า active
+    const handleImageChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append("image", file); // เพิ่มไฟล์ที่เลือก
+
+            try {
+                // ส่ง POST request ไปยัง ImgBB API
+                const response = await axios.post('https://api.imgbb.com/1/upload?key=d11593c766f5add0af53144a89c145fa', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                // ดึง URL ของรูปภาพที่อัพโหลด
+                const uploadedImageUrl = response.data.data.url;
+
+                // บันทึกข้อมูลลง Firebase
+                const newMenu = {
+                    name: menuName,
+                    imageUrl: uploadedImageUrl,
+                    category: category,
+                };
+
+                // บันทึกข้อมูลใน Firebase Realtime Database
+                const menuRef = ref(dbRealtime, 'menus/' + category);
+                await push(menuRef, newMenu);
+
+                alert("Image uploaded and menu added successfully!");
+                document.getElementById('addMenu').close(); // ปิด Dialog หลังจากการอัปโหลดเสร็จ
+            } catch (error) {
+                console.error("Error uploading image:", error);
+                alert("Error uploading image. Please check the console for details.");
+            }
+        } else {
+            alert("No file selected");
+        }
     };
 
     return (
@@ -55,37 +98,67 @@ function foodMenu() {
                                         <ul className="menu dropdown-content bg-white shadow-black shadow-lg rounded-box z-1 w-52 p-2 mt-1 shadow-sm">
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Meat")}
+                                                    />
                                                     <span>Meat</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Fries")}
+                                                    />
                                                     <span>Fries</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("SeaFood")}
+                                                    />
                                                     <span>Sea food</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Fruit")}
+                                                    />
                                                     <span>Fruit</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Dessert")}
+                                                    />
                                                     <span>Dessert</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Drink")}
+                                                    />
                                                     <span>Drink</span>
                                                 </label>
                                             </li>
@@ -96,16 +169,35 @@ function foodMenu() {
 
                                 <label className="text-lg">Name</label>
                                 <div className="flex justify-center mt-2">
-                                    <input id="dateInput" type="text" placeholder="stake" className="w-1/4" />
+                                    <input
+                                        type="text"
+                                        value={menuName}
+                                        onChange={(e) => setMenuName(e.target.value)}
+                                        placeholder="stake"
+                                        className="w-1/4"
+                                    />
                                 </div>
 
                                 <label className="text-lg">Picture</label>
                                 <div className="flex justify-center mt-2">
-                                    <input type="file" accept="image" className="w-1/3" />
+                                    <input type="file" accept="image/*" onChange={handleImageChange} className="w-1/3" />
                                 </div>
                             </div>
+
                             <div className="flex justify-center mt-8">
-                                <button className="bg-sky-500 px-4 py-1 text-white rounded-full hover:scale-110 duration-200 cursor-pointer">
+                                <button
+                                    className="bg-sky-500 px-4 py-1 text-white rounded-full hover:scale-110 duration-200 cursor-pointer"
+                                    onClick={() => {
+                                        if (category && menuName && menuImage) {
+                                            addMenu(category, menuName, URL.createObjectURL(menuImage));
+                                            setMenuName("");
+                                            setMenuImage(null);
+                                            document.getElementById("addMenu").close();
+                                        } else {
+                                            alert("กรุณากรอกข้อมูลให้ครบ");
+                                        }
+                                    }}
+                                >
                                     Confirm
                                 </button>
                             </div>
@@ -125,37 +217,67 @@ function foodMenu() {
                                         <ul className="menu dropdown-content bg-white shadow-black shadow-lg rounded-box z-1 w-52 p-2 mt-1 shadow-sm">
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Meat")}
+                                                    />
                                                     <span>Meat</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Fries")}
+                                                    />
                                                     <span>Fries</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("SeaFood")}
+                                                    />
                                                     <span>Sea food</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Fruit")}
+                                                    />
                                                     <span>Fruit</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Dessert")}
+                                                    />
                                                     <span>Dessert</span>
                                                 </label>
                                             </li>
                                             <li>
                                                 <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                                    <input type="radio" name="radio-2" className="radio radio-sm" />
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Drink")}
+                                                    />
                                                     <span>Drink</span>
                                                 </label>
                                             </li>
@@ -166,19 +288,37 @@ function foodMenu() {
 
                                 <label className="text-lg">Name</label>
                                 <div className="flex justify-center mt-2">
-                                    <input id="dateInput" type="text" placeholder="stake" className="w-1/4" />
+                                    <input
+                                        type="text"
+                                        value={deleteName}
+                                        onChange={(e) => setDeleteName(e.target.value)}
+                                        placeholder="stake"
+                                        className="w-1/4"
+                                    />
                                 </div>
                             </div>
-                            
+
                             <div className="flex justify-center mt-8">
-                                <button className="bg-red-500 px-4 py-1 text-white rounded-full hover:scale-110 duration-200 cursor-pointer">
+                                <button
+                                    className="bg-red-500 px-4 py-1 text-white rounded-full hover:scale-110 duration-200 cursor-pointer"
+                                    onClick={() => {
+                                        if (category && deleteName) {
+                                            deleteMenu(category, deleteName);
+                                            setDeleteName("");
+                                            document.getElementById("deleteMenu").close();
+                                        } else {
+                                            alert("เลือกประเภทและชื่อเมนูก่อนลบนะ!");
+                                        }
+                                    }}
+                                >
                                     Confirm
                                 </button>
+
                             </div>
                         </div>
                     </dialog>
 
-                    
+
                     {/* -------------------- */}
 
                     <div className="text-lg w-full self-start mt-4">

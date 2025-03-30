@@ -1,12 +1,22 @@
-import React from 'react'
-import { useState } from 'react';
-import Navbar from '../../../component/nav'
-import FoodMenu from '../../../component/foodMenu'
-import '../client.css'
-import Steak from "../../../assets/steak.jpg"
-import Cupcake from "../../../assets/cupcake.jpg"
+import React, { useState, useEffect, useContext } from "react";  // แก้ไขเป็นการ import React ครั้งเดียว
+import { MenuContext } from "../../../context/menuContext";  // นำเข้า MenuContext
+import { ref, onValue } from "firebase/database";
+import { dbRealtime } from "../../../firebaseConfig"; // ใช้ Firebase config ที่โหลดมา
+import Navbar from '../../../component/nav';
+import FoodMenu from '../../../component/foodMenu';
+import '../client.css';
 
 function menu() {
+    const { menus } = useContext(MenuContext);
+
+    useEffect(() => {
+        // ดึงข้อมูลจาก Firebase เมื่อหน้าโหลด
+        const menuRef = ref(dbRealtime, 'menus');
+        onValue(menuRef, (snapshot) => {
+            const data = snapshot.val();
+            setMenus(data || {}); // เก็บข้อมูลเมนูใน state
+        });
+    }, []);
 
     return (
         <>
@@ -15,29 +25,18 @@ function menu() {
                 <FoodMenu />
                 <div className="content w-full py-32">
                     <div className="card-box py-4 flex justify-center flex-wrap gap-8 tracking-widest text-lg font-semibold">
-
-                        <div className="w-64 card">
-                            <div className="p-1">
-                                <img
-                                    src={Steak}
-                                    alt="img" className="rounded-md" />
-                            </div>
-                            <div className="p-2 w-full text-center">
-                                <h2>Beef steak</h2>
-                            </div>
-                        </div>
-
-                        <div className="w-64 card">
-                            <div className="p-1">
-                                <img
-                                    src={Cupcake}
-                                    alt="img" className="rounded-md" />
-                            </div>
-                            <div className="p-2 w-full text-center">
-                                <h2>Strawberry cupcake with pasta sauce</h2>
-                            </div>
-                        </div>
-
+                        {Object.keys(menus).map((category) =>
+                            menus[category].map((item, index) => (
+                                <div key={index} className="w-64 card m-2">
+                                    <div className="p-1">
+                                        <img src={item.imageUrl} alt={item.name} className="rounded-md" />
+                                    </div>
+                                    <div className="p-2 w-full text-center">
+                                        <h2>{item.name}</h2>
+                                    </div>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
             </div>
