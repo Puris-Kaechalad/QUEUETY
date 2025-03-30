@@ -1,11 +1,8 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
-import axios from 'axios';
-import { ref, push } from 'firebase/database';
-import { dbRealtime } from '../firebaseConfig';
-import { MenuContext } from "../context/menuContext";
 import '../pages/client/client.css'
+import { MenuContext } from "../context/menuContext";
 import Menu from "../assets/menu-icon.png"
 import All from "../assets/all.png"
 import Meat from "../assets/meat.png"
@@ -23,45 +20,6 @@ function foodMenu() {
     const [menuImage, setMenuImage] = useState(null);
     const [deleteName, setDeleteName] = useState("");
     const { addMenu, deleteMenu } = useContext(MenuContext);
-
-    const handleImageChange = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append("image", file); // เพิ่มไฟล์ที่เลือก
-
-            try {
-                // ส่ง POST request ไปยัง ImgBB API
-                const response = await axios.post('https://api.imgbb.com/1/upload?key=d11593c766f5add0af53144a89c145fa', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-
-                // ดึง URL ของรูปภาพที่อัพโหลด
-                const uploadedImageUrl = response.data.data.url;
-
-                // บันทึกข้อมูลลง Firebase
-                const newMenu = {
-                    name: menuName,
-                    imageUrl: uploadedImageUrl,
-                    category: category,
-                };
-
-                // บันทึกข้อมูลใน Firebase Realtime Database
-                const menuRef = ref(dbRealtime, 'menus/' + category);
-                await push(menuRef, newMenu);
-
-                alert("Image uploaded and menu added successfully!");
-                document.getElementById('addMenu').close(); // ปิด Dialog หลังจากการอัปโหลดเสร็จ
-            } catch (error) {
-                console.error("Error uploading image:", error);
-                alert("Error uploading image. Please check the console for details.");
-            }
-        } else {
-            alert("No file selected");
-        }
-    };
 
     return (
         <>
@@ -180,10 +138,14 @@ function foodMenu() {
 
                                 <label className="text-lg">Picture</label>
                                 <div className="flex justify-center mt-2">
-                                    <input type="file" accept="image/*" onChange={handleImageChange} className="w-1/3" />
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => setMenuImage(e.target.files[0])}
+                                        className="w-1/3"
+                                    />
                                 </div>
                             </div>
-
                             <div className="flex justify-center mt-8">
                                 <button
                                     className="bg-sky-500 px-4 py-1 text-white rounded-full hover:scale-110 duration-200 cursor-pointer"

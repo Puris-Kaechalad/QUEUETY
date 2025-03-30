@@ -457,6 +457,7 @@ const Reservation = () => {
                                                 minHeight: '200px',  // เพิ่มความสูงขั้นต่ำให้เห็นภาพ
                                                 backgroundSize: 'cover', // ทำให้ภาพขยายเต็มพื้นที่
                                                 backgroundPosition: 'center' // จัดตำแหน่งภาพกลาง
+                                                
                                             }}
                                         >
                             
