@@ -284,16 +284,21 @@ const Reservation = () => {
     // ฟังก์ชันลบคอนเสิร์ตจาก Firebase
     const handleDeleteConcert = async () => {
         if (!selectedConcert) return; // ตรวจสอบก่อนว่า selectedConcert ถูกตั้งค่าไว้หรือไม่
-
+    
         const concertRef = ref(dbRealtime, `reservations/${selectedConcert.date}`);
-
+        const liveBandRef = ref(dbRealtime, `liveBands/${selectedConcert.date}`);  // path สำหรับ liveBands ที่ต้องการลบ
+        const bandRef = ref(dbRealtime, `bands/${selectedConcert.id}`);  // ตัวอย่างการลบจาก path bands ถ้ามี
+    
         try {
-            await remove(concertRef); // ลบข้อมูลจาก Firebase
-
+            // ลบข้อมูลจากหลาย path
+            await remove(concertRef);      // ลบข้อมูลใน path reservations
+            await remove(liveBandRef);     // ลบข้อมูลใน path liveBands
+            await remove(bandRef);         // ลบข้อมูลใน path bands (ถ้าจำเป็น)
+    
             // ลบคอนเสิร์ตออกจาก state
             setConcertData(concertData.filter(concert => concert.date !== selectedConcert.date));
             alert("Concert data deleted successfully!");
-
+    
             // ปิด Dialog หลังจากลบเสร็จ
             document.getElementById('delBand').close();
         } catch (error) {
