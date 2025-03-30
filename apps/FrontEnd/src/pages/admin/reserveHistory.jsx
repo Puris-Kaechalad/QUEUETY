@@ -172,6 +172,18 @@ function ReserveHistory() {
                         {displayDate}
                     </h3>
 
+                    <div className="mt-8 flex justify-center gap-2">
+                        {dateButtons.map((date, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleDateSelect(date)}
+                                className={`px-2 py-1 rounded-xl cursor-pointer ${selectedDate === `${date} ${moment().year()}` ? 'bg-blue-500 text-white text-md' : 'bg-gray-300 text-gray-400 text-sm'}`}
+                            >
+                                {date}
+                            </button>
+                        ))}
+                    </div>
+
                     <div className="overflow-x-auto mt-8">
                         <table className="table tracking-wider">
                             <thead>
@@ -204,7 +216,7 @@ function ReserveHistory() {
                                                 )}
                                                 {userRole === "staff" && (
                                                     <td>
-                                                         <button 
+                                                        <button
                                                             className={`rounded-full p-2 hover:scale-110 transition-all duration-200 
                                                             ${confirmedReservations.includes(reservation.reservationID) ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}
                                                             onClick={() => handleConfirm(reservation.reservationID)}  // เพิ่มฟังก์ชันติ๊กถูก
@@ -225,34 +237,6 @@ function ReserveHistory() {
                         </table>
                     </div>
 
-                    <div className="mt-5 flex items-center justify-center gap-8">
-                        <button
-                            onClick={() => handleNextPrevious('previous')}
-                            disabled={moment(selectedDate, "D MMM YYYY").isSameOrBefore(moment(minDate, "D MMM YYYY"))}
-                            className="px-4 py-2 bg-blue-500 rounded text-white hover:bg-blue-600 disabled:opacity-50"
-                        >
-                            Previous
-                        </button>
-                        <button
-                            onClick={() => handleNextPrevious('next')}
-                            disabled={moment(selectedDate, "D MMM YYYY").isSameOrAfter(moment(maxDate, "D MMM YYYY"))}
-                            className="px-4 py-2 bg-blue-500 rounded text-white hover:bg-blue-600 disabled:opacity-50"
-                        >
-                            Next
-                        </button>
-                    </div>
-
-                    <div className="mt-4 flex justify-center gap-2">
-                        {dateButtons.map((date, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handleDateSelect(date)}
-                                className={`px-4 py-2 rounded ${selectedDate === `${date} ${moment().year()}` ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
-                            >
-                                {date}
-                            </button>
-                        ))}
-                    </div>
                 </div>
             </div>
         </>
