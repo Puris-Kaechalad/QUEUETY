@@ -29,24 +29,28 @@ function Finished() {
     useEffect(() => {
         const fetchReservationData = async () => {
             if (!reservationID) return;
-
-            // ดึงข้อมูลการจองจาก Firebase
-            const reservationsRef = ref(dbRealtime, 'reservations'); // ดึงทั้งหมดของ reservations
+    
+            const reservationsRef = ref(dbRealtime, 'reservations'); // ดึงข้อมูลจาก Firebase
             const reservationsSnap = await get(reservationsRef);
-
+    
             if (reservationsSnap.exists()) {
-                // ค้นหาจากวันที่ที่เหมาะสม
                 const reservations = reservationsSnap.val();
+    
+                // ค้นหาการจองที่ตรงกับ reservationID
                 for (let dateKey in reservations) {
                     const queues = reservations[dateKey];
                     for (let queueID in queues) {
                         if (queues[queueID].reservationID === reservationID) {
+                            // ถ้าเจอการจองที่ตรงกับ reservationID
                             setReservationData({
                                 ...queues[queueID],
-                                reservationDate: dateKey // เพิ่มวันที่จาก key
+                                reservationDate: dateKey
                             });
                             fetchUserData(queues[queueID].customerID);  // ดึงข้อมูลผู้ใช้
-                            setQueueNumber(Object.keys(queues).length + 1); // คำนวณหมายเลขคิว (เพิ่ม 1 จากจำนวนการจอง)
+                            
+                            // คำนวณหมายเลขคิว
+                            const queueCount = Object.keys(queues).length; // คำนวณจำนวนการจองในวันนั้น
+                            setQueueNumber(queueCount); // หมายเลขคิวที่ถูกต้องจะเท่ากับจำนวนการจองที่มีในวันนั้น
                             return;
                         }
                     }
@@ -55,20 +59,20 @@ function Finished() {
                 console.log("No reservation found with this ID");
             }
         };
-
+    
         const fetchUserData = async (customerID) => {
-            // ดึงข้อมูลผู้ใช้จาก Firebase
             const userRef = ref(dbRealtime, `users/${customerID}`);
             const userSnap = await get(userRef);
             if (userSnap.exists()) {
-                setUserData(userSnap.val());  // เก็บข้อมูลผู้ใช้
+                setUserData(userSnap.val());
             } else {
                 console.log("User data not found");
             }
         };
-
+    
         fetchReservationData();
     }, [reservationID]);
+    
 
     const handleCancel = async () => {
         if (!reservationData) return;
@@ -100,7 +104,9 @@ function Finished() {
                     <h2 className="text-center text-4xl text-yellow-500 font-bold tracking-widest">Reservation</h2>
 
                     <div className="flex justify-center">
-                        <img src={Band1} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
+                        {reservationData && reservationData.imageUrl ? (
+                            <img src={reservationData.imageUrl} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
+                        ) : null} {/* ถ้าไม่มี imageUrl จะไม่แสดงอะไรเลย */}
                     </div>
 
                     <div className="text-md tracking-wider space-y-4">

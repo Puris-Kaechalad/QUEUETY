@@ -8,6 +8,7 @@ function Nav() {
     const [firstname, setFirstname] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false); // เช็คสถานะการล็อกอิน
     const [loading, setLoading] = useState(true); // รอตรวจสอบการล็อกอิน
+    const [userRole, setUserRole] = useState(""); // เก็บ role ของผู้ใช้
     const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนเส้นทางหลัง logout
 
     useEffect(() => {
@@ -21,6 +22,7 @@ function Nav() {
                 get(userRef).then((snapshot) => {
                     if (snapshot.exists()) {
                         setFirstname(snapshot.val().firstname);
+                        setUserRole(snapshot.val().role); // เก็บ role ใน state
                         setIsLoggedIn(true);
                     } else {
                         console.log("No user data found");
@@ -43,6 +45,7 @@ function Nav() {
         signOut(auth).then(() => {
             setIsLoggedIn(false); // รีเซ็ตสถานะการล็อกอิน
             setFirstname(null); // รีเซ็ต firstname
+            setUserRole(""); // รีเซ็ต role
             setLoading(false); // หยุดสถานะการโหลด
             navigate('/login'); // เปลี่ยนเส้นทางไปหน้า login
         }).catch((error) => {
@@ -75,8 +78,16 @@ function Nav() {
                         <li><Link to="/" >Home</Link></li>
                         <li><Link to="/menu" >Menu</Link></li>
                         <li><Link to="/reservation" >Reservation</Link></li>
-                        <li><Link to="/history" >History</Link></li>
                         <li><a href="#contact-us">Contact us</a></li>
+
+                        {/* admin only */}
+                        {userRole === "admin" && (
+                            <>
+                                <li><Link to="/reserveHistory" >History</Link></li>
+                                <li><Link to="/userInfo" >User</Link></li>
+                            </>
+                        )}
+                        {/* admin only */}
                     </ul>
                 </div>
                 <a className="text-xl"><img src={Logo} alt="logo" className="h-18" /></a>
@@ -88,20 +99,27 @@ function Nav() {
                     <li><Link to="/menu" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Menu</Link></li>
                     <li><Link to="/reservation" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Reservation</Link></li>
                     
-                    {/* admin, user history ---------- */}
-                    {isLoggedIn && (
+                    {/* เมนูสำหรับ role "customer" */}
+                    {userRole === "customer" && (
                         <li><Link to="/history" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link></li>
                     )}
-                    <li><Link to="/reserveHistory" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">adHistory</Link></li>
+                    
+                    {/* admin, user history ---------- */}
+                    {userRole === "admin" && (
+                        <>
+                            <li><Link to="/reserveHistory" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">History</Link></li>
+                            <li><Link to="/userInfo" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">User</Link></li>
+                        </>
+                    )}
                     {/* ---------- */}
 
-                    {/* contact us, user database ---------- */}
-                    <li className=""><a href="/" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a></li>
-                    <li><Link to="/userInfo" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">User</Link></li>
-                    {/* ---------- */}
+                    {/* contact us */}
+                    {userRole !== "admin" && (
+                    <li><a href="#contact-us" className="hover:scale-110 hover:bg-transparent rounded-full hover:text-warning transition-all duration-200">Contact us</a></li>
+                    )}
                 </ul>
-            </div>
 
+            </div>
 
             <div className="navbar-end">
                 {loading ? null : isLoggedIn ? (
@@ -114,7 +132,7 @@ function Nav() {
                 )}
             </div>
         </div>
-    )
+    );
 }
 
 export default Nav;

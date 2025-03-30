@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
-import { ref, get, set, push } from 'firebase/database';  // นำเข้า push เพื่อเพิ่มข้อมูลแบบอัตโนมัติ
+import { ref, get, set, push } from 'firebase/database'; // เพิ่ม push
 import { auth, dbRealtime } from "../../firebaseConfig";
 import Navbar from '../../component/nav';
 import './client.css';
-import Band1 from '../../assets/cocktail.jpg';
 import Phone from '../../assets/phone.png';
 import Mail from '../../assets/email.png';
-import { v4 as uuidv4 } from 'uuid'; // ใช้ uuid สร้าง reservationID
 
 function ConfirmInfo() {
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
     const date = queryParams.get('date'); // รับค่าจาก URL สำหรับวัน
+    const price = queryParams.get('price'); // รับราคาจาก URL
 
     const [userData, setUserData] = useState(null);
     const [seats, setSeats] = useState(0);
     const [isChecked, setIsChecked] = useState(false); // เช็คว่าได้ติ๊กช่องหรือยัง
     const [remainingQueue, setRemainingQueue] = useState(50); // จำนวนที่นั่งที่เหลือ
+    const [imageUrl, setImageUrl] = useState(null); // เก็บ URL ของภาพจาก Firebase
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -35,53 +35,98 @@ function ConfirmInfo() {
             // ดึงข้อมูลการจองในวันที่เลือกจาก Firebase
             const reservationsRef = ref(dbRealtime, `reservations/${date}`);
             const snapshot = await get(reservationsRef);
-            
+        
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                const bookedSeats = Object.keys(data).length; // จำนวนการจองที่มีอยู่
-                setRemainingQueue(50 - bookedSeats); // คำนวณจำนวนที่นั่งที่เหลือ
+        
+                // กรองเฉพาะการจองที่มี customerID เท่านั้น
+                const validReservations = Object.keys(data).filter(key => data[key].customerID);
+        
+                // จำนวนการจองที่มีอยู่
+                const bookedSeats = validReservations.length;
+        
+                // คำนวณจำนวนที่นั่งที่เหลือ
+                setRemainingQueue(50 - bookedSeats);
+            } else {
+                // ถ้าไม่มีข้อมูลการจองในวันที่เลือก
+                setRemainingQueue(50); // หมายความว่าทุกที่นั่งยังว่าง
+            }
+        };
+        
+
+        const fetchImageUrl = async () => {
+            // ดึง URL รูปจาก Firebase (ในกรณีที่มีการอัปโหลดรูปไว้ใน Firebase)
+            const imageRef = ref(dbRealtime, `reservations/${date}/imageUrl`);
+            const snapshot = await get(imageRef);
+            if (snapshot.exists()) {
+                setImageUrl(snapshot.val()); // ถ้ามี URL ให้เก็บใน state
             }
         };
 
         fetchUserData();
         fetchRemainingQueue();
+        fetchImageUrl();
     }, [date]); // เมื่อเปลี่ยนวันที่ให้ดึงข้อมูลใหม่
 
     const handleConfirm = async () => {
-        if (!auth.currentUser || !userData) return alert("User not logged in!");
-
+        if (!auth.currentUser || !userData) {
+            alert("User not logged in!");
+            return;
+        }
+    
         if (seats <= 0) {
             alert("Please specify a valid number of seats!");
             return;
         }
-
+    
         if (!isChecked) {
             alert("Please agree to the reservation policy!");
             return;
         }
-
+    
         if (seats > remainingQueue) {
             alert("Not enough seats available!");
             return;
         }
-
-        const totalPrice = seats * 3200;
-
-        // ใช้ push() เพื่อเพิ่มข้อมูลการจองลงในแต่ละวันและแต่ละ queue
-        const reservationsRef = ref(dbRealtime, `reservations/${date}`);
-        const newReservationRef = push(reservationsRef); // เพิ่มข้อมูลใหม่ในแต่ละวันที่เลือก
-
-        // ใช้ newReservationRef.key เป็น reservationID
-        await set(newReservationRef, {
-            customerID: auth.currentUser.uid,
-            reservationID: newReservationRef.key,  // ใช้ key ที่ Firebase สร้างขึ้น
-            seat: seats,
-            totalPrice,
-        });
-
-        // ไปหน้า Finished พร้อมแนบ reservationID
-        navigate(`/finished?reservationID=${newReservationRef.key}`);
+    
+        const totalPrice = seats * price; // ใช้ราคาที่ส่งมาจาก URL
+    
+        try {
+            const reservationsRef = ref(dbRealtime, `reservations/${date}`); // ดึงข้อมูลจาก Firebase ตามวันที่ที่เลือก
+            
+            // ดึงข้อมูลการจองในวันนั้น ๆ
+            const snapshot = await get(reservationsRef);
+            let queueNumber = 1; // ตั้งค่าเริ่มต้นของคิวเป็น 1
+    
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const reservationsOnDate = Object.keys(data).filter((key) => data[key].reservationID); // กรองเฉพาะรายการที่มี reservationID
+    
+                queueNumber = reservationsOnDate.length + 1; // คำนวณหมายเลขคิวใหม่
+            }
+    
+            // ใช้ push เพื่อสร้างการจองใหม่ใน Firebase
+            const newReservationRef = push(reservationsRef);
+    
+            // บันทึกการจองใหม่พร้อมหมายเลขคิว
+            await set(newReservationRef, {
+                customerID: auth.currentUser.uid,
+                reservationID: newReservationRef.key,
+                seat: seats,
+                totalPrice,
+                queue: queueNumber,  // บันทึกหมายเลขคิว
+            });
+    
+            // หลังจากบันทึกข้อมูลแล้วเปลี่ยนเส้นทางไปหน้า finished พร้อมกับ reservationID
+            navigate(`/finished?reservationID=${newReservationRef.key}`);
+        } catch (error) {
+            console.error("Error confirming reservation: ", error);
+            alert("An error occurred while confirming your reservation.");
+        }
     };
+    
+    
+    
 
     return (
         <>
@@ -101,12 +146,15 @@ function ConfirmInfo() {
                         </div>
                     </div>
 
-                    <div className="flex justify-center">
-                        <img src={Band1} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
-                    </div>
+                    {/* แสดงรูปภาพจาก Firebase ถ้ามี imageUrl */}
+                    {imageUrl && (
+                        <div className="flex justify-center">
+                            <img src={imageUrl} alt="img" className="max-w-lg rounded-lg shadow-black shadow-md" />
+                        </div>
+                    )}
 
                     <div className="text-md tracking-wider space-y-4">
-                        <h3 className="text-3xl font-bold">Remaining queue: {remainingQueue}</h3> {/* แสดงจำนวนที่นั่งที่เหลือ */}
+                        <h3 className="text-3xl font-bold">Remaining queue: {remainingQueue}</h3>
                         <hr />
                         <div className="flex justify-between">
                             <p>Day/Month/Year</p>
