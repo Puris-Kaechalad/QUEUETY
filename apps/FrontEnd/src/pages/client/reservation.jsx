@@ -37,10 +37,10 @@ const Reservation = () => {
     const [isConcertDays, setIsConcertDays] = useState({});
 
     const [reservationDates, setReservationDates] = useState([]);
-   
-    
-    
-    
+
+
+
+
     useEffect(() => {
         if (!selectedDate) return; // ถ้าไม่มี selectedDate ให้ return
 
@@ -241,7 +241,7 @@ const Reservation = () => {
         const concertRef = ref(dbRealtime, `reservations/${selectedDate}/isConcertDay`);
         const imageRef = ref(dbRealtime, `reservations/${selectedDate}/imageUrl`);
         const liveBandRef = ref(dbRealtime, `liveBands/${selectedDate}`);
-    
+
         await set(liveBandRef, {
             date: selectedDate,
             price: price,
@@ -250,11 +250,11 @@ const Reservation = () => {
         await set(priceRef, price);
         await set(concertRef, true); // เปลี่ยนเป็น live band
         await set(imageRef, imageUrl); // บันทึก url ตอน confirm
-    
+
         document.getElementById('change').close();
         alert("Live band updated successfully!");
     };
-    
+
 
     // ฟังก์ชันอัปโหลดภาพไปยัง Cloudinary และบันทึก URL ลงใน Firebase
     const handleImageChange = async (event) => {
@@ -262,12 +262,12 @@ const Reservation = () => {
         if (file) {
             const formData = new FormData();
             formData.append("image", file);
-    
+
             try {
                 const response = await axios.post('https://api.imgbb.com/1/upload?key=d11593c766f5add0af53144a89c145fa', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-    
+
                 const uploadedImageUrl = response.data.data.url;
                 setImageUrl(uploadedImageUrl); // เก็บไว้ก่อน ยังไม่บันทึกลง Firebase
                 alert("Image uploaded successfully!");
@@ -279,7 +279,7 @@ const Reservation = () => {
             alert("No file selected");
         }
     };
-    
+
 
     // ฟังก์ชันลบคอนเสิร์ตจาก Firebase
     const handleDeleteConcert = async () => {
@@ -364,57 +364,57 @@ const Reservation = () => {
     const handleClearFakeQueue = async (date) => {
         const reservationRef = ref(dbRealtime, `reservations/${date}`);
         const snapshot = await get(reservationRef);
-    
+
         if (snapshot.exists()) {
             const data = snapshot.val();
             const updates = {};
-    
+
             Object.keys(data).forEach(key => {
                 if (key.startsWith("testUser")) {
                     updates[key] = null; // ลบ key นี้
                 }
             });
-    
+
             await set(reservationRef, {
                 ...data,
                 ...updates,
             });
-    
+
             alert(`Cleared fake queue for ${date}`);
         }
     };
-    
+
 
     const handleReserve = async (date) => {
         if (!user) {
             navigate("/login", { state: { from: `/confirm?date=${encodeURIComponent(date)}` } });
             return;
         }
-    
+
         const reservationRef = ref(dbRealtime, 'reservations/' + date);
         const snapshot = await get(reservationRef);
-    
+
         if (snapshot.exists()) {
             const reservations = snapshot.val();
             const userReservation = Object.values(reservations).find(
                 (reservation) => reservation.customerID === user.uid
             );
-    
+
             if (userReservation) {
                 // ถ้าเคยจอง → ไปหน้า finished ทันที
                 navigate(`/finished?reservationID=${userReservation.reservationID}`);
                 return;
             }
         }
-    
+
         // ดึงราคาของวันที่เลือกจาก Firebase
         const priceRef = ref(dbRealtime, `reservations/${date}/price`);
         const priceSnapshot = await get(priceRef);
         const selectedPrice = priceSnapshot.exists() ? priceSnapshot.val() : 499;
-    
+
         navigate(`/confirm?date=${encodeURIComponent(date)}&price=${selectedPrice}`);
     };
-    
+
     // ฟังก์ชันสำหรับการดูข้อมูลการจองในวันนั้น
     const handleViewReservation = (date) => {
         navigate(`/reserveHistory?selectedDate=${encodeURIComponent(date)}`);  // ส่ง selectedDate ไปที่ ReserveHistory
@@ -451,92 +451,93 @@ const Reservation = () => {
                                     ) : (
                                         dates.map((day, index) => (
                                             <div
-                                            key={index}
-                                            className="card tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible"
-                                            style={{
-                                                // เช็คว่า isConcertDay = true หรือไม่ ถ้ามีจะใช้ imageUrl เป็นพื้นหลัง
-                                                backgroundImage: isConcertDays[day.date] && imageUrls[day.date]
-                                                    ? `url(${imageUrls[day.date]})`  // ถ้าวันนี้เป็นวันคอนเสิร์ตและมี imageUrl
-                                                    : 'none',  // ถ้าไม่ใช่คอนเสิร์ตหรือไม่มี imageUrl, จะไม่แสดง backgroundImage
-                                                backgroundColor: !isConcertDays[day.date] || !imageUrls[day.date] ? '#783939' : 'transparent',  // ใช้สีพื้นหลังน้ำตาลถ้าไม่มี imageUrl หรือไม่ใช่คอนเสิร์ต
-                                                minHeight: '200px',  // เพิ่มความสูงขั้นต่ำให้เห็นภาพ
-                                                backgroundSize: 'cover', // ทำให้ภาพขยายเต็มพื้นที่
-                                                backgroundPosition: 'center' // จัดตำแหน่งภาพกลาง
-                                                
-                                            }}
-                                        >
-                            
-    
+                                                key={index}
+                                                className="card tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible"
+                                                style={{
+                                                    // เช็คว่า isConcertDay = true หรือไม่ ถ้ามีจะใช้ imageUrl เป็นพื้นหลัง
+                                                    backgroundImage: isConcertDays[day.date] && imageUrls[day.date]
+                                                        ? `url(${imageUrls[day.date]})`  // ถ้าวันนี้เป็นวันคอนเสิร์ตและมี imageUrl
+                                                        : 'none',  // ถ้าไม่ใช่คอนเสิร์ตหรือไม่มี imageUrl, จะไม่แสดง backgroundImage
+                                                    backgroundColor: !isConcertDays[day.date] || !imageUrls[day.date] ? '#783939' : 'transparent',  // ใช้สีพื้นหลังน้ำตาลถ้าไม่มี imageUrl หรือไม่ใช่คอนเสิร์ต
+                                                    minHeight: '200px',  // เพิ่มความสูงขั้นต่ำให้เห็นภาพ
+                                                    backgroundSize: 'cover', // ทำให้ภาพขยายเต็มพื้นที่
+                                                    backgroundPosition: 'center', // จัดตำแหน่งภาพกลาง
+                                                    filter: isConcertDays[day.date] && imageUrls[day.date] ? 'brightness(90%)' : 'none', // ปรับความสว่าง
+                                                    
+                                                }}
+                                            >
+
+
 
 
                                                 {/* admin only ----------------------- */}
                                                 {userRole === "admin" && (
-    <div className="mt-12 text-center space-y-4">
-        <button
-            className="bg-yellow-500 text-white px-4 py-2 rounded-full hover:scale-110 duration-200"
-            onClick={async () => {
-                const targetDate = dates[0].date; // เติมวันแรก
-                const reservationRef = ref(dbRealtime, `reservations/${targetDate}`);
-                const snapshot = await get(reservationRef);
+                                                    <div className="mt-12 text-center space-y-4">
+                                                        <button
+                                                            className="bg-yellow-500 text-white px-4 py-2 rounded-full hover:scale-110 duration-200"
+                                                            onClick={async () => {
+                                                                const targetDate = dates[0].date; // เติมวันแรก
+                                                                const reservationRef = ref(dbRealtime, `reservations/${targetDate}`);
+                                                                const snapshot = await get(reservationRef);
 
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    let count = 0;
-                    Object.keys(data).forEach(key => {
-                        if (data[key].customerID) count++;
-                    });
+                                                                if (snapshot.exists()) {
+                                                                    const data = snapshot.val();
+                                                                    let count = 0;
+                                                                    Object.keys(data).forEach(key => {
+                                                                        if (data[key].customerID) count++;
+                                                                    });
 
-                    const updates = {};
-                    for (let i = count; i < 50; i++) {
-                        updates[`testUser${i}`] = { customerID: `test-user-${i}` };
-                    }
+                                                                    const updates = {};
+                                                                    for (let i = count; i < 50; i++) {
+                                                                        updates[`testUser${i}`] = { customerID: `test-user-${i}` };
+                                                                    }
 
-                    await set(reservationRef, {
-                        ...data,
-                        ...updates,
-                    });
+                                                                    await set(reservationRef, {
+                                                                        ...data,
+                                                                        ...updates,
+                                                                    });
 
-                    alert(`🎯 เติม queue ให้เต็มแล้วสำหรับวันที่ ${targetDate}`);
-                }
-            }}
-        >
-            ➕ Fill Fake Queue
-        </button>
+                                                                    alert(`🎯 เติม queue ให้เต็มแล้วสำหรับวันที่ ${targetDate}`);
+                                                                }
+                                                            }}
+                                                        >
+                                                            ➕ Fill Fake Queue
+                                                        </button>
 
-        <button
-            className="bg-red-600 text-white px-4 py-2 rounded-full hover:scale-110 duration-200 ml-4"
-            onClick={async () => {
-                const targetDate = dates[0].date;
-                const reservationRef = ref(dbRealtime, `reservations/${targetDate}`);
-                const snapshot = await get(reservationRef);
+                                                        <button
+                                                            className="bg-red-600 text-white px-4 py-2 rounded-full hover:scale-110 duration-200 ml-4"
+                                                            onClick={async () => {
+                                                                const targetDate = dates[0].date;
+                                                                const reservationRef = ref(dbRealtime, `reservations/${targetDate}`);
+                                                                const snapshot = await get(reservationRef);
 
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    const updates = {};
+                                                                if (snapshot.exists()) {
+                                                                    const data = snapshot.val();
+                                                                    const updates = {};
 
-                    Object.keys(data).forEach(key => {
-                        if (key.startsWith("testUser")) {
-                            updates[key] = null;
-                        }
-                    });
+                                                                    Object.keys(data).forEach(key => {
+                                                                        if (key.startsWith("testUser")) {
+                                                                            updates[key] = null;
+                                                                        }
+                                                                    });
 
-                    await set(ref(dbRealtime, `reservations/${targetDate}`), {
-                        ...data,
-                        ...updates,
-                    });
+                                                                    await set(ref(dbRealtime, `reservations/${targetDate}`), {
+                                                                        ...data,
+                                                                        ...updates,
+                                                                    });
 
-                    alert(`🗑️ Cleared fake queue for ${targetDate}`);
-                }
-            }}
-        >
-            🗑️ Clear Fake Queue
-        </button>
-    </div>
-)}
+                                                                    alert(`🗑️ Cleared fake queue for ${targetDate}`);
+                                                                }
+                                                            }}
+                                                        >
+                                                            🗑️ Clear Fake Queue
+                                                        </button>
+                                                    </div>
+                                                )}
 
 
-                                                
-                                                
+
+
                                                 {userRole === "admin" && (
                                                     <div className="">
                                                         <details className="absolute -top-2 -right-0">
