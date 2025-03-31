@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { MenuContext } from "../../../context/menuContext";
 import Navbar from '../../../component/nav';
+import Footer from '../../../component/footer'
 import FoodMenu from '../../../component/foodMenu';
 import '../client.css';
 
@@ -46,6 +47,7 @@ function Menu() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

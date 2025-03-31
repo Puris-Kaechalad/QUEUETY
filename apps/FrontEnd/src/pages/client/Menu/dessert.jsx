@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import Navbar from "../../../component/nav";
+import Footer from '../../../component/footer'
 import FoodMenu from "../../../component/foodMenu";
 import "../client.css";
 import { MenuContext } from "../../../context/menuContext";
@@ -34,6 +35,7 @@ function Dessert() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }
