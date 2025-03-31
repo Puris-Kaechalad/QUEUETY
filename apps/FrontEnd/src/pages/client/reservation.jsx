@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from '../../component/nav';
+import Footer from '../../component/footer'
 import './client.css';
 import DownArrow from "../../assets/down_arrow.png";
 import Mark from "../../assets/mark.png";
@@ -959,6 +960,7 @@ const Reservation = () => {
                     </div>
                 </div>
             )}
+            <Footer />
         </>
     );
 };

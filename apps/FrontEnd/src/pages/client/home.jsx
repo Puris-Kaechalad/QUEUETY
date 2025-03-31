@@ -1,5 +1,6 @@
 import React, { useState, useEffect  } from 'react'
 import Navbar from '../../component/nav'
+import Footer from '../../component/footer'
 import './client.css'
 import { Link } from "react-router-dom";
 import steakImage from "../../assets/home_background.png";
@@ -79,7 +80,7 @@ function Home() {
                 <a href="#about-us" className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110">
                   About us
                 </a>
-                {userRole !== "staff" && ( // 🔥 ซ่อนปุ่ม Reserve now ถ้าเป็น staff
+                {userRole !== "staff" && ( // ซ่อนปุ่ม Reserve now ถ้าเป็น staff
                   <Link to="/reservation" className="flex items-center bg-yellow-600 shadow-black shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">
                     Reserve now
                   </Link>
@@ -163,6 +164,7 @@ function Home() {
           </div>
         </form>
       </section>
+      <Footer />
     </>
   )
 }

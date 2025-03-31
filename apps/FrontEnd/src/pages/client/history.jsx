@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import Navbar from '../../component/nav';
+import Footer from '../../component/footer'
 import './client.css';
 import { ref, get } from 'firebase/database'; 
 import { dbRealtime } from "../../firebaseConfig"; 
@@ -130,6 +131,7 @@ function History() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }
