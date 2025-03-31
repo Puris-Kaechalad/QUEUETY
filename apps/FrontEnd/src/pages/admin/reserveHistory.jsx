@@ -50,6 +50,9 @@ function ReserveHistory() {
                             userFetchPromises.push(get(userRef));
                         }
                     });
+                    reservationsList.sort((a, b) => Number(a.queue) - Number(b.queue));
+
+                    setReservations(reservationsList);
                 }
             });
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect  } from 'react'
 import Navbar from '../../component/nav'
 import './client.css'
 import { Link } from "react-router-dom";
@@ -7,11 +7,31 @@ import HomeCenter from "../../assets/home_center.jpg";
 import DownArrow from "../../assets/down_arrow.png"
 import Location from "../../assets/location.png"
 import emailjs from 'emailjs-com';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, get } from "firebase/database";
 
 function Home() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userRole, setUserRole] = useState("");
+  
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const db = getDatabase();
+        const userRef = ref(db, `users/${user.uid}`);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          setUserRole(data.role);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,9 +76,16 @@ function Home() {
               <p className="mt-8 text-4xl">Let me help you find a seat!</p>
             </div>
             <div className="flex space-x-8">
-              <a href="#about-us" className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110 ">About us</a>
-              <Link to="/reservation" className="flex items-center bg-yellow-600 shadow-black shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">Reserve now</Link>
-            </div>
+                <a href="#about-us" className="text-white px-4 py-2 border-1 border-dashed rounded-full tracking-wider hover:bg-white hover:text-black transition-all duration-200 hover:scale-110">
+                  About us
+                </a>
+                {userRole !== "staff" && ( // 🔥 ซ่อนปุ่ม Reserve now ถ้าเป็น staff
+                  <Link to="/reservation" className="flex items-center bg-yellow-600 shadow-black shadow-lg px-4 py-2 rounded-full leading-none font-bold text-lg tracking-wider hover:bg-transparent hover:border-1 hover:border-yellow-500 transition-all duration-200 hover:scale-110">
+                    Reserve now
+                  </Link>
+                )}
+              </div>
+
           </div>
         </div>
 
