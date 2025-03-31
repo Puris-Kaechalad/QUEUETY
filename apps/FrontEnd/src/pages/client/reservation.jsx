@@ -237,6 +237,7 @@ const Reservation = () => {
         document.getElementById('change').showModal(); // แสดง dialog สำหรับการเปลี่ยนเป็น live band
     };
 
+    
     // Confirm action ใน Edit Dialog
     const handleEditConfirm = async () => {
         // ตรวจสอบค่าราคา
@@ -245,33 +246,69 @@ const Reservation = () => {
             return;
         }
     
-        // อัปเดตข้อมูลใน Firebase สำหรับ liveBands
-        const liveBandRef = ref(dbRealtime, `liveBands/${selectedConcert.date}`);
-        await set(liveBandRef, {
-            date: selectedConcert.date,
-            price: price, // อัปเดตราคาใหม่
-            imageUrl: imageUrl, // อัปเดตรูปภาพ
-        });
+        // ตรวจสอบว่า imageUrl มีค่าไหม (ตรวจสอบว่าได้เลือกไฟล์รูปภาพหรือยัง)
+        if (!imageUrl) {
+            alert("กรุณาเลือกภาพก่อนทำการบันทึก");
+            return;
+        }
     
-        // อัปเดตข้อมูลใน Firebase สำหรับ reservations
-        const priceRef = ref(dbRealtime, `reservations/${selectedConcert.date}/price`);
-        const imageRef = ref(dbRealtime, `reservations/${selectedConcert.date}/imageUrl`);
-        const concertRef = ref(dbRealtime, `reservations/${selectedConcert.date}/isConcertDay`);
+        // ถ้าใช้ dialog editBand, ใช้ selectedConcert
+        if (selectedConcert) {
+            // อัปเดตข้อมูลใน Firebase สำหรับ liveBands (ใช้ selectedConcert)
+            const liveBandRef = ref(dbRealtime, `liveBands/${selectedConcert.date}`);
+            await set(liveBandRef, {
+                date: selectedConcert.date,  // ใช้ selectedConcert.date
+                price: price,        // อัปเดตราคาใหม่
+                imageUrl: imageUrl,  // อัปเดตรูปภาพ
+            });
     
-        await set(priceRef, price); // อัปเดตราคาใน reservations
-        await set(imageRef, imageUrl); // อัปเดตรูปภาพใน reservations
-        await set(concertRef, true); // ตั้งค่าเป็น live band ใน reservations
+            // อัปเดตข้อมูลใน Firebase สำหรับ reservations
+            const priceRef = ref(dbRealtime, `reservations/${selectedConcert.date}/price`);
+            const imageRef = ref(dbRealtime, `reservations/${selectedConcert.date}/imageUrl`);
+            const concertRef = ref(dbRealtime, `reservations/${selectedConcert.date}/isConcertDay`);
     
-        // อัปเดตข้อมูลใน state
-        setPrice(price); // อัปเดตราคาใน state
-        setImageUrl(imageUrl); // อัปเดตรูปภาพใน state
+            await set(priceRef, price);  // อัปเดตราคาใน reservations
+            await set(imageRef, imageUrl); // อัปเดตรูปภาพใน reservations
+            await set(concertRef, true); // ตั้งค่าเป็น live band ใน reservations
     
-        // ปิด dialog
-        document.getElementById('editBand').close();
+            // อัปเดตข้อมูลใน state
+            setPrice(price); // อัปเดตราคาใน state
+            setImageUrl(imageUrl); // อัปเดตรูปภาพใน state
     
+            // ปิด editBand dialog
+            document.getElementById('editBand').close();
+        } 
+        // ถ้าใช้ dialog change, ใช้ selectedDate
+        else if (selectedDate) {
+            // อัปเดตข้อมูลใน Firebase สำหรับ liveBands
+            const liveBandRef = ref(dbRealtime, `liveBands/${selectedDate}`);
+            await set(liveBandRef, {
+                date: selectedDate,  // ใช้ selectedDate
+                price: price,        // อัปเดตราคาใหม่
+                imageUrl: imageUrl,  // อัปเดตรูปภาพ
+            });
+    
+            // อัปเดตข้อมูลใน Firebase สำหรับ reservations
+            const priceRef = ref(dbRealtime, `reservations/${selectedDate}/price`);
+            const imageRef = ref(dbRealtime, `reservations/${selectedDate}/imageUrl`);
+            const concertRef = ref(dbRealtime, `reservations/${selectedDate}/isConcertDay`);
+    
+            await set(priceRef, price);  // อัปเดตราคาใน reservations
+            await set(imageRef, imageUrl); // อัปเดตรูปภาพใน reservations
+            await set(concertRef, true); // ตั้งค่าเป็น live band ใน reservations
+    
+            // อัปเดตข้อมูลใน state
+            setPrice(price); // อัปเดตราคาใน state
+            setImageUrl(imageUrl); // อัปเดตรูปภาพใน state
+    
+            // ปิด change dialog
+            document.getElementById('change').close();
+        }
+        
         // แจ้งเตือนหลังจากอัปเดตเสร็จ
         alert("Live band updated successfully!");
     };
+    
     
     
     
@@ -836,49 +873,55 @@ const Reservation = () => {
                         {/* admin add band ------------------------ */}
 
                         <div className="lg:flex flex-wrap">
-                            {concertData.length === 0 ? (
-                                <div className="text-center text-lg font-bold text-red-500">No concert available</div>
-                            ) : (
-                                concertData.map((concert, index) => (
-                                    <div key={index} className="mt-16 lg:w-1/2 p-4">
-                                        <div className="flex justify-start items-center gap-4 w-full">
-                                            <h3 className="text-xl font-bold tracking-wider">{concert.date}</h3>
-                                            <p className="text-lg tracking-wider">{concert.price}฿ / 1 customer</p>
-                                        </div>
-                                        <div className="mt-4 relative overflow-visible">
-                                            {/* admin edit, del button --------- */}
-                                            {userRole === "admin" && (
-                                                <div className="absolute -top-0 -right-1">
-                                                    <div className="flex">
-                                                        <details className="">
-                                                            <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
-                                                                <button
-                                                                    className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all"
-                                                                    onClick={() => openEditBandDialog(concert)}  // เรียกใช้ฟังก์ชันที่ถูกต้อง
-                                                                >
-                                                                    <img src={Edit} alt="edit icon" className="h-6 bg-white" />
-                                                                </button>
+    {concertData.length === 0 ? (
+        <div className="text-center text-lg font-bold text-red-500">No concert available</div>
+    ) : (
+        concertData.map((concert, index) => (
+            // ตรวจสอบว่า concert มี imageUrl ก่อนแสดงข้อมูล
+            concert.imageUrl ? (
+                <div key={index} className="mt-16 lg:w-1/2 p-4">
+                    <div className="flex justify-start items-center gap-4 w-full">
+                        <h3 className="text-xl font-bold tracking-wider">{concert.date}</h3>
+                        <p className="text-lg tracking-wider">{concert.price}฿ / 1 customer</p>
+                    </div>
+                    <div className="mt-4 relative overflow-visible">
+                        {/* admin edit, del button --------- */}
+                        {userRole === "admin" && (
+                            <div className="absolute -top-0 -right-1">
+                                <div className="flex">
+                                    <details className="">
+                                        <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
+                                            <button
+                                                className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all"
+                                                onClick={() => openEditBandDialog(concert)}  // เรียกใช้ฟังก์ชันที่ถูกต้อง
+                                            >
+                                                <img src={Edit} alt="edit icon" className="h-6 bg-white" />
+                                            </button>
+                                        </summary>
+                                    </details>
+                                    <details className="">
+                                        <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
+                                            <button className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all" onClick={() => openDeleteDialog(concert)}>
+                                                <img src={Del} alt="del icon" className="h-6" />
+                                            </button>
+                                        </summary>
+                                    </details>
+                                </div>
+                            </div>
+                        )}
+                        {/* admin edit, del button --------- */}
+                        <img
+                            src={concert.imageUrl}
+                            alt="concert"
+                            className="w-full rounded-xl shadow-black shadow-md"
+                        />
+                    </div>
+                </div>
+            ) : null // ถ้าไม่มี imageUrl, จะไม่แสดงอะไรเลย
+        ))
+    )}
+</div>
 
-                                                            </summary>
-                                                        </details>
-                                                        <details className="">
-                                                            <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
-                                                                <button className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all" onClick={() => openDeleteDialog(concert)}>
-                                                                    <img src={Del} alt="del icon" className="h-6" />
-                                                                </button>
-
-                                                            </summary>
-                                                        </details>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {/* admin edit, del button --------- */}
-                                            <img src={concert.imageUrl} alt="concert" className="w-full rounded-xl shadow-black shadow-md" />
-                                        </div>
-                                    </div>
-                                ))
-                            )}
-                        </div>
                     </div>
                     {/* admin edit, del popup--------- */}
                     <div className="">
