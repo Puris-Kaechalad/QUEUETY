@@ -35,6 +35,7 @@ const Reservation = () => {
     const [bandPrice, setBandPrice] = useState("");  // เก็บราคา
     const [imageUrls, setImageUrls] = useState({});
     const [isConcertDays, setIsConcertDays] = useState({});
+    const [date, setDate] = useState(""); // เก็บวันที่
 
     const [reservationDates, setReservationDates] = useState([]);
    
@@ -237,23 +238,41 @@ const Reservation = () => {
 
     // Confirm action ใน Edit Dialog
     const handleEditConfirm = async () => {
-        const priceRef = ref(dbRealtime, `reservations/${selectedDate}/price`);
-        const concertRef = ref(dbRealtime, `reservations/${selectedDate}/isConcertDay`);
-        const imageRef = ref(dbRealtime, `reservations/${selectedDate}/imageUrl`);
-        const liveBandRef = ref(dbRealtime, `liveBands/${selectedDate}`);
+        // ตรวจสอบค่าราคา
+        if (!price || isNaN(price)) {
+            alert("กรุณากรอกราคาให้ถูกต้อง");
+            return;
+        }
     
+        // อัปเดตข้อมูลใน Firebase สำหรับ liveBands
+        const liveBandRef = ref(dbRealtime, `liveBands/${selectedConcert.date}`);
         await set(liveBandRef, {
-            date: selectedDate,
-            price: price,
-            imageUrl: imageUrl,
+            date: selectedConcert.date,
+            price: price, // อัปเดตราคาใหม่
+            imageUrl: imageUrl, // อัปเดตรูปภาพ
         });
-        await set(priceRef, price);
-        await set(concertRef, true); // เปลี่ยนเป็น live band
-        await set(imageRef, imageUrl); // บันทึก url ตอน confirm
     
-        document.getElementById('change').close();
+        // อัปเดตข้อมูลใน Firebase สำหรับ reservations
+        const priceRef = ref(dbRealtime, `reservations/${selectedConcert.date}/price`);
+        const imageRef = ref(dbRealtime, `reservations/${selectedConcert.date}/imageUrl`);
+        const concertRef = ref(dbRealtime, `reservations/${selectedConcert.date}/isConcertDay`);
+    
+        await set(priceRef, price); // อัปเดตราคาใน reservations
+        await set(imageRef, imageUrl); // อัปเดตรูปภาพใน reservations
+        await set(concertRef, true); // ตั้งค่าเป็น live band ใน reservations
+    
+        // อัปเดตข้อมูลใน state
+        setPrice(price); // อัปเดตราคาใน state
+        setImageUrl(imageUrl); // อัปเดตรูปภาพใน state
+    
+        // ปิด dialog
+        document.getElementById('editBand').close();
+    
+        // แจ้งเตือนหลังจากอัปเดตเสร็จ
         alert("Live band updated successfully!");
     };
+    
+    
     
 
     // ฟังก์ชันอัปโหลดภาพไปยัง Cloudinary และบันทึก URL ลงใน Firebase
@@ -602,11 +621,31 @@ const Reservation = () => {
                                                                 </div>
                                                                 <div className="flex justify-center mt-8">
                                                                     <button
-                                                                        onClick={() => {
-                                                                            // อัปเดตราคาใน Firebase
+                                                                        onClick={async () => {
+                                                                            // อัปเดตข้อมูลใน Firebase
                                                                             const priceRef = ref(dbRealtime, `reservations/${selectedDate}/price`);
-                                                                            set(priceRef, price); // บันทึกราคาใหม่
-                                                                            document.getElementById('edit').close();
+                                                                            const concertRef = ref(dbRealtime, `reservations/${selectedDate}/isConcertDay`);
+                                                                            const imageRef = ref(dbRealtime, `reservations/${selectedDate}/imageUrl`);
+                                                                            const liveBandRef = ref(dbRealtime, `liveBands/${selectedDate}`);
+
+                                                                            // อัปเดตราคาใน reservations
+                                                                            await set(priceRef, price);
+                                                                            await set(concertRef, true); // เปลี่ยนเป็น live band
+                                                                            await set(imageRef, imageUrl); // บันทึกรูปภาพ
+
+                                                                            // อัปเดตข้อมูลใน liveBands
+                                                                            await set(liveBandRef, {
+                                                                                date: selectedDate,
+                                                                                price: price,
+                                                                                imageUrl: imageUrl,
+                                                                            });
+
+                                                                            // อัปเดต state ในกรณีที่จำเป็น
+                                                                            setPrice(price); // อัปเดตราคาใน state
+                                                                            setImageUrl(imageUrl); // อัปเดตภาพใน state
+
+                                                                            document.getElementById('edit').close(); // ปิด Dialog
+                                                                            alert("Live band updated successfully!");
                                                                         }}
                                                                         className="bg-sky-500 px-4 py-1 rounded-full hover:scale-110 duration-200 cursor-pointer"
                                                                     >
@@ -615,6 +654,7 @@ const Reservation = () => {
                                                                 </div>
                                                             </div>
                                                         </dialog>
+
 
 
                                                         {/* Dialog สำหรับ Change to live band */}
@@ -745,27 +785,49 @@ const Reservation = () => {
                                         <div className="mt-8 text-center space-y-6">
                                             <label className="text-lg">Date</label>
                                             <div className="flex gap-2 justify-center mt-2">
-                                                <input id="dateInput" type="text" placeholder="dd/mm/yyyy" className="w-1/4" />
+                                                <input
+                                                    id="dateInput"
+                                                    type="text"
+                                                    placeholder="dd/mm/yyyy"
+                                                    className="w-1/4"
+                                                    value={date} // ผูกกับ state
+                                                    onChange={(e) => setDate(e.target.value)} // อัปเดตค่า state เมื่อมีการกรอก
+                                                />
                                             </div>
 
                                             <label className="text-lg">Price</label>
                                             <div className="flex gap-2 justify-center mt-2">
-                                                <input type="text" placeholder="499" className="w-1/4" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="499"
+                                                    className="w-1/4"
+                                                    value={price} // ผูกกับ state
+                                                    onChange={(e) => setPrice(e.target.value)} // อัปเดตค่า price ใน state
+                                                />
                                                 <p>฿</p>
                                             </div>
 
                                             <label className="text-lg">Picture</label>
                                             <div className="flex justify-center mt-2">
-                                                <input type="file" accept="image" className="w-1/3" onChange={handleImageChange} />
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="w-1/3"
+                                                    onChange={handleImageChange} // ฟังก์ชันสำหรับเปลี่ยนรูป
+                                                />
                                             </div>
                                         </div>
                                         <div className="flex justify-center mt-8">
-                                            <button onClick={handleAddBand} className="bg-sky-500 px-4 py-1 rounded-full hover:scale-110 duration-200 cursor-pointer">
+                                            <button
+                                                onClick={handleAddBand} // เรียกฟังก์ชันที่อัปเดต Firebase
+                                                className="bg-sky-500 px-4 py-1 rounded-full hover:scale-110 duration-200 cursor-pointer"
+                                            >
                                                 Confirm
                                             </button>
                                         </div>
                                     </div>
                                 </dialog>
+
 
 
                             </div>
