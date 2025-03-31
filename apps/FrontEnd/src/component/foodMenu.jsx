@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import { useContext, useState, useEffect} from "react";
+import { useLocation } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
 import '../pages/client/client.css'
 import Menu from "../assets/menu-icon.png"
 import All from "../assets/all.png"
@@ -23,57 +24,57 @@ function foodMenu() {
     const [menuName, setMenuName] = useState("");
     const [menuImage, setMenuImage] = useState(null);
     const [deleteName, setDeleteName] = useState("");
-    const {menus, addMenu, deleteMenu } = useContext(MenuContext);
+    const { menus, addMenu, deleteMenu } = useContext(MenuContext);
     const [categories, setCategories] = useState([]);
     const [userRole, setUserRole] = useState(null); // ใช้ state เพื่อเก็บข้อมูล role ของผู้ใช้
     useEffect(() => {
         const auth = getAuth();
-      
+
         // เช็คสถานะของผู้ใช้เมื่อเข้าสู่ระบบหรือออกจากระบบ
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            // ถ้ามีผู้ใช้เข้าสู่ระบบ ให้ดึงข้อมูล role จาก Firebase Realtime Database
-            const userRef = ref(dbRealtime, `users/${user.uid}/role`); // Path ที่เก็บ role ของผู้ใช้
-            const snapshot = await get(userRef);
-            
-            if (snapshot.exists()) {
-              setUserRole(snapshot.val()); // เก็บ role ใน state
+            if (user) {
+                // ถ้ามีผู้ใช้เข้าสู่ระบบ ให้ดึงข้อมูล role จาก Firebase Realtime Database
+                const userRef = ref(dbRealtime, `users/${user.uid}/role`); // Path ที่เก็บ role ของผู้ใช้
+                const snapshot = await get(userRef);
+
+                if (snapshot.exists()) {
+                    setUserRole(snapshot.val()); // เก็บ role ใน state
+                } else {
+                    console.log("No role found for user");
+                }
             } else {
-              console.log("No role found for user");
+                setUserRole(null); // ถ้าผู้ใช้ไม่ล็อกอิน
             }
-          } else {
-            setUserRole(null); // ถ้าผู้ใช้ไม่ล็อกอิน
-          }
         });
-      
+
         return () => unsubscribe(); // ลบ listener เมื่อ component ถูก unmount
-      }, []);
-    
+    }, []);
+
 
     const handleImageUpload = async (file) => {
         const formData = new FormData();
         formData.append('image', file);
-    
+
         // อัปโหลดไปยัง ImgBB
         const response = await axios.post('https://api.imgbb.com/1/upload?key=d11593c766f5add0af53144a89c145fa', formData);
-    
+
         // รับ URL ของรูปภาพจาก ImgBB
         return response.data.data.url;
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (!category || !menuName || !menuImage) {
             alert("กรุณากรอกข้อมูลให้ครบ");
             return;
         }
-    
+
         // อัปโหลดรูปภาพไปยัง ImgBB
         const imageUrl = await handleImageUpload(menuImage);
-    
+
         // ส่งข้อมูลเมนูพร้อม URL รูปภาพไปยัง Firebase
         addMenu(category, menuName, imageUrl);
-    
+
         setMenuName("");
         setMenuImage(null);
         document.getElementById("addMenu").close(); // ปิด Dialog
@@ -112,6 +113,12 @@ function foodMenu() {
         fetchCategories(); // เรียกฟังก์ชันนี้เมื่อโหลดหน้า
     }, []);
 
+    const location = useLocation();
+    // ฟังก์ชันสำหรับการคลิกเลือกหมวดหมู่
+    const handleCategoryClick = (category) => {
+        // ถ้าต้องการให้ทำงานเมื่อคลิก
+    };
+
     return (
         <>
             <aside className="sidebar w-1/4">
@@ -123,7 +130,7 @@ function foodMenu() {
 
                     {/* edit, delete menu */}
                     {userRole === "admin" && (
-                            <div className="flex justify-between">
+                        <div className="flex justify-between">
                             <button className="bg-white text-sky-500 font-semibold px-4 py-1 rounded-lg flex items-center gap-2 cursor-pointer" onClick={() => document.getElementById('addMenu').showModal()}>
                                 Add
                                 <img src={Edit} alt="edit icon" className="h-4" />
@@ -133,8 +140,8 @@ function foodMenu() {
                                 Delete
                                 <img src={Del} alt="del icon" className="h-4" />
                             </button>
-                            </div>
-                        )}
+                        </div>
+                    )}
 
                     <dialog id="addMenu" className="modal">
                         <div className="modal-box bg-white text-black">
@@ -240,7 +247,7 @@ function foodMenu() {
                                 </div>
                             </div>
                             <div className="flex justify-center mt-8">
-                            <button
+                                <button
                                     className="bg-sky-500 px-4 py-1 text-white rounded-full hover:scale-110 duration-200 cursor-pointer"
                                     onClick={handleSubmit}  // เรียกฟังก์ชัน handleSubmit เมื่อกด Confirm
                                 >
@@ -252,150 +259,150 @@ function foodMenu() {
                     </dialog>
 
                     <dialog id="deleteMenu" className="modal">
-                <div className="modal-box bg-white text-black">
-                    <form method="dialog">
-                        <button className="btn bg-transparent border-none shadow-none absolute right-2 top-2 text-black">✕</button>
-                    </form>
-                    <h3 className="font-bold text-2xl">Delete menu</h3>
-                    <div className="mt-8 text-center space-y-6">
-                        <div>
-                            <details className="dropdown">
-                                <summary className="btn bg-transparent shadow-none text-black">Category</summary>
-                                <ul className="menu dropdown-content bg-white shadow-black shadow-lg rounded-box z-1 w-52 p-2 mt-1 shadow-sm">
-                                    <li>
-                                        <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                            <input
-                                                type="radio"
-                                                name="radio-2"
-                                                className="radio radio-sm"
-                                                onChange={() => setCategory("Meat")}
-                                            />
-                                            <span>Meat</span>
-                                        </label>
-                                    </li>
-                                    <li>
-                                        <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                            <input
-                                                type="radio"
-                                                name="radio-2"
-                                                className="radio radio-sm"
-                                                onChange={() => setCategory("Fries")}
-                                            />
-                                            <span>Fries</span>
-                                        </label>
-                                    </li>
-                                    <li>
-                                        <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                            <input
-                                                type="radio"
-                                                name="radio-2"
-                                                className="radio radio-sm"
-                                                onChange={() => setCategory("SeaFood")}
-                                            />
-                                            <span>Sea food</span>
-                                        </label>
-                                    </li>
-                                    <li>
-                                        <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                            <input
-                                                type="radio"
-                                                name="radio-2"
-                                                className="radio radio-sm"
-                                                onChange={() => setCategory("Fruit")}
-                                            />
-                                            <span>Fruit</span>
-                                        </label>
-                                    </li>
-                                    <li>
-                                        <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                            <input
-                                                type="radio"
-                                                name="radio-2"
-                                                className="radio radio-sm"
-                                                onChange={() => setCategory("Dessert")}
-                                            />
-                                            <span>Dessert</span>
-                                        </label>
-                                    </li>
-                                    <li>
-                                        <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
-                                            <input
-                                                type="radio"
-                                                name="radio-2"
-                                                className="radio radio-sm"
-                                                onChange={() => setCategory("Drink")}
-                                            />
-                                            <span>Drink</span>
-                                        </label>
-                                    </li>
-                                </ul>
-                            </details>
-                        </div>
+                        <div className="modal-box bg-white text-black">
+                            <form method="dialog">
+                                <button className="btn bg-transparent border-none shadow-none absolute right-2 top-2 text-black">✕</button>
+                            </form>
+                            <h3 className="font-bold text-2xl">Delete menu</h3>
+                            <div className="mt-8 text-center space-y-6">
+                                <div>
+                                    <details className="dropdown">
+                                        <summary className="btn bg-transparent shadow-none text-black">Category</summary>
+                                        <ul className="menu dropdown-content bg-white shadow-black shadow-lg rounded-box z-1 w-52 p-2 mt-1 shadow-sm">
+                                            <li>
+                                                <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Meat")}
+                                                    />
+                                                    <span>Meat</span>
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Fries")}
+                                                    />
+                                                    <span>Fries</span>
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("SeaFood")}
+                                                    />
+                                                    <span>Sea food</span>
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Fruit")}
+                                                    />
+                                                    <span>Fruit</span>
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Dessert")}
+                                                    />
+                                                    <span>Dessert</span>
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <label className="flex items-center gap-2 cursor-pointer px-2 py-1">
+                                                    <input
+                                                        type="radio"
+                                                        name="radio-2"
+                                                        className="radio radio-sm"
+                                                        onChange={() => setCategory("Drink")}
+                                                    />
+                                                    <span>Drink</span>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </details>
+                                </div>
 
-                        <label className="text-lg">Name</label>
-                        <div className="flex justify-center mt-2">
-                            <input
-                                type="text"
-                                value={deleteName}
-                                onChange={(e) => setDeleteName(e.target.value)}
-                                placeholder="Enter name of menu to delete"
-                                className="w-1/4"
-                            />
-                        </div>
-                    </div>
+                                <label className="text-lg">Name</label>
+                                <div className="flex justify-center mt-2">
+                                    <input
+                                        type="text"
+                                        value={deleteName}
+                                        onChange={(e) => setDeleteName(e.target.value)}
+                                        placeholder="Enter name of menu to delete"
+                                        className="w-1/4"
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="flex justify-center mt-8">
-                        <button
-                            className="bg-red-500 text-white px-4 py-2 rounded"
-                            onClick={handleDelete} // เรียกใช้ handleDelete เมื่อกด Confirm
-                        >
-                            Confirm
-                        </button>
-                    </div>
-                </div>
-            </dialog>
+                            <div className="flex justify-center mt-8">
+                                <button
+                                    className="bg-red-500 text-white px-4 py-2 rounded"
+                                    onClick={handleDelete} // เรียกใช้ handleDelete เมื่อกด Confirm
+                                >
+                                    Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </dialog>
 
 
                     {/* -------------------- */}
 
                     <div className="text-lg w-full self-start mt-4">
-                        <Link to="/menu" className="menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105">
+                        <Link to="/menu" className={`menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105 ${location.pathname === "/menu" ? "underline underline-offset-8 text-white" : ""}`} onClick={() => handleCategoryClick("All")}>
                             <img src={All} alt="icon" className="h-6" />
                             <p>All</p>
                         </Link>
-                        <hr className="my-1"></hr>
+                        <hr className="my-1" />
 
-                        <Link to="/menu/Meat" className="menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105">
+                        <Link to="/menu/Meat" className={`menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105 ${location.pathname === "/menu/Meat" ? "underline underline-offset-8 text-white" : ""}`} onClick={() => handleCategoryClick("Meat")}>
                             <img src={Meat} alt="icon" className="h-6" />
                             <p>Meat</p>
                         </Link>
-                        <hr className="my-1"></hr>
+                        <hr className="my-1" />
 
-                        <Link to="/menu/fries" className="menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105">
+                        <Link to="/menu/fries" className={`menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105 ${location.pathname === "/menu/fries" ? "underline underline-offset-8 text-white" : ""}`} onClick={() => handleCategoryClick("Fries")}>
                             <img src={Fried} alt="icon" className="h-6" />
                             <p>Fries</p>
                         </Link>
-                        <hr className="my-1"></hr>
+                        <hr className="my-1" />
 
-                        <Link to="/menu/seaFood" className="menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105">
+                        <Link to="/menu/seaFood" className={`menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105 ${location.pathname === "/menu/seaFood" ? "underline underline-offset-8 text-white" : ""}`} onClick={() => handleCategoryClick("SeaFood")}>
                             <img src={Shrimp} alt="icon" className="h-6" />
-                            <p>Sea food</p>
+                            <p>Seafood</p>
                         </Link>
-                        <hr className="my-1"></hr>
+                        <hr className="my-1" />
 
-                        <Link to="/menu/fruit" className="menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105">
+                        <Link to="/menu/fruit" className={`menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105 ${location.pathname === "/menu/fruit" ? "underline underline-offset-8 text-white" : ""}`} onClick={() => handleCategoryClick("Fruit")}>
                             <img src={Apple} alt="icon" className="h-6" />
                             <p>Fruit</p>
                         </Link>
-                        <hr className="my-1"></hr>
+                        <hr className="my-1" />
 
-                        <Link to="/menu/dessert" className="menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105" onClick={() => handleCategoryClick('Dessert')}>
+                        <Link to="/menu/dessert" className={`menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105 ${location.pathname === "/menu/dessert" ? "underline underline-offset-8 text-white" : ""}`} onClick={() => handleCategoryClick("Dessert")}>
                             <img src={Dessert} alt="icon" className="h-6" />
                             <p>Dessert</p>
                         </Link>
-                        <hr className="my-1"></hr>
+                        <hr className="my-1" />
 
-                        <Link to="/menu/drink" className="menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105" onClick={() => handleCategoryClick('Drink')}>
+                        <Link to="/menu/drink" className={`menu-select flex justify-between w-full p-2 transition-all duration-200 hover:scale-105 ${location.pathname === "/menu/drink" ? "underline underline-offset-8 text-white" : ""}`} onClick={() => handleCategoryClick("Drink")}>
                             <img src={Drink} alt="icon" className="h-6" />
                             <p>Drink</p>
                         </Link>
