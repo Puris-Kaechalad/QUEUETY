@@ -231,7 +231,7 @@ function foodMenu() {
                                         type="text"
                                         value={menuName}
                                         onChange={(e) => setMenuName(e.target.value)}
-                                        placeholder="stake"
+                                        placeholder="Enter name"
                                         className="w-1/4"
                                     />
                                 </div>
