@@ -15,6 +15,7 @@ import Del from "../assets/bin.png";
 import { MenuContext } from "../context/menuContext";
 import { ref, get } from "firebase/database";
 import { dbRealtime } from "../firebaseConfig"; // Firebase configuration
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import axios from 'axios';
 
 function foodMenu() {
@@ -24,6 +25,29 @@ function foodMenu() {
     const [deleteName, setDeleteName] = useState("");
     const {menus, addMenu, deleteMenu } = useContext(MenuContext);
     const [categories, setCategories] = useState([]);
+    const [userRole, setUserRole] = useState(null); // ใช้ state เพื่อเก็บข้อมูล role ของผู้ใช้
+    useEffect(() => {
+        const auth = getAuth();
+      
+        // เช็คสถานะของผู้ใช้เมื่อเข้าสู่ระบบหรือออกจากระบบ
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            // ถ้ามีผู้ใช้เข้าสู่ระบบ ให้ดึงข้อมูล role จาก Firebase Realtime Database
+            const userRef = ref(dbRealtime, `users/${user.uid}/role`); // Path ที่เก็บ role ของผู้ใช้
+            const snapshot = await get(userRef);
+            
+            if (snapshot.exists()) {
+              setUserRole(snapshot.val()); // เก็บ role ใน state
+            } else {
+              console.log("No role found for user");
+            }
+          } else {
+            setUserRole(null); // ถ้าผู้ใช้ไม่ล็อกอิน
+          }
+        });
+      
+        return () => unsubscribe(); // ลบ listener เมื่อ component ถูก unmount
+      }, []);
     
 
     const handleImageUpload = async (file) => {
@@ -98,17 +122,19 @@ function foodMenu() {
                     </div>
 
                     {/* edit, delete menu */}
-                    <div className="flex justify-between">
-                        <button className="bg-white text-sky-500 font-semibold px-4 py-1 rounded-lg flex items-center gap-2 cursor-pointer" onClick={() => document.getElementById('addMenu').showModal()}>
-                            Add
-                            <img src={Edit} alt="edit icon" className="h-4" />
-                        </button>
+                    {userRole === "admin" && (
+                            <div className="flex justify-between">
+                            <button className="bg-white text-sky-500 font-semibold px-4 py-1 rounded-lg flex items-center gap-2 cursor-pointer" onClick={() => document.getElementById('addMenu').showModal()}>
+                                Add
+                                <img src={Edit} alt="edit icon" className="h-4" />
+                            </button>
 
-                        <button className="bg-white text-red-500 font-semibold px-4 py-1 rounded-lg flex items-center gap-2 cursor-pointer" onClick={() => document.getElementById('deleteMenu').showModal()}>
-                            Delete
-                            <img src={Del} alt="edit icon" className="h-4" />
-                        </button>
-                    </div>
+                            <button className="bg-white text-red-500 font-semibold px-4 py-1 rounded-lg flex items-center gap-2 cursor-pointer" onClick={() => document.getElementById('deleteMenu').showModal()}>
+                                Delete
+                                <img src={Del} alt="del icon" className="h-4" />
+                            </button>
+                            </div>
+                        )}
 
                     <dialog id="addMenu" className="modal">
                         <div className="modal-box bg-white text-black">
