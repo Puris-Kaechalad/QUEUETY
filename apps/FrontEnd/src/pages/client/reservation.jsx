@@ -11,7 +11,7 @@ import Del from "../../assets/bin.png";
 import Cross from "../../assets/cross.png";
 import Music from "../../assets/music.png";
 import Band1 from '../../assets/cocktail.jpg';
-import { ref, get, set, remove,update } from 'firebase/database';
+import { ref, get, set, remove, update } from 'firebase/database';
 import { dbRealtime } from "../../firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import axios from 'axios';
@@ -39,10 +39,10 @@ const Reservation = () => {
     const [date, setDate] = useState(""); // เก็บวันที่
 
     const [reservationDates, setReservationDates] = useState([]);
-   
-    
-    
-    
+
+
+
+
     useEffect(() => {
         if (!selectedDate) return; // ถ้าไม่มี selectedDate ให้ return
 
@@ -237,7 +237,7 @@ const Reservation = () => {
         document.getElementById('change').showModal(); // แสดง dialog สำหรับการเปลี่ยนเป็น live band
     };
 
-    
+
     // Confirm action ใน Edit Dialog
     const handleEditConfirm = async () => {
         // ตรวจสอบค่าราคา
@@ -245,13 +245,13 @@ const Reservation = () => {
             alert("กรุณากรอกราคาให้ถูกต้อง");
             return;
         }
-    
+
         // ตรวจสอบว่า imageUrl มีค่าไหม (ตรวจสอบว่าได้เลือกไฟล์รูปภาพหรือยัง)
         if (!imageUrl) {
             alert("กรุณาเลือกภาพก่อนทำการบันทึก");
             return;
         }
-    
+
         // ถ้าใช้ dialog editBand, ใช้ selectedConcert
         if (selectedConcert) {
             // อัปเดตข้อมูลใน Firebase สำหรับ liveBands (ใช้ selectedConcert)
@@ -261,23 +261,23 @@ const Reservation = () => {
                 price: price,        // อัปเดตราคาใหม่
                 imageUrl: imageUrl,  // อัปเดตรูปภาพ
             });
-    
+
             // อัปเดตข้อมูลใน Firebase สำหรับ reservations
             const priceRef = ref(dbRealtime, `reservations/${selectedConcert.date}/price`);
             const imageRef = ref(dbRealtime, `reservations/${selectedConcert.date}/imageUrl`);
             const concertRef = ref(dbRealtime, `reservations/${selectedConcert.date}/isConcertDay`);
-    
+
             await set(priceRef, price);  // อัปเดตราคาใน reservations
             await set(imageRef, imageUrl); // อัปเดตรูปภาพใน reservations
             await set(concertRef, true); // ตั้งค่าเป็น live band ใน reservations
-    
+
             // อัปเดตข้อมูลใน state
             setPrice(price); // อัปเดตราคาใน state
             setImageUrl(imageUrl); // อัปเดตรูปภาพใน state
-    
+
             // ปิด editBand dialog
             document.getElementById('editBand').close();
-        } 
+        }
         // ถ้าใช้ dialog change, ใช้ selectedDate
         else if (selectedDate) {
             // อัปเดตข้อมูลใน Firebase สำหรับ liveBands
@@ -287,31 +287,31 @@ const Reservation = () => {
                 price: price,        // อัปเดตราคาใหม่
                 imageUrl: imageUrl,  // อัปเดตรูปภาพ
             });
-    
+
             // อัปเดตข้อมูลใน Firebase สำหรับ reservations
             const priceRef = ref(dbRealtime, `reservations/${selectedDate}/price`);
             const imageRef = ref(dbRealtime, `reservations/${selectedDate}/imageUrl`);
             const concertRef = ref(dbRealtime, `reservations/${selectedDate}/isConcertDay`);
-    
+
             await set(priceRef, price);  // อัปเดตราคาใน reservations
             await set(imageRef, imageUrl); // อัปเดตรูปภาพใน reservations
             await set(concertRef, true); // ตั้งค่าเป็น live band ใน reservations
-    
+
             // อัปเดตข้อมูลใน state
             setPrice(price); // อัปเดตราคาใน state
             setImageUrl(imageUrl); // อัปเดตรูปภาพใน state
-    
+
             // ปิด change dialog
             document.getElementById('change').close();
         }
-        
+
         // แจ้งเตือนหลังจากอัปเดตเสร็จ
         alert("Live band updated successfully!");
     };
-    
-    
-    
-    
+
+
+
+
 
     // ฟังก์ชันอัปโหลดภาพไปยัง Cloudinary และบันทึก URL ลงใน Firebase
     const handleImageChange = async (event) => {
@@ -319,12 +319,12 @@ const Reservation = () => {
         if (file) {
             const formData = new FormData();
             formData.append("image", file);
-    
+
             try {
                 const response = await axios.post('https://api.imgbb.com/1/upload?key=d11593c766f5add0af53144a89c145fa', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-    
+
                 const uploadedImageUrl = response.data.data.url;
                 setImageUrl(uploadedImageUrl); // เก็บไว้ก่อน ยังไม่บันทึกลง Firebase
                 alert("Image uploaded successfully!");
@@ -336,21 +336,21 @@ const Reservation = () => {
             alert("No file selected");
         }
     };
-    
+
 
     // ฟังก์ชันลบคอนเสิร์ตจาก Firebase
     const handleDeleteConcert = async () => {
         console.log("Selected Concert: ", selectedConcert); // ตรวจสอบค่าของ selectedConcert
-    
+
         // ตรวจสอบว่ามีเพียงแค่ date และมีข้อมูลของ concert
         if (!selectedConcert || !selectedConcert.date) {
             alert("Invalid concert data.");
             return; // หยุดการทำงานถ้าข้อมูลไม่ครบ
         }
-    
+
         const concertRef = ref(dbRealtime, `reservations/${selectedConcert.date}`);
         const liveBandRef = ref(dbRealtime, `liveBands/${selectedConcert.date}`);
-    
+
         try {
             // ใช้ update() แทน remove() เพื่ออัปเดตข้อมูลที่ไม่ต้องการ
             await update(concertRef, {
@@ -358,14 +358,14 @@ const Reservation = () => {
                 price: null,
                 isConcertDay: null
             });
-    
+
             // ลบข้อมูลจาก liveBands (ถ้าจำเป็น)
             await remove(liveBandRef);
-    
+
             // ลบคอนเสิร์ตออกจาก state
             setConcertData(concertData.filter(concert => concert.date !== selectedConcert.date));
             alert("Concert data deleted successfully!");
-    
+
             // ปิด Dialog หลังจากลบเสร็จ
             document.getElementById('delBand').close();
         } catch (error) {
@@ -373,12 +373,12 @@ const Reservation = () => {
             alert("Failed to delete concert.");
         }
     };
-    
-    
-    
 
-    
-    
+
+
+
+
+
 
 
     const openDeleteDialog = (concert) => {
@@ -396,7 +396,7 @@ const Reservation = () => {
     const handleAddBand = async () => {
         const dateInput = document.getElementById('dateInput').value; // ตัวอย่างการดึงข้อมูลจาก input field
         const formattedDate = convertDate(dateInput); // แปลงวันที่ที่กรอก
-    
+
         // อัปเดตข้อมูลใน path reservations
         const concertRef = ref(dbRealtime, `reservations/${formattedDate}`);
         await update(concertRef, {
@@ -404,7 +404,7 @@ const Reservation = () => {
             imageUrl: imageUrl,
             isConcertDay: true,
         });
-    
+
         // อัปเดตข้อมูลใน path liveBands
         const liveBandRef = ref(dbRealtime, `liveBands/${formattedDate}`);
         await update(liveBandRef, {
@@ -412,11 +412,11 @@ const Reservation = () => {
             price: price,
             imageUrl: imageUrl,
         });
-    
+
         console.log("Updated concert on:", formattedDate); // ตรวจสอบวันที่ที่บันทึกใน Firebase
         document.getElementById('add').close(); // ปิด Dialog
     };
-    
+
     useEffect(() => {
         const fetchConcertData = async () => {
             const bandRef = ref(dbRealtime, 'liveBands');
@@ -441,57 +441,57 @@ const Reservation = () => {
     const handleClearFakeQueue = async (date) => {
         const reservationRef = ref(dbRealtime, `reservations/${date}`);
         const snapshot = await get(reservationRef);
-    
+
         if (snapshot.exists()) {
             const data = snapshot.val();
             const updates = {};
-    
+
             Object.keys(data).forEach(key => {
                 if (key.startsWith("testUser")) {
                     updates[key] = null; // ลบ key นี้
                 }
             });
-    
+
             await set(reservationRef, {
                 ...data,
                 ...updates,
             });
-    
+
             alert(`Cleared fake queue for ${date}`);
         }
     };
-    
+
 
     const handleReserve = async (date) => {
         if (!user) {
             navigate("/login", { state: { from: `/confirm?date=${encodeURIComponent(date)}` } });
             return;
         }
-    
+
         const reservationRef = ref(dbRealtime, 'reservations/' + date);
         const snapshot = await get(reservationRef);
-    
+
         if (snapshot.exists()) {
             const reservations = snapshot.val();
             const userReservation = Object.values(reservations).find(
                 (reservation) => reservation.customerID === user.uid
             );
-    
+
             if (userReservation) {
                 // ถ้าเคยจอง → ไปหน้า finished ทันที
                 navigate(`/finished?reservationID=${userReservation.reservationID}`);
                 return;
             }
         }
-    
+
         // ดึงราคาของวันที่เลือกจาก Firebase
         const priceRef = ref(dbRealtime, `reservations/${date}/price`);
         const priceSnapshot = await get(priceRef);
         const selectedPrice = priceSnapshot.exists() ? priceSnapshot.val() : 499;
-    
+
         navigate(`/confirm?date=${encodeURIComponent(date)}&price=${selectedPrice}`);
     };
-    
+
     // ฟังก์ชันสำหรับการดูข้อมูลการจองในวันนั้น
     const handleViewReservation = (date) => {
         navigate(`/reserveHistory?selectedDate=${encodeURIComponent(date)}`);  // ส่ง selectedDate ไปที่ ReserveHistory
@@ -528,92 +528,22 @@ const Reservation = () => {
                                     ) : (
                                         dates.map((day, index) => (
                                             <div
-                                            key={index}
-                                            className="card tracking-wider py-4 px-8 rounded-lg space-y-2 relative overflow-visible"
-                                            style={{
-                                                // เช็คว่า isConcertDay = true หรือไม่ ถ้ามีจะใช้ imageUrl เป็นพื้นหลัง
-                                                backgroundImage: isConcertDays[day.date] && imageUrls[day.date]
-                                                    ? `url(${imageUrls[day.date]})`  // ถ้าวันนี้เป็นวันคอนเสิร์ตและมี imageUrl
-                                                    : 'none',  // ถ้าไม่ใช่คอนเสิร์ตหรือไม่มี imageUrl, จะไม่แสดง backgroundImage
-                                                backgroundColor: !isConcertDays[day.date] || !imageUrls[day.date] ? '#783939' : 'transparent',  // ใช้สีพื้นหลังน้ำตาลถ้าไม่มี imageUrl หรือไม่ใช่คอนเสิร์ต
-                                                minHeight: '200px',  // เพิ่มความสูงขั้นต่ำให้เห็นภาพ
-                                                backgroundSize: 'cover', // ทำให้ภาพขยายเต็มพื้นที่
-                                                backgroundPosition: 'center' // จัดตำแหน่งภาพกลาง
-                                                
-                                            }}
-                                        >
-                            
-    
+                                                key={index}
+                                                className="card tracking-wider w-74 py-4 px-8 rounded-lg space-y-2 relative overflow-visible"
+                                                style={{
+                                                    // เช็คว่า isConcertDay = true หรือไม่ ถ้ามีจะใช้ imageUrl เป็นพื้นหลัง
+                                                    backgroundImage: isConcertDays[day.date] && imageUrls[day.date]
+                                                        ? `url(${imageUrls[day.date]})`  // ถ้าวันนี้เป็นวันคอนเสิร์ตและมี imageUrl
+                                                        : 'none',  // ถ้าไม่ใช่คอนเสิร์ตหรือไม่มี imageUrl, จะไม่แสดง backgroundImage
+                                                    backgroundColor: !isConcertDays[day.date] || !imageUrls[day.date] ? '#783939' : 'transparent',  // ใช้สีพื้นหลังน้ำตาลถ้าไม่มี imageUrl หรือไม่ใช่คอนเสิร์ต
+                                                    minHeight: '200px',  // เพิ่มความสูงขั้นต่ำให้เห็นภาพ
+                                                    backgroundSize: 'cover', // ทำให้ภาพขยายเต็มพื้นที่
+                                                    backgroundPosition: 'center' // จัดตำแหน่งภาพกลาง
 
+                                                }}
+                                            >
 
                                                 {/* admin only ----------------------- */}
-                                                {userRole === "admin" && (
-    <div className="mt-12 text-center space-y-4">
-        <button
-            className="bg-yellow-500 text-white px-4 py-2 rounded-full hover:scale-110 duration-200"
-            onClick={async () => {
-                const targetDate = dates[0].date; // เติมวันแรก
-                const reservationRef = ref(dbRealtime, `reservations/${targetDate}`);
-                const snapshot = await get(reservationRef);
-
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    let count = 0;
-                    Object.keys(data).forEach(key => {
-                        if (data[key].customerID) count++;
-                    });
-
-                    const updates = {};
-                    for (let i = count; i < 50; i++) {
-                        updates[`testUser${i}`] = { customerID: `test-user-${i}` };
-                    }
-
-                    await set(reservationRef, {
-                        ...data,
-                        ...updates,
-                    });
-
-                    alert(`🎯 เติม queue ให้เต็มแล้วสำหรับวันที่ ${targetDate}`);
-                }
-            }}
-        >
-            ➕ Fill Fake Queue
-        </button>
-
-        <button
-            className="bg-red-600 text-white px-4 py-2 rounded-full hover:scale-110 duration-200 ml-4"
-            onClick={async () => {
-                const targetDate = dates[0].date;
-                const reservationRef = ref(dbRealtime, `reservations/${targetDate}`);
-                const snapshot = await get(reservationRef);
-
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    const updates = {};
-
-                    Object.keys(data).forEach(key => {
-                        if (key.startsWith("testUser")) {
-                            updates[key] = null;
-                        }
-                    });
-
-                    await set(ref(dbRealtime, `reservations/${targetDate}`), {
-                        ...data,
-                        ...updates,
-                    });
-
-                    alert(`🗑️ Cleared fake queue for ${targetDate}`);
-                }
-            }}
-        >
-            🗑️ Clear Fake Queue
-        </button>
-    </div>
-)}
-
-
-                                                
-                                                
                                                 {userRole === "admin" && (
                                                     <div className="">
                                                         <details className="absolute -top-2 -right-0">
@@ -873,54 +803,54 @@ const Reservation = () => {
                         {/* admin add band ------------------------ */}
 
                         <div className="lg:flex flex-wrap">
-    {concertData.length === 0 ? (
-        <div className="text-center text-lg font-bold text-red-500">No concert available</div>
-    ) : (
-        concertData.map((concert, index) => (
-            // ตรวจสอบว่า concert มี imageUrl ก่อนแสดงข้อมูล
-            concert.imageUrl ? (
-                <div key={index} className="mt-16 lg:w-1/2 p-4">
-                    <div className="flex justify-start items-center gap-4 w-full">
-                        <h3 className="text-xl font-bold tracking-wider">{concert.date}</h3>
-                        <p className="text-lg tracking-wider">{concert.price}฿ / 1 customer</p>
-                    </div>
-                    <div className="mt-4 relative overflow-visible">
-                        {/* admin edit, del button --------- */}
-                        {userRole === "admin" && (
-                            <div className="absolute -top-0 -right-1">
-                                <div className="flex">
-                                    <details className="">
-                                        <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
-                                            <button
-                                                className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all"
-                                                onClick={() => openEditBandDialog(concert)}  // เรียกใช้ฟังก์ชันที่ถูกต้อง
-                                            >
-                                                <img src={Edit} alt="edit icon" className="h-6 bg-white" />
-                                            </button>
-                                        </summary>
-                                    </details>
-                                    <details className="">
-                                        <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
-                                            <button className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all" onClick={() => openDeleteDialog(concert)}>
-                                                <img src={Del} alt="del icon" className="h-6" />
-                                            </button>
-                                        </summary>
-                                    </details>
-                                </div>
-                            </div>
-                        )}
-                        {/* admin edit, del button --------- */}
-                        <img
-                            src={concert.imageUrl}
-                            alt="concert"
-                            className="w-full rounded-xl shadow-black shadow-md"
-                        />
-                    </div>
-                </div>
-            ) : null // ถ้าไม่มี imageUrl, จะไม่แสดงอะไรเลย
-        ))
-    )}
-</div>
+                            {concertData.length === 0 ? (
+                                <div className="text-center text-lg font-bold text-red-500">No concert available</div>
+                            ) : (
+                                concertData.map((concert, index) => (
+                                    // ตรวจสอบว่า concert มี imageUrl ก่อนแสดงข้อมูล
+                                    concert.imageUrl ? (
+                                        <div key={index} className="mt-16 lg:w-1/2 p-4">
+                                            <div className="flex justify-start items-center gap-4 w-full">
+                                                <h3 className="text-xl font-bold tracking-wider">{concert.date}</h3>
+                                                <p className="text-lg tracking-wider">{concert.price}฿ / 1 customer</p>
+                                            </div>
+                                            <div className="mt-4 relative overflow-visible">
+                                                {/* admin edit, del button --------- */}
+                                                {userRole === "admin" && (
+                                                    <div className="absolute -top-0 -right-1">
+                                                        <div className="flex">
+                                                            <details className="">
+                                                                <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
+                                                                    <button
+                                                                        className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all"
+                                                                        onClick={() => openEditBandDialog(concert)}  // เรียกใช้ฟังก์ชันที่ถูกต้อง
+                                                                    >
+                                                                        <img src={Edit} alt="edit icon" className="h-6 bg-white" />
+                                                                    </button>
+                                                                </summary>
+                                                            </details>
+                                                            <details className="">
+                                                                <summary className="btn p-1 shadow-none border-none bg-transparent rounded-full">
+                                                                    <button className="btn bg-white shadow-none border-none rounded-full cursor-pointer hover:scale-110 duration-200 transition-all" onClick={() => openDeleteDialog(concert)}>
+                                                                        <img src={Del} alt="del icon" className="h-6" />
+                                                                    </button>
+                                                                </summary>
+                                                            </details>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {/* admin edit, del button --------- */}
+                                                <img
+                                                    src={concert.imageUrl}
+                                                    alt="concert"
+                                                    className="w-full rounded-xl shadow-black shadow-md"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : null // ถ้าไม่มี imageUrl, จะไม่แสดงอะไรเลย
+                                ))
+                            )}
+                        </div>
 
                     </div>
                     {/* admin edit, del popup--------- */}
