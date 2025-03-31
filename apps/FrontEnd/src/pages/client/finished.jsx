@@ -99,7 +99,7 @@ function Finished() {
             <Navbar />
             <div className="finished flex justify-center items-center px-auto py-32 ">
                 <div className="finished-box max-w-6xl m-auto p-8 space-y-12 shadow-black shadow-xl">
-                    <h2 className="text-center text-4xl text-yellow-500 font-bold tracking-widest">Reservation</h2>
+                    <h2 className="text-center text-4xl text-yellow-500 font-bold tracking-widest">Finished reserve</h2>
 
                     <div className="flex justify-center">
                         {imageUrl && (

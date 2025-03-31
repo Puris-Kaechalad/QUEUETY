@@ -122,16 +122,46 @@ function ReserveHistory() {
         }
     };
 
+    // bug
+    // const handleConfirm = (reservationID) => {
+    //     // Toggle the confirmed reservation by checking if it already exists
+    //     if (confirmedReservations.includes(reservationID)) {
+    //         // If it's already confirmed, remove it (set as not confirmed)
+    //         setConfirmedReservations(prevState => prevState.filter(id => id !== reservationID));
+    //     } else {
+    //         // If it's not confirmed, add it to the confirmed reservations list
+    //         setConfirmedReservations(prevState => [...prevState, reservationID]);
+    //     }
+    // };
     const handleConfirm = (reservationID) => {
         // Toggle the confirmed reservation by checking if it already exists
         if (confirmedReservations.includes(reservationID)) {
             // If it's already confirmed, remove it (set as not confirmed)
-            setConfirmedReservations(prevState => prevState.filter(id => id !== reservationID));
+            setConfirmedReservations(prevState => {
+                const updatedReservations = prevState.filter(id => id !== reservationID);
+                // Save the updated state to localStorage
+                localStorage.setItem('confirmedReservations', JSON.stringify(updatedReservations));
+                return updatedReservations;
+            });
         } else {
             // If it's not confirmed, add it to the confirmed reservations list
-            setConfirmedReservations(prevState => [...prevState, reservationID]);
+            setConfirmedReservations(prevState => {
+                const updatedReservations = [...prevState, reservationID];
+                // Save the updated state to localStorage
+                localStorage.setItem('confirmedReservations', JSON.stringify(updatedReservations));
+                return updatedReservations;
+            });
         }
     };
+
+    useEffect(() => {
+        // Load the saved confirmed reservations from localStorage when the component mounts
+        const savedReservations = localStorage.getItem('confirmedReservations');
+        if (savedReservations) {
+            setConfirmedReservations(JSON.parse(savedReservations));
+        }
+    }, []);
+
 
     useEffect(() => {
         const auth = getAuth();
@@ -197,7 +227,7 @@ function ReserveHistory() {
                                     <th>Seat</th>
                                     <th>Phone number</th>
                                     {userRole === "admin" && <th>Price</th>} {/* เพิ่ม Price เฉพาะ admin */}
-                                    {userRole === "staff" && <th>Confirmed</th>} {/* เพิ่ม column เฉพาะ staff */}
+                                    {userRole === "staff" && <th>Check</th>} {/* เพิ่ม column เฉพาะ staff */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -217,14 +247,27 @@ function ReserveHistory() {
                                                 {userRole === "admin" && (
                                                     <td>{reservation.totalPrice}฿</td> // ปรับให้ admin เห็น
                                                 )}
-                                                {userRole === "staff" && (
+
+                                                {/* {userRole === "staff" && (
                                                     <td>
                                                         <button
                                                             className={`rounded-full p-2 hover:scale-110 transition-all duration-200 
                                                             ${confirmedReservations.includes(reservation.reservationID) ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}
-                                                            onClick={() => handleConfirm(reservation.reservationID)}  // เพิ่มฟังก์ชันติ๊กถูก
+                                                            onClick={() => handleConfirm(reservation.reservationID)}
                                                         >
-                                                            {confirmedReservations.includes(reservation.reservationID) ? <FaTimes /> : <FaCheck />} {/* ไอคอนติ๊กถูกและกากบาท */}
+                                                            {confirmedReservations.includes(reservation.reservationID) ? <FaTimes /> : <FaCheck />}
+                                                        </button>
+                                                    </td>
+                                                )} */}
+
+                                                {userRole === "staff" && (
+                                                    <td>
+                                                        <button
+                                                            className={`rounded-full px-4 py-1 cursor-pointer duration-200 
+                                                            ${confirmedReservations.includes(reservation.reservationID) ? 'text-red-500' : 'bg-sky-500 text-white'}`}
+                                                            onClick={() => handleConfirm(reservation.reservationID)}
+                                                        >
+                                                            {confirmedReservations.includes(reservation.reservationID) ? 'Cancel' : 'Check in'}
                                                         </button>
                                                     </td>
                                                 )}
